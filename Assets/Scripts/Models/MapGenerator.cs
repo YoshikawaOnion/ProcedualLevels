@@ -10,24 +10,35 @@ public class MapGenerator
     /// <summary>
     /// 部屋を分割する際の子区画の最小サイズを取得または設定します。
     /// </summary>
-    public int RoomMinSize { get; set; }
+    public int ChildBoundMinSize { get; set; }
     /// <summary>
     /// 部屋を分割する際の親区画の最小サイズを取得または設定します。
     /// </summary>
-    public int ParentRoomMinSize { get; set; }
+    public int ParentBoundMinSize { get; set; }
 	/// <summary>
 	/// 部屋の属する区画に対する余白サイズを取得または設定します。
 	/// </summary>
 	public int MarginSize { get; set; }
-
+    /// <summary>
+    /// 通路の幅を取得または設定します。
+    /// </summary>
     public int PathThickness { get; set; }
+    /// <summary>
+    /// 部屋の最小サイズを取得または設定します。
+    /// </summary>
+    public int RoomMinSize { get; set; }
+    /// <summary>
+    /// 一部屋あたりの、通路の削除を試みる回数を取得または設定します。
+    /// </summary>
+    public float PathReducingChange { get; set; }
 
     public MapGenerator()
     {
-        RoomMinSize = 6;
-        ParentRoomMinSize = 12;
+        ChildBoundMinSize = 6;
+        ParentBoundMinSize = 12;
         MarginSize = 2;
         PathThickness = 2;
+        RoomMinSize = 24;
     }
 
     /// <summary>
@@ -51,11 +62,7 @@ public class MapGenerator
 
         foreach (var div in divisions)
         {
-            var room = div.Clone();
-            room.Left += MarginSize;
-            room.Right -= MarginSize;
-            room.Bottom += MarginSize;
-            room.Top -= MarginSize;
+            var room = CreateRoom(div);
             map.Divisions.Add(new MapDivision()
             {
                 Bound = div,
@@ -68,6 +75,24 @@ public class MapGenerator
         ReducePathesAtRandom(map);
 
         return map;
+    }
+
+    private MapRectangle CreateRoom(MapRectangle bound)
+	{
+		var room = bound.Clone();
+		room.Left += MarginSize;
+		room.Right -= MarginSize;
+		room.Bottom += MarginSize;
+		room.Top -= MarginSize;
+
+        var widthReduce = GetRandomInRange(0, bound.Width - RoomMinSize);
+        var heightReduce = GetRandomInRange(0, bound.Height - RoomMinSize);
+        room.Left += widthReduce / 2;
+        room.Right -= widthReduce / 2;
+        room.Bottom += heightReduce / 2;
+        room.Top -= heightReduce / 2;
+
+        return room;
     }
 
     private void ReducePathesAtRandom(MapData map)
@@ -145,7 +170,7 @@ public class MapGenerator
         MapRectangle child = null;
         bool childIsToBeDivided = false;
         bool parentIsToBeDivided = false;
-        var sizeToBeDivided = RoomMinSize + ParentRoomMinSize;
+        var sizeToBeDivided = ChildBoundMinSize + ParentBoundMinSize;
 
 		if (vertical)
 		{
@@ -303,6 +328,6 @@ public class MapGenerator
     private int GetRandInRoom(int size)
     {
         var rand = (int)(UnityEngine.Random.value * size);
-        return Mathf.Clamp(rand, RoomMinSize, size - ParentRoomMinSize);
+        return Mathf.Clamp(rand, ChildBoundMinSize, size - ParentBoundMinSize);
     }
 }
