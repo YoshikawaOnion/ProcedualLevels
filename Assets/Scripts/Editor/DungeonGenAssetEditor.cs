@@ -9,7 +9,7 @@ public class DungeonGenAssetEditor : ScriptableObject
 	public static void CreateDungeonGenAssetInstance()
 	{
 		var asset = CreateInstance<ProcedualLevels.Models.DungeonGenAsset>();
-		AssetDatabase.CreateAsset(asset, "Assets/Resources/Asset/DungeonGenAsset.asset");
+		AssetDatabase.CreateAsset(asset, "Assets/Resources/Assets/DungeonGenAsset.asset");
 		AssetDatabase.Refresh();
 	}
 }

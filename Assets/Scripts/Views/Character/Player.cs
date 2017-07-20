@@ -19,6 +19,7 @@ namespace ProcedualLevels.Views
         [SerializeField]
         private float jetSpeed = 10;
 
+        private CopyManager copyManager { get; set; }
         private new Rigidbody2D rigidbody;
         private GameObject copyPrefab;
 
@@ -27,11 +28,23 @@ namespace ProcedualLevels.Views
         {
             rigidbody = GetComponent<Rigidbody2D>();
             copyPrefab = Resources.Load<GameObject>("Prefabs/Character/Copy");
+            var copyManagerPrefab = Resources.Load<GameObject>("Prefabs/Manager/CopyManager");
+            var obj = Instantiate(copyManagerPrefab);
+            copyManager = obj.GetComponent<CopyManager>();
         }
 
-        // Update is called once per frame
-        void Update()
+        private void Update()
         {
+            if (Input.GetKeyDown(KeyCode.Space))
+            {
+                for (int i = 0; i < jumpCopyCount; i++)
+                {
+                    var angle = Helper.RandomInRange(-60, 60) + 180;
+                    copyManager.CreateCopy(
+                        transform.position.AddY(copyOffset).MergeZ(-4),
+                        Vector2Extensions.FromAngleLength(angle, jetSpeed));
+                }
+            }
         }
 
         private void FixedUpdate()
@@ -50,15 +63,6 @@ namespace ProcedualLevels.Views
             if (Input.GetKeyDown(KeyCode.Space))
             {
                 rigidbody.AddForce(Vector2.up * jumpPower);
-                for (int i = 0; i < jumpCopyCount; i++)
-                {
-                    var obj = Instantiate(copyPrefab);
-                    obj.transform.position = transform.position.AddY(copyOffset);
-                    var rigid = obj.GetComponent<Rigidbody2D>();
-                    var angle = Helper.RandomInRange(-60, 60) + 180;
-                    var v = Vector2Extensions.FromAngleLength(angle, jetSpeed);
-                    rigid.velocity = v;
-                }
             }
         }
     }

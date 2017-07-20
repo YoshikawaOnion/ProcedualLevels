@@ -8,11 +8,36 @@ namespace ProcedualLevels.Views
 {
     public class Copy : MonoBehaviour
     {
-        // Use this for initialization
-        void Start()
+        [SerializeField]
+        private Vector2 ballUv;
+        [SerializeField]
+        private Vector2 dropUv;
+
+        public Vector2 Uv { get; private set; }
+        public IObservable<Unit> OnVanish { get; private set; }
+
+        private Subject<Unit> onVanish_ { get; set; }
+
+        public void Initialize()
+		{
+			Observable.Timer(TimeSpan.FromSeconds(60))
+					  .Subscribe(x => Reset());
+			Uv = dropUv;
+			onVanish_ = new Subject<Unit>();
+			OnVanish = onVanish_;
+            gameObject.SetActive(true);
+        }
+
+        public void Reset()
         {
-            Observable.Timer(TimeSpan.FromSeconds(120))
-                      .Subscribe(x => gameObject.SetActive(false));
+            gameObject.SetActive(false);
+            onVanish_.OnNext(Unit.Default);
+            onVanish_.OnCompleted();
+        }
+
+        private void OnCollisionEnter2D(Collision2D collision)
+        {
+            Uv = ballUv;
         }
     }
 }

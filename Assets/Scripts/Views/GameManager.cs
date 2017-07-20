@@ -8,54 +8,28 @@ namespace ProcedualLevels.Views
 {
     public class GameManager : MonoBehaviour
     {
-        // この辺りはあとでScriptableObject化
-        [SerializeField]
-        private int childBoundMinSize = 6;
-        [SerializeField]
-        private int parentBoundMinSize = 12;
-        [SerializeField]
-        private int marginSize = 4;
-        [SerializeField]
-        private int pathThickness = 2;
-        [SerializeField]
-        private int worldWidth = 640;
-        [SerializeField]
-        private int worldHeight = 480;
-        [SerializeField]
-        private int roomMinSize = 24;
-        [SerializeField]
-        private int pathReducingChance = 4;
-
         [SerializeField]
         private new Camera camera;
+        [SerializeField]
+        public Script_SpriteStudio_ManagerDraw managerDraw;
 
-        private GameObject player;
+        private Player player;
 
         private void Start()
         {
-            // この辺りはあとでModelへ移動
-            var generator = new MapGenerator()
-            {
-                ChildBoundMinSize = childBoundMinSize,
-                ParentBoundMinSize = parentBoundMinSize,
-                MarginSize = marginSize,
-                PathThickness = pathThickness,
-                RoomMinSize = roomMinSize,
-                PathReducingChance = pathReducingChance,
-            };
-            var leftBottom = new Vector2(-worldWidth / 2, -worldHeight / 2);
-            var rightTop = new Vector2(worldWidth / 2, worldHeight / 2);
-            var map = generator.GenerateMap(leftBottom, rightTop);
+            var model = new Models.GameManager();
+            var map = model.GenerateMap();
 
             var mapPrefab = Resources.Load<MapView>("Prefabs/Dungeon/Map");
             var mapObj = Instantiate(mapPrefab);
-            mapObj.Initialize(camera, map);
+            mapObj.Initialize(map, this);
 
-            var playerPrefab = Resources.Load<GameObject>("Prefabs/Character/Player");
+            var playerPrefab = Resources.Load<Player>("Prefabs/Character/Player_Control");
             player = Instantiate(playerPrefab);
             player.transform.position = map.Divisions[0].Room.Position
                 + map.Divisions[0].Room.Size / 2;
             player.transform.SetPositionZ(-2);
+            player.transform.SetParent(managerDraw.transform);
         }
 
         // Update is called once per frame
@@ -69,7 +43,7 @@ namespace ProcedualLevels.Views
                 instance.transform.position = new Vector3(pos.x, pos.y, -2);
             }
 
-            camera.transform.position = player.transform.position.ZReplacedBy(-10);
+            camera.transform.position = player.transform.position.MergeZ(-10);
         }
     }
 }

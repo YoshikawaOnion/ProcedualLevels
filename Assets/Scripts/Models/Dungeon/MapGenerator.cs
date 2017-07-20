@@ -78,17 +78,26 @@ namespace ProcedualLevels.Models
             ReducePathesAtRandom(map);
 
             var startRoomIndex = GetRandomInRange(0, map.Divisions.Count - 1);
-            var goalRoomIndex = GetRandomInRange(0, map.Divisions.Count - 1);
             map.StartLocation = GetRandomLocation(map.Divisions[startRoomIndex].Room);
-            map.GoalLocation = GetRandomLocation(map.Divisions[goalRoomIndex].Room);
 
-            return map;
+            int goalRoomIndex;
+            while (true)
+			{
+				goalRoomIndex = GetRandomInRange(0, map.Divisions.Count - 1);
+                if (startRoomIndex != goalRoomIndex)
+				{
+                    break;
+                }
+			}
+			map.GoalLocation = GetRandomLocation(map.Divisions[goalRoomIndex].Room);
+
+			return map;
         }
 
         private Vector2 GetRandomLocation(MapRectangle room)
         {
-            var x = GetRandomInRange(room.Left, room.Right);
-            var y = GetRandomInRange(room.Bottom, room.Top);
+            var x = GetRandomInRange(room.Left + MarginSize, room.Right - MarginSize);
+            var y = GetRandomInRange(room.Bottom + MarginSize, room.Top - MarginSize);
             return new Vector2(x, y);
         }
 
