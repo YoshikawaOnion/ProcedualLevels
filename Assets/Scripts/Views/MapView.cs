@@ -26,6 +26,10 @@ namespace ProcedualLevels.Views
                 //var w = InstantiateRect(null, wallPrefab, division.Bound);
                 //w.transform.AddPositionZ(2);
             }
+
+            var goalPrefab = Resources.Load<GameObject>("Prefabs/Dungeon/Goal");
+            var goal = Instantiate(goalPrefab);
+            goal.transform.position = map.GoalLocation;
         }
 
         private static GameObject InstantiateRect(GameObject maze, GameObject prefab, MapRectangle room)

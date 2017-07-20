@@ -23,6 +23,8 @@ namespace ProcedualLevels.Views
         private int worldHeight = 480;
         [SerializeField]
         private int roomMinSize = 24;
+        [SerializeField]
+        private int pathReducingChance = 4;
 
         [SerializeField]
         private new Camera camera;
@@ -39,6 +41,7 @@ namespace ProcedualLevels.Views
                 MarginSize = marginSize,
                 PathThickness = pathThickness,
                 RoomMinSize = roomMinSize,
+                PathReducingChance = pathReducingChance,
             };
             var leftBottom = new Vector2(-worldWidth / 2, -worldHeight / 2);
             var rightTop = new Vector2(worldWidth / 2, worldHeight / 2);

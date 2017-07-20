@@ -11,7 +11,7 @@ namespace ProcedualLevels.Views
         // Use this for initialization
         void Start()
         {
-            Observable.Timer(TimeSpan.FromSeconds(30))
+            Observable.Timer(TimeSpan.FromSeconds(120))
                       .Subscribe(x => gameObject.SetActive(false));
         }
     }

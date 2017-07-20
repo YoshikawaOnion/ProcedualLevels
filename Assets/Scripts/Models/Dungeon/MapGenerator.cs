@@ -32,7 +32,7 @@ namespace ProcedualLevels.Models
         /// <summary>
         /// 一部屋あたりの、通路の削除を試みる回数を取得または設定します。
         /// </summary>
-        public float PathReducingChange { get; set; }
+        public float PathReducingChance { get; set; }
 
         public MapGenerator()
         {
@@ -41,6 +41,7 @@ namespace ProcedualLevels.Models
             MarginSize = 2;
             PathThickness = 2;
             RoomMinSize = 24;
+            PathReducingChance = 4;
         }
 
         /// <summary>
@@ -76,7 +77,19 @@ namespace ProcedualLevels.Models
             ConnectRooms(map, false, (o, i) => o.Top == i.Bottom);
             ReducePathesAtRandom(map);
 
+            var startRoomIndex = GetRandomInRange(0, map.Divisions.Count - 1);
+            var goalRoomIndex = GetRandomInRange(0, map.Divisions.Count - 1);
+            map.StartLocation = GetRandomLocation(map.Divisions[startRoomIndex].Room);
+            map.GoalLocation = GetRandomLocation(map.Divisions[goalRoomIndex].Room);
+
             return map;
+        }
+
+        private Vector2 GetRandomLocation(MapRectangle room)
+        {
+            var x = GetRandomInRange(room.Left, room.Right);
+            var y = GetRandomInRange(room.Bottom, room.Top);
+            return new Vector2(x, y);
         }
 
         private MapRectangle CreateRoom(MapRectangle bound)
@@ -100,7 +113,7 @@ namespace ProcedualLevels.Models
         private void ReducePathesAtRandom(MapData map)
         {
             var head = map.Divisions[0];
-            var loop = (int)(map.Divisions.Count * 4);    // 繰り返し回数。いい感じに調整する
+            var loop = (int)(map.Divisions.Count * PathReducingChance);
 
             MarkConnectedRooms(head, 0);
             for (int i = 0; i < loop; i++)

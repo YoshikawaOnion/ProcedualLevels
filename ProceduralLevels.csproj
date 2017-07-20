@@ -144,10 +144,12 @@
     <Compile Include="Assets\Scripts\Models\DungeonGenAsset.cs" />
     <Compile Include="Assets\Scripts\Models\GameManager.cs" />
     <Compile Include="Assets\Scripts\Room.cs" />
-    <Compile Include="Assets\Scripts\Views\Copy.cs" />
+    <Compile Include="Assets\Scripts\Views\Character\Copy.cs" />
+    <Compile Include="Assets\Scripts\Views\Character\Player.cs" />
     <Compile Include="Assets\Scripts\Views\GameManager.cs" />
+    <Compile Include="Assets\Scripts\Views\Goal.cs" />
     <Compile Include="Assets\Scripts\Views\MapView.cs" />
-    <Compile Include="Assets\Scripts\Views\Player.cs" />
+    <Compile Include="Assets\Scripts\Common\Def.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Assets\Demigiant\DOTween\DOTween.XML" />
