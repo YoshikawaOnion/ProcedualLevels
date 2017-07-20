@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<SpriteStudioCellMap version="1.00.02">
+	<name>Player</name>
+	<exportPath></exportPath>
+	<generator>TexturePacker</generator>
+	<packed>1</packed>
+	<imagePath>Player.png</imagePath>
+	<pixelSize>64 64</pixelSize>
+	<overrideTexSettings>0</overrideTexSettings>
+	<wrapMode>clamp</wrapMode>
+	<filterMode>linear</filterMode>
+	<imagePathAtImport>/Users/kurashimakazuyuki/ProcedualLevels/Assets/Resources/Textures/Player/Player.png</imagePathAtImport>
+	<packInfoFilePath></packInfoFilePath>
+	<texPackSettings>
+		<maxSize>4096 4096</maxSize>
+		<forcePo2>1</forcePo2>
+		<forceSquare>0</forceSquare>
+		<margin>0</margin>
+		<padding>1</padding>
+	</texPackSettings>
+	<cells>
+		<cell>
+			<name>1</name>
+			<pos>21 17</pos>
+			<size>14 14</size>
+			<pivot>0 0</pivot>
+			<rotated>0</rotated>
+			<orgImageName>/Users/kurashimakazuyuki/ProcedualLevels/Assets/Resources/Textures/Player/1.png</orgImageName>
+			<posStable>0</posStable>
+		</cell>
+		<cell>
+			<name>2</name>
+			<pos>17 40</pos>
+			<size>12 16</size>
+			<pivot>0 0</pivot>
+			<rotated>0</rotated>
+			<orgImageName>/Users/kurashimakazuyuki/ProcedualLevels/Assets/Resources/Textures/Player/2.png</orgImageName>
+			<posStable>0</posStable>
+		</cell>
+		<cell>
+			<name>3</name>
+			<pos>32 2</pos>
+			<size>16 12</size>
+			<pivot>0 0</pivot>
+			<rotated>0</rotated>
+			<orgImageName>/Users/kurashimakazuyuki/ProcedualLevels/Assets/Resources/Textures/Player/3.png</orgImageName>
+			<posStable>0</posStable>
+		</cell>
+		<cell>
+			<name>4</name>
+			<pos>2 40</pos>
+			<size>12 16</size>
+			<pivot>0 0</pivot>
+			<rotated>0</rotated>
+			<orgImageName>/Users/kurashimakazuyuki/ProcedualLevels/Assets/Resources/Textures/Player/4.png</orgImageName>
+			<posStable>0</posStable>
+		</cell>
+		<cell>
+			<name>5</name>
+			<pos>2 21</pos>
+			<size>16 16</size>
+			<pivot>0 0</pivot>
+			<rotated>0</rotated>
+			<orgImageName>/Users/kurashimakazuyuki/ProcedualLevels/Assets/Resources/Textures/Player/5.png</orgImageName>
+			<posStable>0</posStable>
+		</cell>
+		<cell>
+			<name>6</name>
+			<pos>2 2</pos>
+			<size>16 16</size>
+			<pivot>0 0</pivot>
+			<rotated>0</rotated>
+			<orgImageName>/Users/kurashimakazuyuki/ProcedualLevels/Assets/Resources/Textures/Player/6.png</orgImageName>
+			<posStable>0</posStable>
+		</cell>
+	</cells>
+</SpriteStudioCellMap>
