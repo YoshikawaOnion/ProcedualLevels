@@ -29,17 +29,34 @@ public class PlayerStateJumping : StateMachine
     private void OnHitWithProbablyGround(Collision2D collision)
     {
         var copy = collision.gameObject.GetComponent<Copy>();
-        if (copy != null && !copy.IsOnGround)
+        if (copy != null)
         {
-            return;
+            if (!copy.IsOnGround)
+            {
+                return;   
+            }
+            else
+            {
+                RaiseSettlingGround();
+            }
         }
         foreach (var contact in collision.contacts)
         {
-            if (contact.normal.x <= 0.15f
-               && contact.normal.x >= -0.15f)
+            if (contact.normal.x <= 0.3f
+               && contact.normal.x >= -0.3f
+               && contact.normal.y > 0)
             {
-                context.Owner.ChangeJumpState(Player.GroundStateName, context);
+                RaiseSettlingGround();
             }
         }
+    }
+
+    private void RaiseSettlingGround()
+	{
+		foreach (var charge in context.Owner.Charges)
+		{
+			charge.Value = true;
+		}
+		context.Owner.ChangeJumpState(Player.GroundStateName, context);        
     }
 }

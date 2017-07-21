@@ -29,7 +29,6 @@ public class PlayerStateGround : StateMachine
     {
         if (Input.GetKeyDown(KeyCode.Space))
         {
-            Debug.Log("Jump");
             rigidbody.AddForce(new Vector2(0, context.Owner.jumpPower));
             context.Owner.ChangeJumpState(Player.JumpingStateName, context);
         }

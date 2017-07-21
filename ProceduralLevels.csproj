@@ -169,13 +169,18 @@
     <Compile Include="Assets\Scripts\Models\DungeonGenAsset.cs" />
     <Compile Include="Assets\Scripts\Models\GameManager.cs" />
     <Compile Include="Assets\Scripts\Room.cs" />
+    <Compile Include="Assets\Scripts\Views\Character\Charge.cs" />
     <Compile Include="Assets\Scripts\Views\Character\Copy.cs" />
-    <Compile Include="Assets\Scripts\Views\Player\Player.cs" />
-    <Compile Include="Assets\Scripts\Views\Manager\GameManager.cs" />
     <Compile Include="Assets\Scripts\Views\Goal.cs" />
     <Compile Include="Assets\Scripts\Views\Manager\CopyManager.cs" />
+    <Compile Include="Assets\Scripts\Views\Manager\GameEventFacade.cs" />
+    <Compile Include="Assets\Scripts\Views\Manager\GameManager.cs" />
     <Compile Include="Assets\Scripts\Views\Manager\MapTipRenderer.cs" />
     <Compile Include="Assets\Scripts\Views\MapView.cs" />
+    <Compile Include="Assets\Scripts\Views\Player\Player.cs" />
+    <Compile Include="Assets\Scripts\Views\Player\PlayerContext.cs" />
+    <Compile Include="Assets\Scripts\Views\Player\PlayerStateGround.cs" />
+    <Compile Include="Assets\Scripts\Views\Player\PlayerStateJumping.cs" />
     <Compile Include="Assets\SpriteStudio\Script\Script_SpriteStudio_Collider.cs" />
     <Compile Include="Assets\SpriteStudio\Script\Script_SpriteStudio_ControlPrefab.cs" />
     <Compile Include="Assets\SpriteStudio\Script\Script_SpriteStudio_DataAnimation.cs" />
@@ -203,10 +208,6 @@
     <Compile Include="Assets\SpriteStudioSample\basic\script\instance_sample.cs" />
     <Compile Include="Assets\SpriteStudioSample\basic\script\player.cs" />
     <Compile Include="Assets\SpriteStudioSample\basic\script\sseffect.cs" />
-    <Compile Include="Assets\Scripts\Views\Player\PlayerStateGround.cs" />
-    <Compile Include="Assets\Scripts\Views\Player\PlayerContext.cs" />
-    <Compile Include="Assets\Scripts\Views\Player\PlayerStateJumping.cs" />
-    <Compile Include="Assets\Scripts\Views\Manager\GameEventFacade.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Assets\BatchRendererExamples\Shaders\GlowlineSurface.shader" />

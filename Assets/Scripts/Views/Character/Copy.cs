@@ -14,6 +14,8 @@ namespace ProcedualLevels.Views
         private Vector2 dropUv;
         [SerializeField]
         private float VanishTime;
+        [SerializeField]
+        private float GravityAtFalling;
 
         public bool IsOnGround { get; private set; }
         public Vector2 Uv { get; private set; }
@@ -26,12 +28,12 @@ namespace ProcedualLevels.Views
 		{
 			Observable.Timer(TimeSpan.FromSeconds(VanishTime))
 					  .Subscribe(x => Reset());
-			Uv = dropUv;
 			OnVanish_ = new Subject<Unit>();
 			OnVanish = OnVanish_;
             gameObject.SetActive(true);
-            Rigidbody = GetComponent<Rigidbody2D>();
-            IsOnGround = false;
+			Rigidbody = GetComponent<Rigidbody2D>();
+
+            SetGroundState(false);
         }
 
         public void Reset()
@@ -39,6 +41,13 @@ namespace ProcedualLevels.Views
             gameObject.SetActive(false);
             OnVanish_.OnNext(Unit.Default);
             OnVanish_.OnCompleted();
+        }
+
+        private void SetGroundState(bool isOnGround)
+        {
+            IsOnGround = isOnGround;
+            Uv = isOnGround ? ballUv : dropUv;
+            Rigidbody.gravityScale = isOnGround ? 1 : GravityAtFalling;
         }
 
         private void OnCollisionStay2D(Collision2D collision)
@@ -55,8 +64,7 @@ namespace ProcedualLevels.Views
                 {
                     return;
                 }
-                Uv = ballUv;
-                IsOnGround = true;
+                SetGroundState(true);
             }
 
             if (collision.gameObject.tag == Def.TerrainTag)
@@ -65,8 +73,7 @@ namespace ProcedualLevels.Views
                 if (contact.normal.x <= 0.15f
                    && contact.normal.x >= -0.15f)
 				{
-					Uv = ballUv;
-					IsOnGround = true;
+                    SetGroundState(true);
                 }
             }
         }

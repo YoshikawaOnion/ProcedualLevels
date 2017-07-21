@@ -5,6 +5,7 @@ using DG.Tweening;
 using ProcedualLevels.Common;
 using UniRx;
 using System;
+using System.Linq;
 
 namespace ProcedualLevels.Views
 {
@@ -28,12 +29,15 @@ namespace ProcedualLevels.Views
         private float jetSpeed = 10;
         [SerializeField]
         private float jetAngleMax = 60;
+        [SerializeField]
+        public int chargeMax = 8;
+
+        public ReactiveProperty<bool>[] Charges;
 
         private Script_SpriteStudio_Root sprite;
         private CopyManager copyManager;
         private new Rigidbody2D rigidbody;
         private GameObject copyPrefab;
-        private bool isOnTerrain;
         public StateMachine JumpState { get; private set; }
 
         private IPlayerEventAccepter EventAccepter { get; set; }
@@ -47,7 +51,6 @@ namespace ProcedualLevels.Views
 			var obj = Instantiate(copyManagerPrefab);
 			copyManager = obj.GetComponent<CopyManager>();
 			sprite = GetComponentInChildren<Script_SpriteStudio_Root>();
-			isOnTerrain = true;
             EventAccepter = eventAccepter;
 
             var context = new PlayerContext
@@ -57,6 +60,16 @@ namespace ProcedualLevels.Views
             };
             JumpState = GetComponent<StateMachine>();
             ChangeJumpState(JumpingStateName, context);
+
+            var chargePrefab = Resources.Load<Charge>("Prefabs/Character/Charge");
+            Charges = new ReactiveProperty<bool>[chargeMax];
+            for (int i = 0; i < chargeMax; i++)
+            {
+                Charges[i] = new ReactiveProperty<bool>(true);
+                var chargeObj = Instantiate(chargePrefab);
+                chargeObj.Initialize(this, i);
+                chargeObj.transform.SetParent(transform);
+            }
         }
 
         private void OnDestroy()
@@ -69,7 +82,12 @@ namespace ProcedualLevels.Views
             transform.rotation = Quaternion.identity;
             if (Input.GetKeyDown(KeyCode.Space))
             {
-                StartCoroutine(ShotCoroutine());
+                var prop = Charges.FirstOrDefault(x => x.Value);
+                if (prop != null)
+				{
+                    prop.Value = false;
+					StartCoroutine(ShotCoroutine());
+                }
             }
         }
 

@@ -86,7 +86,7 @@ namespace ProcedualLevels.Models
                 var count = (int)(item.Room.Width * item.Room.Height * EnemyCountRatio);
                 for (int i = 0; i < count; i++)
                 {
-                    var pos = GetRandomLocation(item.Room);
+                    var pos = GetRandomLocation(item.Room, 0);
                     if (pos != map.GoalLocation
                        && pos != map.StartLocation)
                     {
@@ -99,7 +99,7 @@ namespace ProcedualLevels.Models
         private void PlaceStartAndGoal(MapData map)
         {
             var startRoomIndex = GetRandomInRange(0, map.Divisions.Count - 1);
-            map.StartLocation = GetRandomLocation(map.Divisions[startRoomIndex].Room);
+            map.StartLocation = GetRandomLocation(map.Divisions[startRoomIndex].Room, MarginSize);
 
             int goalRoomIndex;
             while (true)
@@ -110,7 +110,7 @@ namespace ProcedualLevels.Models
                     break;
                 }
             }
-            map.GoalLocation = GetRandomLocation(map.Divisions[goalRoomIndex].Room);
+            map.GoalLocation = GetRandomLocation(map.Divisions[goalRoomIndex].Room, MarginSize);
         }
 
         private void GenerateRooms(Vector2 leftBottom, Vector2 rightTop, MapData map)
@@ -135,10 +135,10 @@ namespace ProcedualLevels.Models
             }
         }
 
-        private Vector2 GetRandomLocation(MapRectangle room)
+        private Vector2 GetRandomLocation(MapRectangle room, int margin)
         {
-            var x = GetRandomInRange(room.Left + MarginSize, room.Right - MarginSize);
-            var y = GetRandomInRange(room.Bottom + MarginSize, room.Top - MarginSize);
+            var x = GetRandomInRange(room.Left + margin, room.Right - margin);
+            var y = GetRandomInRange(room.Bottom + margin, room.Top - margin);
             return new Vector2(x + 0.5f, y + 0.5f);
         }
 
