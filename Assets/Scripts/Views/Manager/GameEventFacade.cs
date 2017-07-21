@@ -8,12 +8,14 @@ namespace ProcedualLevels.Views
     {
         IObserver<Collision2D> OnPlayerCollideWithEggSender { get; }
         IObserver<Collision2D> OnPlayerCollideWithTerrainSender { get; }
+        IObserver<Collision2D> OnPlayerCollideWithEnemySender { get; }
     }
 
     public interface IGameEventReceiver
     {
         IObservable<Collision2D> OnPlayerCollideWithEggReceiver { get; }
         IObservable<Collision2D> OnPlayerCollideWithTerrainReceiver { get; }
+        IObservable<Collision2D> OnPlayerCollideWithEnemyReceiver { get; }
     }
 
     public class GameEventFacade : IPlayerEventAccepter,
@@ -26,5 +28,9 @@ namespace ProcedualLevels.Views
         public IObservable<Collision2D> OnPlayerCollideWithTerrainReceiver { get { return onPlayerCollideWithTerrain; } }
         public IObserver<Collision2D> OnPlayerCollideWithTerrainSender { get { return onPlayerCollideWithTerrain; } }
         private Subject<Collision2D> onPlayerCollideWithTerrain = new Subject<Collision2D>();
+
+        public IObservable<Collision2D> OnPlayerCollideWithEnemyReceiver { get { return onPlayerCollideWithEnemy; } }
+        public IObserver<Collision2D> OnPlayerCollideWithEnemySender { get { return onPlayerCollideWithEnemy; } }
+        private Subject<Collision2D> onPlayerCollideWithEnemy = new Subject<Collision2D>();
     }
 }

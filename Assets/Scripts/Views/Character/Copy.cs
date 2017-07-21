@@ -11,7 +11,9 @@ namespace ProcedualLevels.Views
         [SerializeField]
         private Vector2 ballUv;
         [SerializeField]
-        private Vector2 dropUv;
+        private Vector2 dropUv0;
+        [SerializeField]
+        private Vector2 dropUv1;
         [SerializeField]
         private float VanishTime;
         [SerializeField]
@@ -46,8 +48,17 @@ namespace ProcedualLevels.Views
         private void SetGroundState(bool isOnGround)
         {
             IsOnGround = isOnGround;
-            Uv = isOnGround ? ballUv : dropUv;
             Rigidbody.gravityScale = isOnGround ? 1 : GravityAtFalling;
+            if (isOnGround)
+			{
+				Uv = dropUv1;
+                Observable.Timer(TimeSpan.FromMilliseconds(50))
+                          .Subscribe(x => Uv = ballUv);
+            }
+            else
+            {
+                Uv = dropUv0;
+            }
         }
 
         private void OnCollisionStay2D(Collision2D collision)

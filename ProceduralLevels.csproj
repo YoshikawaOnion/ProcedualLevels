@@ -208,6 +208,8 @@
     <Compile Include="Assets\SpriteStudioSample\basic\script\instance_sample.cs" />
     <Compile Include="Assets\SpriteStudioSample\basic\script\player.cs" />
     <Compile Include="Assets\SpriteStudioSample\basic\script\sseffect.cs" />
+    <Compile Include="Assets\Scripts\Views\Player\PlayerStateHealthy.cs" />
+    <Compile Include="Assets\Scripts\Views\Player\PlayerStateDamaged.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Assets\BatchRendererExamples\Shaders\GlowlineSurface.shader" />

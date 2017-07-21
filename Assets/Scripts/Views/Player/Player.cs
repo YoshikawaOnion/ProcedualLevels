@@ -16,6 +16,8 @@ namespace ProcedualLevels.Views
         public static readonly string AttackAnimationName = "Attack";
         public static readonly string IdleAnimationName = "Idle";
         public static readonly string DamageAnimationName = "Damage";
+        public static readonly string HealthyStateName = "PlayerStateHealthy";
+        public static readonly string DamageStateName = "PlayerStateDamaged";
 
         [SerializeField]
         private float walkSpeed = 2;
@@ -39,6 +41,7 @@ namespace ProcedualLevels.Views
         private new Rigidbody2D rigidbody;
         private GameObject copyPrefab;
         public StateMachine JumpState { get; private set; }
+        public StateMachine DamageState { get; private set; }
 
         private IPlayerEventAccepter EventAccepter { get; set; }
 
@@ -58,8 +61,12 @@ namespace ProcedualLevels.Views
                 Owner = this,
                 GameEvents = eventReceiver
             };
-            JumpState = GetComponent<StateMachine>();
+
+            var states = GetComponents<StateMachine>();
+            JumpState = states[0];
+            //DamageState = states[1];
             ChangeJumpState(JumpingStateName, context);
+            //ChangeDamageState(HealthyStateName, context);
 
             var chargePrefab = Resources.Load<Charge>("Prefabs/Character/Charge");
             Charges = new ReactiveProperty<bool>[chargeMax];
@@ -133,17 +140,6 @@ namespace ProcedualLevels.Views
                     copy.Reset();
                 }
             }
-			if (collision.gameObject.tag == Def.EnemyTag)
-			{
-                int damageNo = sprite.IndexGetAnimation("Damage");
-				sprite.AnimationPlay(damageNo);
-                Observable.Timer(TimeSpan.FromMilliseconds(800))
-                          .Subscribe(x =>
-                {
-	                int idleNo = sprite.IndexGetAnimation("Idle");
-	                sprite.AnimationPlay(idleNo);
-                });
-            }
 
 			if (collision.gameObject.tag == Def.TerrainTag)
 			{
@@ -157,9 +153,26 @@ namespace ProcedualLevels.Views
 			}
         }
 
+        private void OnCollisionEnter2D(Collision2D collision)
+        {
+			if (collision.gameObject.tag == Def.EnemyTag)
+			{
+				EventAccepter.OnPlayerCollideWithEnemySender
+							 .OnNext(collision);
+                ChangeAnimation(DamageAnimationName);
+				Observable.Timer(TimeSpan.FromMilliseconds(800))
+				  .Subscribe(x => ChangeAnimation(IdleAnimationName));
+			}
+        }
+
         public void ChangeJumpState(string stateName, PlayerContext context)
         {
             JumpState.ChangeSubState(stateName, context);
+        }
+
+        public void ChangeDamageState(string stateName, PlayerContext context)
+        {
+            DamageState.ChangeSubState(stateName, context);
         }
 
         public void ChangeAnimation(string animationName)
