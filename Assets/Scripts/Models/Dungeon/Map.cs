@@ -12,5 +12,46 @@ public class MapData
     public MapData()
     {
         Divisions = new List<MapDivision>();
+        EnemyLocations = new List<Vector2>();
+    }
+
+    public bool IsRoom(int left, int bottom)
+    {
+        foreach (var item in Divisions)
+        {
+            if (IsInRectanble(left, bottom, item.Room))
+            {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public bool IsPath(int left, int bottom)
+    {
+		foreach (var item in Divisions)
+		{
+			foreach (var connection in item.ConnectedDivisions)
+			{
+				foreach (var path in connection.Item2.Rooms)
+				{
+					if (IsInRectanble(left, bottom, path))
+					{
+						return true;
+					}
+				}
+			}
+		}
+		return false;
+    }
+
+    private bool IsInRectanble(int left, int bottom, MapRectangle room)
+	{
+		if (left >= room.Left && bottom >= room.Bottom
+		   && left < room.Right && bottom < room.Top)
+		{
+			return true;
+		}
+        return false;
     }
 }

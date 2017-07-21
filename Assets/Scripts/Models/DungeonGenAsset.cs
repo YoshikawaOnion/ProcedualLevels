@@ -24,8 +24,13 @@ namespace ProcedualLevels.Models
 		[Tooltip("部屋の最小サイズ")]
 		[SerializeField]
         public int RoomMinSize = 24;
+        [Tooltip("部屋の最大サイズ")]
+        [SerializeField]
+        public int RoomMaxSize = 64;
 		[Tooltip("一部屋あたりの、通路の削除を試みる回数")]
 		[SerializeField]
         public int PathReducingChance = 4;
+        [Tooltip("一部屋に対する敵のいるマスの割合")]
+        public float EnemyCountRatio = 0.01f;
     }
 }

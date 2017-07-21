@@ -30,9 +30,21 @@ namespace ProcedualLevels.Models
         /// </summary>
         public int RoomMinSize { get; set; }
         /// <summary>
+        /// 部屋の最大サイズを取得または設定します。
+        /// </summary>
+        public int RoomMaxSize { get; set; }
+        /// <summary>
         /// 一部屋あたりの、通路の削除を試みる回数を取得または設定します。
         /// </summary>
         public float PathReducingChance { get; set; }
+        /// <summary>
+        /// 一部屋あたりの敵がいるマスの割合を取得または設定します。
+        /// </summary>
+        public float EnemyCountRatio { get; set; }
+        /// <summary>
+        /// すり抜け防止用のColliderのための余白サイズを取得または設定します。
+        /// </summary>
+        public int ColliderMargin { get; set; }
 
         public MapGenerator()
         {
@@ -41,7 +53,10 @@ namespace ProcedualLevels.Models
             MarginSize = 2;
             PathThickness = 2;
             RoomMinSize = 24;
+            RoomMaxSize = 64;
             PathReducingChance = 4;
+            EnemyCountRatio = 0.03f;
+            ColliderMargin = 1;
         }
 
         /// <summary>
@@ -54,6 +69,52 @@ namespace ProcedualLevels.Models
         {
             var map = new MapData();
 
+            GenerateRooms(leftBottom, rightTop, map);
+            ConnectRooms(map, true, (o, i) => o.Right == i.Left);
+            ConnectRooms(map, false, (o, i) => o.Top == i.Bottom);
+            ReducePathesAtRandom(map);
+            PlaceStartAndGoal(map);
+            PlaceEnemies(map);
+
+            return map;
+        }
+
+        private void PlaceEnemies(MapData map)
+        {
+            foreach (var item in map.Divisions)
+            {
+                var count = (int)(item.Room.Width * item.Room.Height * EnemyCountRatio);
+                for (int i = 0; i < count; i++)
+                {
+                    var pos = GetRandomLocation(item.Room);
+                    if (pos != map.GoalLocation
+                       && pos != map.StartLocation)
+                    {
+                        map.EnemyLocations.Add(pos);
+                    }
+                }
+            }
+        }
+
+        private void PlaceStartAndGoal(MapData map)
+        {
+            var startRoomIndex = GetRandomInRange(0, map.Divisions.Count - 1);
+            map.StartLocation = GetRandomLocation(map.Divisions[startRoomIndex].Room);
+
+            int goalRoomIndex;
+            while (true)
+            {
+                goalRoomIndex = GetRandomInRange(0, map.Divisions.Count - 1);
+                if (startRoomIndex != goalRoomIndex)
+                {
+                    break;
+                }
+            }
+            map.GoalLocation = GetRandomLocation(map.Divisions[goalRoomIndex].Room);
+        }
+
+        private void GenerateRooms(Vector2 leftBottom, Vector2 rightTop, MapData map)
+        {
             var parent = new MapRectangle(
                 (int)leftBottom.x,
                 (int)rightTop.x,
@@ -72,33 +133,13 @@ namespace ProcedualLevels.Models
                     Room = room,
                 });
             }
-
-            ConnectRooms(map, true, (o, i) => o.Right == i.Left);
-            ConnectRooms(map, false, (o, i) => o.Top == i.Bottom);
-            ReducePathesAtRandom(map);
-
-            var startRoomIndex = GetRandomInRange(0, map.Divisions.Count - 1);
-            map.StartLocation = GetRandomLocation(map.Divisions[startRoomIndex].Room);
-
-            int goalRoomIndex;
-            while (true)
-			{
-				goalRoomIndex = GetRandomInRange(0, map.Divisions.Count - 1);
-                if (startRoomIndex != goalRoomIndex)
-				{
-                    break;
-                }
-			}
-			map.GoalLocation = GetRandomLocation(map.Divisions[goalRoomIndex].Room);
-
-			return map;
         }
 
         private Vector2 GetRandomLocation(MapRectangle room)
         {
             var x = GetRandomInRange(room.Left + MarginSize, room.Right - MarginSize);
             var y = GetRandomInRange(room.Bottom + MarginSize, room.Top - MarginSize);
-            return new Vector2(x, y);
+            return new Vector2(x + 0.5f, y + 0.5f);
         }
 
         private MapRectangle CreateRoom(MapRectangle bound)
@@ -109,8 +150,10 @@ namespace ProcedualLevels.Models
             room.Bottom += MarginSize;
             room.Top -= MarginSize;
 
-            var widthReduce = GetRandomInRange(0, bound.Width - RoomMinSize);
-            var heightReduce = GetRandomInRange(0, bound.Height - RoomMinSize);
+            var widthMinReduce = Mathf.Max(0, bound.Width - RoomMaxSize);
+            var heightMinReduce = Mathf.Max(0, bound.Height - RoomMaxSize);
+            var widthReduce = GetRandomInRange(widthMinReduce, bound.Width - RoomMinSize);
+            var heightReduce = GetRandomInRange(heightMinReduce, bound.Height - RoomMinSize);
             room.Left += widthReduce / 2;
             room.Right -= widthReduce / 2;
             room.Bottom += heightReduce / 2;
@@ -268,14 +311,14 @@ namespace ProcedualLevels.Models
             var connection = new MapRectangle();
             if (horizontal)
             {
-                connection.Left = path1.Right - PathThickness;
+                connection.Left = path1.Right;
                 connection.Right = path1.Right + PathThickness;
                 connection.Bottom = Mathf.Min(path1.Bottom, path2.Bottom);
                 connection.Top = Mathf.Max(path1.Top, path2.Top);
             }
             else
             {
-                connection.Bottom = path1.Top - PathThickness;
+                connection.Bottom = path1.Top;
                 connection.Top = path1.Top + PathThickness;
                 connection.Left = Mathf.Min(path1.Left, path2.Left);
                 connection.Right = Mathf.Max(path1.Right, path2.Right);
@@ -301,12 +344,13 @@ namespace ProcedualLevels.Models
             if (horizontal)
             {
                 var pos = GetRandomInRange(
-                    div.Room.Bottom + PathThickness,
+                    div.Room.Bottom,
                     div.Room.Top - PathThickness);
-                rect.Bottom = pos - PathThickness;
+                rect.Bottom = pos;
                 rect.Top = pos + PathThickness;
                 if (isTopDiv)
                 {
+                    // 少し部屋に食い込ませるために片方だけ端を広げる
                     rect.Left = div.Bound.Left;
                     rect.Right = div.Room.Left + PathThickness;
                 }
@@ -319,9 +363,9 @@ namespace ProcedualLevels.Models
             else
             {
                 var pos = GetRandomInRange(
-                    div.Room.Left + PathThickness,
+                    div.Room.Left,
                     div.Room.Right - PathThickness);
-                rect.Left = pos - PathThickness;
+                rect.Left = pos;
                 rect.Right = pos + PathThickness;
                 if (isTopDiv)
                 {

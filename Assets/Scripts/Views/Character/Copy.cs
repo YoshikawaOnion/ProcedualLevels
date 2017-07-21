@@ -12,32 +12,63 @@ namespace ProcedualLevels.Views
         private Vector2 ballUv;
         [SerializeField]
         private Vector2 dropUv;
+        [SerializeField]
+        private float VanishTime;
 
+        public bool IsOnGround { get; private set; }
         public Vector2 Uv { get; private set; }
         public IObservable<Unit> OnVanish { get; private set; }
 
-        private Subject<Unit> onVanish_ { get; set; }
+        private Subject<Unit> OnVanish_ { get; set; }
+        private Rigidbody2D Rigidbody { get; set; }
 
         public void Initialize()
 		{
-			Observable.Timer(TimeSpan.FromSeconds(60))
+			Observable.Timer(TimeSpan.FromSeconds(VanishTime))
 					  .Subscribe(x => Reset());
 			Uv = dropUv;
-			onVanish_ = new Subject<Unit>();
-			OnVanish = onVanish_;
+			OnVanish_ = new Subject<Unit>();
+			OnVanish = OnVanish_;
             gameObject.SetActive(true);
+            Rigidbody = GetComponent<Rigidbody2D>();
+            IsOnGround = false;
         }
 
         public void Reset()
         {
             gameObject.SetActive(false);
-            onVanish_.OnNext(Unit.Default);
-            onVanish_.OnCompleted();
+            OnVanish_.OnNext(Unit.Default);
+            OnVanish_.OnCompleted();
         }
 
-        private void OnCollisionEnter2D(Collision2D collision)
+        private void OnCollisionStay2D(Collision2D collision)
         {
-            Uv = ballUv;
+            if (IsOnGround)
+            {
+                return;
+            }
+
+            var copy = collision.gameObject.GetComponent<Copy>();
+	        if (copy != null)
+	        {
+                if (!copy.IsOnGround)
+                {
+                    return;
+                }
+                Uv = ballUv;
+                IsOnGround = true;
+            }
+
+            if (collision.gameObject.tag == Def.TerrainTag)
+			{
+                var contact = collision.contacts[0];
+                if (contact.normal.x <= 0.15f
+                   && contact.normal.x >= -0.15f)
+				{
+					Uv = ballUv;
+					IsOnGround = true;
+                }
+            }
         }
     }
 }
