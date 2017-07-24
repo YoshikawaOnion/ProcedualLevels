@@ -1,0 +1,158 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<SpriteStudioCellMap version="1.00.02">
+	<name>Enemy2</name>
+	<exportPath></exportPath>
+	<generator>TexturePacker</generator>
+	<packed>1</packed>
+	<imagePath>Enemy2.png</imagePath>
+	<pixelSize>128 128</pixelSize>
+	<overrideTexSettings>0</overrideTexSettings>
+	<wrapMode>clamp</wrapMode>
+	<filterMode>linear</filterMode>
+	<imagePathAtImport>/Users/kurashimakazuyuki/ProcedualLevels/Assets/Resources/Textures/Enemy2/Enemy2.png</imagePathAtImport>
+	<packInfoFilePath></packInfoFilePath>
+	<texPackSettings>
+		<maxSize>4096 4096</maxSize>
+		<forcePo2>1</forcePo2>
+		<forceSquare>0</forceSquare>
+		<margin>0</margin>
+		<padding>1</padding>
+	</texPackSettings>
+	<cells>
+		<cell>
+			<name>b1</name>
+			<pos>2 58</pos>
+			<size>28 16</size>
+			<pivot>0 -0.125</pivot>
+			<rotated>0</rotated>
+			<orgImageName>/Users/kurashimakazuyuki/ProcedualLevels/Assets/Resources/Textures/Enemy2/b1.png</orgImageName>
+			<posStable>0</posStable>
+		</cell>
+		<cell>
+			<name>b2</name>
+			<pos>33 75</pos>
+			<size>26 16</size>
+			<pivot>0 -0.1875</pivot>
+			<rotated>0</rotated>
+			<orgImageName>/Users/kurashimakazuyuki/ProcedualLevels/Assets/Resources/Textures/Enemy2/b2.png</orgImageName>
+			<posStable>0</posStable>
+		</cell>
+		<cell>
+			<name>b3</name>
+			<pos>35 56</pos>
+			<size>30 16</size>
+			<pivot>0 0</pivot>
+			<rotated>0</rotated>
+			<orgImageName>/Users/kurashimakazuyuki/ProcedualLevels/Assets/Resources/Textures/Enemy2/b3.png</orgImageName>
+			<posStable>0</posStable>
+		</cell>
+		<cell>
+			<name>b4</name>
+			<pos>68 50</pos>
+			<size>30 18</size>
+			<pivot>0 -0.111111111938953</pivot>
+			<rotated>0</rotated>
+			<orgImageName>/Users/kurashimakazuyuki/ProcedualLevels/Assets/Resources/Textures/Enemy2/b4.png</orgImageName>
+			<posStable>0</posStable>
+		</cell>
+		<cell>
+			<name>b5</name>
+			<pos>72 2</pos>
+			<size>32 18</size>
+			<pivot>0 -0.111111111938953</pivot>
+			<rotated>0</rotated>
+			<orgImageName>/Users/kurashimakazuyuki/ProcedualLevels/Assets/Resources/Textures/Enemy2/b5.png</orgImageName>
+			<posStable>0</posStable>
+		</cell>
+		<cell>
+			<name>g1</name>
+			<pos>2 31</pos>
+			<size>30 24</size>
+			<pivot>0 -0.0416666679084301</pivot>
+			<rotated>0</rotated>
+			<orgImageName>/Users/kurashimakazuyuki/ProcedualLevels/Assets/Resources/Textures/Enemy2/g1.png</orgImageName>
+			<posStable>0</posStable>
+		</cell>
+		<cell>
+			<name>g2</name>
+			<pos>35 31</pos>
+			<size>30 22</size>
+			<pivot>0 0.0454545468091965</pivot>
+			<rotated>0</rotated>
+			<orgImageName>/Users/kurashimakazuyuki/ProcedualLevels/Assets/Resources/Textures/Enemy2/g2.png</orgImageName>
+			<posStable>0</posStable>
+		</cell>
+		<cell>
+			<name>g3</name>
+			<pos>72 23</pos>
+			<size>30 24</size>
+			<pivot>-0.0333333350718021 -0.0833333358168602</pivot>
+			<rotated>0</rotated>
+			<orgImageName>/Users/kurashimakazuyuki/ProcedualLevels/Assets/Resources/Textures/Enemy2/g3.png</orgImageName>
+			<posStable>0</posStable>
+		</cell>
+		<cell>
+			<name>g4</name>
+			<pos>37 2</pos>
+			<size>32 26</size>
+			<pivot>0 -0.0769230797886848</pivot>
+			<rotated>0</rotated>
+			<orgImageName>/Users/kurashimakazuyuki/ProcedualLevels/Assets/Resources/Textures/Enemy2/g4.png</orgImageName>
+			<posStable>0</posStable>
+		</cell>
+		<cell>
+			<name>g5</name>
+			<pos>2 2</pos>
+			<size>32 26</size>
+			<pivot>0 -0.115384615957737</pivot>
+			<rotated>0</rotated>
+			<orgImageName>/Users/kurashimakazuyuki/ProcedualLevels/Assets/Resources/Textures/Enemy2/g5.png</orgImageName>
+			<posStable>0</posStable>
+		</cell>
+		<cell>
+			<name>s1</name>
+			<pos>2 77</pos>
+			<size>26 18</size>
+			<pivot>0.0384615398943424 0.277777791023254</pivot>
+			<rotated>0</rotated>
+			<orgImageName>/Users/kurashimakazuyuki/ProcedualLevels/Assets/Resources/Textures/Enemy2/s1.png</orgImageName>
+			<posStable>0</posStable>
+		</cell>
+		<cell>
+			<name>s2</name>
+			<pos>68 71</pos>
+			<size>28 18</size>
+			<pivot>0.0357142873108387 0.277777791023254</pivot>
+			<rotated>0</rotated>
+			<orgImageName>/Users/kurashimakazuyuki/ProcedualLevels/Assets/Resources/Textures/Enemy2/s2.png</orgImageName>
+			<posStable>0</posStable>
+		</cell>
+		<cell>
+			<name>s3</name>
+			<pos>2 102</pos>
+			<size>24 20</size>
+			<pivot>0.0416666679084301 0.200000002980232</pivot>
+			<rotated>0</rotated>
+			<orgImageName>/Users/kurashimakazuyuki/ProcedualLevels/Assets/Resources/Textures/Enemy2/s3.png</orgImageName>
+			<posStable>0</posStable>
+		</cell>
+		<cell>
+			<name>s4</name>
+			<pos>99 77</pos>
+			<size>26 22</size>
+			<pivot>0.0384615398943424 0.181818187236786</pivot>
+			<rotated>0</rotated>
+			<orgImageName>/Users/kurashimakazuyuki/ProcedualLevels/Assets/Resources/Textures/Enemy2/s4.png</orgImageName>
+			<posStable>0</posStable>
+		</cell>
+		<cell>
+			<name>s5</name>
+			<pos>101 50</pos>
+			<size>24 24</size>
+			<pivot>0.0416666679084301 0.0833333358168602</pivot>
+			<rotated>0</rotated>
+			<orgImageName>/Users/kurashimakazuyuki/ProcedualLevels/Assets/Resources/Textures/Enemy2/s5.png</orgImageName>
+			<posStable>0</posStable>
+		</cell>
+	</cells>
+</SpriteStudioCellMap>
