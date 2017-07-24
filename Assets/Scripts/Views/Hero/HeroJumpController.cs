@@ -10,16 +10,18 @@ namespace ProcedualLevels.Views
         [SerializeField]
         private float jumpPower;
 
-        private HeroContext Context { get; set; }
         private CompositeDisposable JumpStateDisposable { get; set; }
+        private HeroController Hero { get; set; }
+        private Rigidbody2D Rigidbody { get; set; }
 
-        public void Initialize(HeroContext context)
+        private void Start()
         {
-            Context = context;
-            SetGroundState();
+			Hero = GetComponent<HeroController>();
+			Rigidbody = GetComponent<Rigidbody2D>();
+			SetGroundState();
         }
 
-		private void InitializeJumpState()
+        private void InitializeJumpState()
 		{
 			if (JumpStateDisposable != null)
 			{
@@ -32,7 +34,7 @@ namespace ProcedualLevels.Views
 		{
 			InitializeJumpState();
 
-			Context.Hero.UpdateAsObservable()
+			Hero.UpdateAsObservable()
 				   .Where(x => Input.GetKeyDown(KeyCode.Space))
 				   .Subscribe(x => Jump())
 				   .AddTo(JumpStateDisposable);
@@ -41,8 +43,9 @@ namespace ProcedualLevels.Views
 		private void SetJumpState()
 		{
 			InitializeJumpState();
-			
-			Context.GameEvents.OnPlayerCollideWithTerrainReceiver
+
+            Hero.OnCollisionEnter2DAsObservable()
+                   .Where(x => x.gameObject.tag == Def.TerrainTag)
 			       .Subscribe(collision => CheckGround(collision))
 			       .AddTo(JumpStateDisposable);
 		}
@@ -60,8 +63,7 @@ namespace ProcedualLevels.Views
 
         private void Jump()
         {
-            var rigidbody = Context.Hero.GetComponent<Rigidbody2D>();
-            rigidbody.AddForce(new Vector2(0, jumpPower));
+            Rigidbody.AddForce(new Vector2(0, jumpPower));
             SetJumpState();
         }
     }

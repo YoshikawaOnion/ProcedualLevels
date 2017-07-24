@@ -15,22 +15,10 @@ namespace ProcedualLevels.Views
 
         private Hero Hero { get; set; }
         private Rigidbody2D Rigidbody { get; set; }
-        private IPlayerEventAccepter EventAccepter { get; set; }
 
-        public void Initialize(Hero hero,
-                               IGameEventReceiver eventReceiver,
-                               IPlayerEventAccepter eventAccepter)
+        public void Initialize(Hero hero)
         {
             Hero = hero;
-            EventAccepter = eventAccepter;
-
-            var jump = GetComponent<HeroJumpController>();
-            var context = new HeroContext()
-            {
-                Hero = this,
-                GameEvents = eventReceiver
-            };
-            jump.Initialize(context);
         }
 
         // Use this for initialization
@@ -51,16 +39,6 @@ namespace ProcedualLevels.Views
                 velocity -= walkSpeed;
             }
             Rigidbody.velocity = Rigidbody.velocity.MergeX(velocity);
-        }
-
-
-        private void OnCollisionEnter2D(Collision2D collision)
-        {
-            if (collision.gameObject.tag == Def.TerrainTag)
-            {
-                EventAccepter.OnPlayerCollideWithTerrainSender
-                             .OnNext(collision);
-            }
         }
     }
 }

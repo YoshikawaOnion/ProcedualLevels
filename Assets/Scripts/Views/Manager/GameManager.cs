@@ -31,6 +31,19 @@ namespace ProcedualLevels.Views
             SetMapUp(context);
             SetHeroUp(context);
             SetMaptipUp(context);
+            SetEnemiesUp(context);
+        }
+
+        private void SetEnemiesUp(AdventureContext context)
+        {
+            var enemyPrefab = Resources.Load<Enemy>("Prefabs/Character/Enemy_Control");
+            foreach (var location in context.Map.EnemyLocations)
+            {
+                var obj = Instantiate(enemyPrefab);
+                obj.transform.position = location.ToVector3().MergeZ(enemyPrefab.transform.position.z);
+                obj.Initialize();
+                obj.transform.SetParent(managerDraw.transform);
+            }
         }
 
         private static void SetMaptipUp(AdventureContext context)
@@ -53,7 +66,7 @@ namespace ProcedualLevels.Views
             HeroController = Instantiate(heroPrefab);
             HeroController.transform.position = context.Map.StartLocation;
             HeroController.transform.SetPositionZ(heroPrefab.transform.position.z);
-            HeroController.Initialize(context.Hero, EventFacade, EventFacade);
+            HeroController.Initialize(context.Hero);
         }
 
         private void SetPlayerUp(MapData map)

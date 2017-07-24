@@ -88,7 +88,7 @@ namespace ProcedualLevels.Models
                 {
                     var pos = GetRandomLocation(item.Room, 0);
                     if (pos != map.GoalLocation
-                       && pos != map.StartLocation)
+                       && pos.x != map.StartLocation.x)
                     {
                         map.EnemyLocations.Add(pos);
                     }

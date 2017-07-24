@@ -18,11 +18,9 @@ namespace ProcedualLevels.Views
             var goal = Instantiate(goalPrefab);
             goal.transform.position = map.GoalLocation;
             goal.transform.SetParent(manager.managerDraw.transform);
-
-            ShowEnemes(map, manager);
         }
 
-        private void ShowEnemes(MapData map, GameManager manager)
+        private void ShowEnemies(MapData map, GameManager manager)
         {
             var enemyPrefab = Resources.Load<GameObject>("Prefabs/Character/Enemy_Control");
             foreach (var p in map.EnemyLocations)
