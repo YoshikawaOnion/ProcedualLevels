@@ -8,16 +8,18 @@ using ProcedualLevels.Common;
 
 namespace ProcedualLevels.Views
 {
-	public class Enemy : MonoBehaviour
-	{
+    public class EnemyController : MonoBehaviour
+    {
         [SerializeField]
         private float walkSpeed;
 
+        public Models.Enemy Enemy { get; private set; }
         private GameObject SearchArea { get; set; }
         private CompositeDisposable Disposable { get; set; }
 
-        public void Initialize()
+        public void Initialize(Models.Enemy enemy)
         {
+            Enemy = enemy;
             Disposable = new CompositeDisposable();
             SearchArea = transform.Find("SearchArea").gameObject;
 
@@ -25,6 +27,9 @@ namespace ProcedualLevels.Views
                       .Where(x => x.tag == Def.PlayerTag)
                       .Subscribe(x => RaiseFoundState(x))
                       .AddTo(Disposable);
+
+            var battler = GetComponent<BattlerController>();
+            battler.Initialize(enemy);
         }
 
         private void RaiseFoundState(Collider2D collision)

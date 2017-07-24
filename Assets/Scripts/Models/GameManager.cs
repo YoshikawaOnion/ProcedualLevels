@@ -1,5 +1,6 @@
 using UnityEngine;
 using System.Collections;
+using System.Linq;
 
 namespace ProcedualLevels.Models
 {
@@ -9,9 +10,12 @@ namespace ProcedualLevels.Models
         {
             var context = new AdventureContext()
             {
-                Hero = new Hero(),
+                Hero = new Hero(view),
                 Map = GenerateMap(asset)
             };
+            context.Enemeis = context.Map.EnemyLocations
+                .Select(x => new Enemy(x, view))
+                .ToArray();
             view.Initialize(context);
         }
 

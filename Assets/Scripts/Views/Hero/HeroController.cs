@@ -13,12 +13,17 @@ namespace ProcedualLevels.Views
         [SerializeField]
         private float walkSpeed;
 
-        private Hero Hero { get; set; }
+        public Hero Hero { get; private set; }
         private Rigidbody2D Rigidbody { get; set; }
+        private IPlayerEventAccepter EventAccepter { get; set; }
 
-        public void Initialize(Hero hero)
+        public void Initialize(Hero hero, IPlayerEventAccepter eventAccepter)
         {
             Hero = hero;
+            EventAccepter = eventAccepter;
+
+            var battler = GetComponent<BattlerController>();
+            battler.Initialize(hero);
         }
 
         // Use this for initialization
@@ -39,6 +44,16 @@ namespace ProcedualLevels.Views
                 velocity -= walkSpeed;
             }
             Rigidbody.velocity = Rigidbody.velocity.MergeX(velocity);
+        }
+
+        private void OnCollisionEnter2D(Collision2D collision)
+        {
+            var enemy = collision.gameObject.GetComponent<EnemyController>();
+            if (enemy != null)
+            {
+                EventAccepter.OnPlayerBattleWithEnemySender
+                             .OnNext(enemy.Enemy);
+            }
         }
     }
 }

@@ -2,6 +2,7 @@ using UnityEngine;
 using System.Collections;
 using UniRx;
 using UniRx.Triggers;
+using System;
 
 namespace ProcedualLevels.Views
 {
@@ -9,6 +10,9 @@ namespace ProcedualLevels.Views
     {
         [SerializeField]
         private float jumpPower;
+        [Tooltip("地形との接触時に法線のX要素の絶対値がどれだけの値以下なら着地とみなすか")]
+        [SerializeField]
+        private float groundNormalXRange;
 
         private CompositeDisposable JumpStateDisposable { get; set; }
         private HeroController Hero { get; set; }
@@ -35,26 +39,27 @@ namespace ProcedualLevels.Views
 			InitializeJumpState();
 
 			Hero.UpdateAsObservable()
-				   .Where(x => Input.GetKeyDown(KeyCode.Space))
-				   .Subscribe(x => Jump())
-				   .AddTo(JumpStateDisposable);
+				.Where(x => Input.GetKeyDown(KeyCode.Space))
+				.Subscribe(x => Jump())
+		        .AddTo(JumpStateDisposable);
 		}
 
 		private void SetJumpState()
 		{
 			InitializeJumpState();
 
-            Hero.OnCollisionEnter2DAsObservable()
-                   .Where(x => x.gameObject.tag == Def.TerrainTag)
-			       .Subscribe(collision => CheckGround(collision))
-			       .AddTo(JumpStateDisposable);
+            Hero.OnCollisionStay2DAsObservable()
+                .SkipUntil(Observable.Timer(TimeSpan.FromMilliseconds(100)))
+                .Where(x => x.gameObject.tag == Def.TerrainTag)
+			    .Subscribe(collision => CheckGround(collision))
+			    .AddTo(JumpStateDisposable);
 		}
 
 		private void CheckGround(Collision2D collision)
 		{
 			var contact = collision.contacts[0];
-			if (contact.normal.x <= 0.15f
-				&& contact.normal.x >= -0.15f
+            if (contact.normal.x <= groundNormalXRange
+				&& contact.normal.x >= -groundNormalXRange
 				&& contact.normal.y > 0)
 			{
 				SetGroundState();
@@ -63,8 +68,8 @@ namespace ProcedualLevels.Views
 
         private void Jump()
         {
-            Rigidbody.AddForce(new Vector2(0, jumpPower));
-            SetJumpState();
+			SetJumpState();
+			Rigidbody.AddForce(new Vector2(0, jumpPower));
         }
     }
 }

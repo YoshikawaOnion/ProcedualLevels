@@ -11,12 +11,16 @@ namespace ProcedualLevels.Models
 		public ReactiveProperty<int> Hp { get; private set; }
 		public ReactiveProperty<int> MaxHp { get; private set; }
 
-		public Battler()
+        private IAdventureView view;
+
+		public Battler(IAdventureView view)
 		{
-			Attack = new ReactiveProperty<int>();
-            Range = new ReactiveProperty<int>();
-			Hp = new ReactiveProperty<int>();
-			MaxHp = new ReactiveProperty<int>();
+            this.view = view;
+
+			Attack = new ReactiveProperty<int>(1);
+            Range = new ReactiveProperty<int>(1);
+			Hp = new ReactiveProperty<int>(10);
+			MaxHp = new ReactiveProperty<int>(10);
 			Hp.Where(x => x > MaxHp.Value || x < 0)
 			  .Subscribe(x => Hp.Value = Helper.Clamp(Hp.Value, 0, MaxHp.Value));
 		}
