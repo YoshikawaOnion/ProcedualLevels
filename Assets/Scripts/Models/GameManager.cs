@@ -5,11 +5,18 @@ namespace ProcedualLevels.Models
 {
     public class GameManager
     {
-        public MapData GenerateMap()
+        public void Initialize(DungeonGenAsset asset, IAdventureView view)
         {
-            var asset = Resources.Load<DungeonGenAsset>
-                                 ("Assets/DungeonGenAsset");
+            var context = new AdventureContext()
+            {
+                Hero = new Hero(),
+                Map = GenerateMap(asset)
+            };
+            view.Initialize(context);
+        }
 
+        public MapData GenerateMap(DungeonGenAsset asset)
+        {
             var generator = new MapGenerator()
             {
                 ChildBoundMinSize = asset.ChildBoundMinSize,

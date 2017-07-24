@@ -1,4 +1,5 @@
-﻿﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using ProcedualLevels.Common;
 using ProcedualLevels.Models;
@@ -6,7 +7,7 @@ using UnityEngine;
 
 namespace ProcedualLevels.Views
 {
-    public class GameManager : MonoBehaviour
+    public class GameManager : MonoBehaviour, IAdventureView
     {
         [SerializeField]
         private new Camera camera;
@@ -15,23 +16,44 @@ namespace ProcedualLevels.Views
 
         private Player Player { get; set; }
         private GameEventFacade EventFacade { get; set; }
+        private HeroController HeroController { get; set; }
 
         private void Start()
 		{
-			EventFacade = new GameEventFacade();
-
+            var asset = Resources.Load<DungeonGenAsset>("Assets/DungeonGenAsset");
             var model = new Models.GameManager();
-            var map = model.GenerateMap();
+			model.Initialize(asset, this);
+        }
 
-            var mapPrefab = Resources.Load<MapView>("Prefabs/Dungeon/Map");
-            var mapObj = Instantiate(mapPrefab);
-            mapObj.Initialize(map, this);
+		public void Initialize(AdventureContext context)
+        {
+            EventFacade = new GameEventFacade();
+            SetMapUp(context);
+            SetHeroUp(context);
+            SetMaptipUp(context);
+        }
 
-            SetPlayerUp(map);
-
+        private static void SetMaptipUp(AdventureContext context)
+        {
             var maptipManagerPrefab = Resources.Load<MapTipRenderer>("Prefabs/Manager/MaptipRenderer");
             var maptipManager = Instantiate(maptipManagerPrefab);
-            maptipManager.Initialize(map);
+            maptipManager.Initialize(context.Map);
+        }
+
+        private void SetMapUp(AdventureContext context)
+        {
+            var mapPrefab = Resources.Load<MapView>("Prefabs/Dungeon/Map");
+            var mapObj = Instantiate(mapPrefab);
+            mapObj.Initialize(context.Map, this);
+        }
+
+        private void SetHeroUp(AdventureContext context)
+        {
+            var heroPrefab = Resources.Load<HeroController>("Prefabs/Character/Hero");
+            HeroController = Instantiate(heroPrefab);
+            HeroController.transform.position = context.Map.StartLocation;
+            HeroController.transform.SetPositionZ(heroPrefab.transform.position.z);
+            HeroController.Initialize(context.Hero, EventFacade, EventFacade);
         }
 
         private void SetPlayerUp(MapData map)
@@ -48,15 +70,8 @@ namespace ProcedualLevels.Views
         // Update is called once per frame
         void Update()
         {
-            if (Input.GetMouseButtonDown(0))
-            {
-                var prefab = Resources.Load<GameObject>("Prefabs/Debug/Ball");
-                var instance = Instantiate(prefab);
-                var pos = camera.ScreenToWorldPoint(Input.mousePosition);
-                instance.transform.position = new Vector3(pos.x, pos.y, -2);
-            }
-
-            camera.transform.position = Player.transform.position.MergeZ(-10);
+            camera.transform.position = HeroController.transform.position.MergeZ(-10);
         }
+
     }
 }

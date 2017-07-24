@@ -140,11 +140,6 @@ namespace UniRx
 
     public partial class Observable
     {
-        public static void Timer(object timespan)
-        {
-            throw new NotImplementedException();
-        }
-
         static IObservable<T> AddRef<T>(IObservable<T> xs, RefCountDisposable r)
         {
             return Observable.Create<T>((IObserver<T> observer) => new CompositeDisposable(new IDisposable[]

@@ -106,7 +106,7 @@ namespace ProcedualLevels.Views
 
             for (int i = 0; i < jumpCopyCount; i++)
             {
-                var angle = Helper.RandomInRange(-jetAngleMax, jetAngleMax) + 180;
+                var angle = Common.Helper.RandomInRange(-jetAngleMax, jetAngleMax) + 180;
                 copyManager.CreateCopy(
                     transform.position.AddY(copyOffset).MergeZ(-4),
                     Vector2Extensions.FromAngleLength(angle, jetSpeed));
