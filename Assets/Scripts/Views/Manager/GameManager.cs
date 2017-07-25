@@ -86,7 +86,8 @@ namespace ProcedualLevels.Views
             HeroController = Instantiate(heroPrefab);
             HeroController.transform.position = context.Map.StartLocation;
             HeroController.transform.SetPositionZ(heroPrefab.transform.position.z);
-			HeroController.Initialize(context.Hero, EventFacade);
+			HeroController.Initialize(context.Hero, EventFacade, EventFacade);
+            HeroController.transform.SetParent(managerDraw.transform);
         }
 
         // Update is called once per frame

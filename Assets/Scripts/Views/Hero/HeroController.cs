@@ -16,12 +16,19 @@ namespace ProcedualLevels.Views
 
         public Hero Hero { get; private set; }
         private IPlayerEventAccepter EventAccepter { get; set; }
+        private Subject<float> WalkDirectionSubject { get; set; }
 
-        public void Initialize(Hero hero, IPlayerEventAccepter eventAccepter)
-        {
+        public void Initialize(Hero hero,
+                               IPlayerEventAccepter eventAccepter,
+                               IGameEventReceiver eventReceiver)
+		{
+			base.Initialize(hero);
             Hero = hero;
             EventAccepter = eventAccepter;
-            base.Initialize(hero);
+            WalkDirectionSubject = new Subject<float>();
+
+            var animation = GetComponent<HeroAnimationController>();
+            animation.Initialize(WalkDirectionSubject, eventReceiver);
         }
 
         private void OnCollisionEnter2D(Collision2D collision)
@@ -49,6 +56,8 @@ namespace ProcedualLevels.Views
             Debug.DrawLine(transform.position,
                            transform.position + Rigidbody.velocity.ToVector3() * 10,
                            new Color(255, 0, 0));
+            
+            WalkDirectionSubject.OnNext(velocity);
 		}
     }
 }
