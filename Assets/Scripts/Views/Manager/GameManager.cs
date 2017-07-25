@@ -38,8 +38,9 @@ namespace ProcedualLevels.Views
 			BattleObservable = EventFacade.OnPlayerBattleWithEnemyReceiver;
 
             var asset = Resources.Load<DungeonGenAsset>("Assets/DungeonGenAsset");
+            var battlerGen = Resources.Load<BattlerGenAsset>("Assets/BattlerGenAsset");
             var model = new Models.GameManager();
-			model.Initialize(asset, this);
+			model.Initialize(asset, battlerGen, this);
         }
 
 		public void Initialize(AdventureContext context)

@@ -9,7 +9,7 @@ public class BattlerGenAssetEditor : ScriptableObject
 	public static void CreateBattlerGenAssetInstance()
 	{
 		var asset = CreateInstance<ProcedualLevels.Models.BattlerGenAsset>();
-		AssetDatabase.CreateAsset(asset, "Assets/Resources/Asset/BattlerGenAsset.asset");
+		AssetDatabase.CreateAsset(asset, "Assets/Resources/Assets/BattlerGenAsset.asset");
 		AssetDatabase.Refresh();
 	}
 }

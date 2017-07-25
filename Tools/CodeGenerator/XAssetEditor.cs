@@ -9,7 +9,7 @@ public class $name$AssetEditor : ScriptableObject
 	public static void Create$name$AssetInstance()
 	{
 		var asset = CreateInstance<ProcedualLevels.Models.$name$Asset>();
-		AssetDatabase.CreateAsset(asset, "Assets/Resources/Asset/$name$Asset.asset");
+		AssetDatabase.CreateAsset(asset, "Assets/Resources/Assets/$name$Asset.asset");
 		AssetDatabase.Refresh();
 	}
 }
