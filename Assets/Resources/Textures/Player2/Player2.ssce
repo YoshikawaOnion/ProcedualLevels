@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<SpriteStudioCellMap version="1.00.02">
+	<name>Player2</name>
+	<exportPath></exportPath>
+	<generator>TexturePacker</generator>
+	<packed>1</packed>
+	<imagePath>Player2.png</imagePath>
+	<pixelSize>64 128</pixelSize>
+	<overrideTexSettings>0</overrideTexSettings>
+	<wrapMode>clamp</wrapMode>
+	<filterMode>linear</filterMode>
+	<imagePathAtImport>/Users/kurashimakazuyuki/ProcedualLevels/Assets/Resources/Textures/Player2/Player2.png</imagePathAtImport>
+	<packInfoFilePath></packInfoFilePath>
+	<texPackSettings>
+		<maxSize>4096 4096</maxSize>
+		<forcePo2>1</forcePo2>
+		<forceSquare>0</forceSquare>
+		<margin>0</margin>
+		<padding>1</padding>
+	</texPackSettings>
+	<cells>
+		<cell>
+			<name>efx1</name>
+			<pos>50 39</pos>
+			<size>9 11</size>
+			<pivot>0 0</pivot>
+			<rotated>0</rotated>
+			<orgImageName>/Users/kurashimakazuyuki/ProcedualLevels/Assets/Resources/Textures/Player2/efx1.png</orgImageName>
+			<posStable>0</posStable>
+		</cell>
+		<cell>
+			<name>efx2</name>
+			<pos>50 24</pos>
+			<size>11 12</size>
+			<pivot>-0.0909090936183929 0</pivot>
+			<rotated>0</rotated>
+			<orgImageName>/Users/kurashimakazuyuki/ProcedualLevels/Assets/Resources/Textures/Player2/efx2.png</orgImageName>
+			<posStable>0</posStable>
+		</cell>
+		<cell>
+			<name>sword1</name>
+			<pos>50 2</pos>
+			<size>11 19</size>
+			<pivot>0 0</pivot>
+			<rotated>0</rotated>
+			<orgImageName>/Users/kurashimakazuyuki/ProcedualLevels/Assets/Resources/Textures/Player2/sword1.png</orgImageName>
+			<posStable>0</posStable>
+		</cell>
+		<cell>
+			<name>sword2</name>
+			<pos>25 66</pos>
+			<size>20 10</size>
+			<pivot>0 0.100000001490116</pivot>
+			<rotated>0</rotated>
+			<orgImageName>/Users/kurashimakazuyuki/ProcedualLevels/Assets/Resources/Textures/Player2/sword2.png</orgImageName>
+			<posStable>0</posStable>
+		</cell>
+		<cell>
+			<name>y1</name>
+			<pos>27 2</pos>
+			<size>20 30</size>
+			<pivot>0.0500000007450581 0</pivot>
+			<rotated>0</rotated>
+			<orgImageName>/Users/kurashimakazuyuki/ProcedualLevels/Assets/Resources/Textures/Player2/y1.png</orgImageName>
+			<posStable>0</posStable>
+		</cell>
+		<cell>
+			<name>y2</name>
+			<pos>2 37</pos>
+			<size>20 28</size>
+			<pivot>0 0.0357142873108387</pivot>
+			<rotated>0</rotated>
+			<orgImageName>/Users/kurashimakazuyuki/ProcedualLevels/Assets/Resources/Textures/Player2/y2.png</orgImageName>
+			<posStable>0</posStable>
+		</cell>
+		<cell>
+			<name>y3</name>
+			<pos>27 35</pos>
+			<size>20 28</size>
+			<pivot>0 0.0357142873108387</pivot>
+			<rotated>0</rotated>
+			<orgImageName>/Users/kurashimakazuyuki/ProcedualLevels/Assets/Resources/Textures/Player2/y3.png</orgImageName>
+			<posStable>0</posStable>
+		</cell>
+		<cell>
+			<name>y4</name>
+			<pos>2 68</pos>
+			<size>18 30</size>
+			<pivot>0.0555555559694767 0</pivot>
+			<rotated>0</rotated>
+			<orgImageName>/Users/kurashimakazuyuki/ProcedualLevels/Assets/Resources/Textures/Player2/y4.png</orgImageName>
+			<posStable>0</posStable>
+		</cell>
+		<cell>
+			<name>y5</name>
+			<pos>2 2</pos>
+			<size>22 32</size>
+			<pivot>-0.0454545468091965 0</pivot>
+			<rotated>0</rotated>
+			<orgImageName>/Users/kurashimakazuyuki/ProcedualLevels/Assets/Resources/Textures/Player2/y5.png</orgImageName>
+			<posStable>0</posStable>
+		</cell>
+	</cells>
+</SpriteStudioCellMap>
