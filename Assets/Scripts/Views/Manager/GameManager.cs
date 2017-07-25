@@ -59,7 +59,7 @@ namespace ProcedualLevels.Views
                 var obj = Instantiate(enemyPrefab);
                 obj.transform.position = enemy.InitialPosition.ToVector3()
                     .MergeZ(enemyPrefab.transform.position.z);
-                obj.Initialize(enemy);
+                obj.Initialize(enemy, EventFacade);
                 obj.transform.SetParent(managerDraw.transform);
                 list.Add(obj);
             }

@@ -86,7 +86,6 @@ namespace ProcedualLevels.Views
                          .Repeat()
                          .Subscribe(x =>
             {
-                Debug.Log("Neutralize");
                 if (Direction > 0)
                 {
                     PlayAnimation(IdleRightAnimation, LoopAnimation);
@@ -104,5 +103,11 @@ namespace ProcedualLevels.Views
 			var index = Sprite.IndexGetAnimation(animationKey);
 			Sprite.AnimationPlay(index, playTimes);
 		}
+
+        private void OnDestroy()
+        {
+            Sprite = null;
+            Disposable.Dispose();
+        }
     }
 }
