@@ -16,29 +16,29 @@ namespace ProcedualLevels.Views
 
         public Hero Hero { get; private set; }
         private IPlayerEventAccepter EventAccepter { get; set; }
-        private Subject<float> WalkDirectionSubject { get; set; }
+        private HeroAnimationController Animation { get; set; }
 
         public void Initialize(Hero hero,
-                               IPlayerEventAccepter eventAccepter,
-                               IGameEventReceiver eventReceiver)
+                               IPlayerEventAccepter eventAccepter)
 		{
 			base.Initialize(hero);
             Hero = hero;
             EventAccepter = eventAccepter;
-            WalkDirectionSubject = new Subject<float>();
 
-            var animation = GetComponent<HeroAnimationController>();
-            animation.Initialize(WalkDirectionSubject, eventReceiver);
-        }
+            Animation = GetComponent<HeroAnimationController>();
+            Animation.Initialize();
 
-        private void OnCollisionEnter2D(Collision2D collision)
-        {
-            var enemy = collision.gameObject.GetComponent<EnemyController>();
-            if (enemy != null)
-            {
-                EventAccepter.OnPlayerBattleWithEnemySender
-                             .OnNext(enemy.Enemy);
-            }
+            // 敵とぶつかるとバトルのメッセージを流す。ただし一度バトルしたら一定時間はぶつかってもバトルしない
+            this.OnCollisionStay2DAsObservable()
+                .Select(x => x.gameObject.GetComponent<EnemyController>())
+                .Where(x => x != null)
+                .ThrottleFirst(TimeSpan.FromMilliseconds(750))
+                .Subscribe(x =>
+			{
+				EventAccepter.OnPlayerBattleWithEnemySender
+							 .OnNext(x.Enemy);
+                Animation.AnimateAttack();
+            });
         }
 		
 		public override void Control()
@@ -53,11 +53,15 @@ namespace ProcedualLevels.Views
 				velocity -= walkSpeed;
 			}
 			Rigidbody.velocity = Rigidbody.velocity.MergeX(velocity);
-            Debug.DrawLine(transform.position,
-                           transform.position + Rigidbody.velocity.ToVector3() * 10,
-                           new Color(255, 0, 0));
-            
-            WalkDirectionSubject.OnNext(velocity);
+
+            Animation.AnimateWalk(velocity);
 		}
+
+        public override void Die()
+        {
+            this.enabled = false;
+            Animation.AnimateDie()
+                     .Subscribe(x => Destroy(gameObject));
+        }
     }
 }

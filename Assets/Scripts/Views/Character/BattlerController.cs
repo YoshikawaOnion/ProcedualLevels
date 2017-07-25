@@ -40,5 +40,6 @@ namespace ProcedualLevels.Views
         }
 
         public abstract void Control();
+        public abstract void Die();
     }
 }

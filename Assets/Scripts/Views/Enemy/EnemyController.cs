@@ -31,5 +31,10 @@ namespace ProcedualLevels.Views
 		{
 			FindState.Control();
 		}
+
+        public override void Die()
+        {
+            Destroy(gameObject);
+        }
     }   
 }

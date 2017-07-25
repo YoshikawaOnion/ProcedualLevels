@@ -18,87 +18,119 @@ namespace ProcedualLevels.Views
 		public static readonly string AttackRightAnimation = "Attack_Right";
 		public static readonly string DamageLeftAnimation = "Damage_Left";
 		public static readonly string DamageRightAnimation = "Damage_Right";
-        public static readonly int LoopAnimation = 0;
+        public static readonly int LoopInfinite = 0;
 
         private int Direction { get; set; }
         private Script_SpriteStudio_Root Sprite { get; set; }
         private CompositeDisposable Disposable { get; set; }
+        private Subject<float> DirectionSubject { get; set; }
+        private bool IsDead { get; set; }
 
-		public void Initialize(IObservable<float> directionStream,
-							   IGameEventReceiver eventReceiver)
+		public void Initialize()
 		{
             Disposable = new CompositeDisposable();
             Sprite = transform.Find("Player2").GetComponent<Script_SpriteStudio_Root>();
+            DirectionSubject = new Subject<float>();
+            IsDead = false;
 
-            // 移動の状況に応じて左右のアニメーションを設定
-            // プレイヤーの向きもここで更新
-			directionStream.DistinctUntilChanged()
-						   .Subscribe(x =>
-			{
-				if (x < float.Epsilon && x > -float.Epsilon)
+			PlayAnimation(IdleRightAnimation, LoopInfinite);
+
+            DirectionSubject.DistinctUntilChanged()
+                            .Subscribe(direction =>
+            {
+                if (Mathf.Abs(direction) < float.Epsilon)
 				{
 					if (Direction > 0)
 					{
-						PlayAnimation(IdleRightAnimation, LoopAnimation);
+						PlayAnimation(IdleRightAnimation, LoopInfinite);
 					}
 					else
 					{
-						PlayAnimation(IdleLeftAnimation, LoopAnimation);
+						PlayAnimation(IdleLeftAnimation, LoopInfinite);
 					}
 				}
-				else if (x > 0)
+				else if (direction > 0)
 				{
-					PlayAnimation(WalkRightAnimation, LoopAnimation);
+					PlayAnimation(WalkRightAnimation, LoopInfinite);
 					Direction = 1;
 				}
-				else if (x < 0)
+				else if (direction < 0)
 				{
-					PlayAnimation(WalkLeftAnimation, LoopAnimation);
+					PlayAnimation(WalkLeftAnimation, LoopInfinite);
 					Direction = -1;
 				}
-			})
-                           .AddTo(Disposable);
+			});
+        }
+        /// <summary>
+        /// 指定した歩行方向をアニメーションマネージャに設定し、対応するアニメーションを再生します。
+        /// </summary>
+        /// <param name="direction">現在の歩行方向。</param>
+        public void AnimateWalk(float direction)
+        {
+            DirectionSubject.OnNext(direction);
+        }
 
-            // 敵とぶつかったら攻撃モーション
-            eventReceiver.OnPlayerBattleWithEnemyReceiver
-                         .Subscribe(x =>
+        /// <summary>
+        /// 敵に攻撃する際のアニメーションを再生します。
+        /// </summary>
+        public void AnimateAttack()
+        {
+            if (IsDead)
             {
-				if (Direction > 0)
-				{
-					PlayAnimation(AttackRightAnimation, 1);
-				}
-				else
-				{
-					PlayAnimation(AttackLeftAnimation, 1);
-				}
-            })
-                         .AddTo(Disposable);
+                return;
+            }
 
-            // 現在のアニメーションが終了するまで待つストリーム
-            var neutralizer = this.UpdateAsObservable()
-                                  .SkipWhile(x => Sprite.AnimationCheckPlay())
-                                  .Select(x => Unit.Default);
+            if (Direction > 0)
+            {
+                PlayAnimation(AttackRightAnimation, 1);
+            }
+            else
+            {
+                PlayAnimation(AttackLeftAnimation, 1);
+            }
 
-            // 攻撃モーションが終了したら待機モーションに戻す
-            eventReceiver.OnPlayerBattleWithEnemyReceiver
-                         .SelectMany(neutralizer)
-                         .FirstOrDefault()
-                         .Repeat()
-                         .Subscribe(x =>
+            WaitAnimationFinish().Subscribe(x =>
             {
                 if (Direction > 0)
                 {
-                    PlayAnimation(IdleRightAnimation, LoopAnimation);
+                    PlayAnimation(IdleRightAnimation, LoopInfinite);
                 }
                 else
                 {
-                    PlayAnimation(IdleLeftAnimation, LoopAnimation);
-                }
-            })
-                         .AddTo(Disposable);
+                    PlayAnimation(IdleLeftAnimation, LoopInfinite);
+                }                
+            });
         }
 
-		public void PlayAnimation(string animationKey, int playTimes)
+        /// <summary>
+        /// 死亡時のアニメーションを再生します。
+        /// </summary>
+        /// <returns>アニメーション終了時に値を発行するストリーム。</returns>
+        public IObservable<Unit> AnimateDie()
+        {
+            IsDead = true;
+
+            if (Direction > 0)
+            {
+                PlayAnimation(DamageRightAnimation, 1);
+            }
+            else
+            {
+                PlayAnimation(DamageLeftAnimation, 1);
+            }
+
+            return WaitAnimationFinish();
+        }
+
+        private IObservable<Unit> WaitAnimationFinish()
+        {
+            return this.UpdateAsObservable()
+                       .SkipWhile(x => Sprite.AnimationCheckPlay())
+                       .Select(x => Unit.Default)
+                       .FirstOrDefault();
+        }
+		
+		private void PlayAnimation(string animationKey, int playTimes)
 		{
 			var index = Sprite.IndexGetAnimation(animationKey);
 			Sprite.AnimationPlay(index, playTimes);

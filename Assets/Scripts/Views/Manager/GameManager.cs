@@ -86,7 +86,7 @@ namespace ProcedualLevels.Views
             HeroController = Instantiate(heroPrefab);
             HeroController.transform.position = context.Map.StartLocation;
             HeroController.transform.SetPositionZ(heroPrefab.transform.position.z);
-			HeroController.Initialize(context.Hero, EventFacade, EventFacade);
+			HeroController.Initialize(context.Hero, EventFacade);
             HeroController.transform.SetParent(managerDraw.transform);
         }
 
@@ -114,10 +114,7 @@ namespace ProcedualLevels.Views
         public void ShowDeath(Battler subject)
         {
             var obj = Battlers.FirstOrDefault(x => x.Battler.Index == subject.Index);
-            if (obj != null)
-            {
-                Destroy(obj.gameObject);
-            }
+            obj.Die();
         }
     }
 }
