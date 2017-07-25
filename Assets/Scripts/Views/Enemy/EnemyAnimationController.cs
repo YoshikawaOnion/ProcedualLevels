@@ -15,26 +15,44 @@ namespace ProcedualLevels.Views
 
         private Script_SpriteStudio_Root Sprite { get; set; }
         private CompositeDisposable Disposable { get; set; }
+        private bool IsDead { get; set; }
 
         public void Initialize(IGameEventReceiver eventReceiver)
         {
+            IsDead = false;
             Sprite = transform.Find("Enemy2").GetComponent<Script_SpriteStudio_Root>();
             PlayAnimation(IdleKey, LoopInfinite);
 
             // 戦闘の参加者が自分だったら攻撃モーションを再生
             var enemy = GetComponent<EnemyController>();
             var responsibleBattle = eventReceiver.OnPlayerBattleWithEnemyReceiver
-                                                 .Where(x => x.Index == enemy.Enemy.Index);
+                                                 .Where(x => x.Index == enemy.Enemy.Index)
+                                                 .Where(x => !IsDead);
             responsibleBattle.Subscribe(x => PlayAnimation(AttackKey, 1));
 
             // 攻撃モーションが終わると待機モーションを再生
-            var waitAnimationPlay = this.UpdateAsObservable()
-                                        .SkipWhile(x => Sprite.AnimationCheckPlay())
-                                        .Select(x => Unit.Default);
-            responsibleBattle.SelectMany(waitAnimationPlay)
-                             .FirstOrDefault()
+            responsibleBattle.SelectMany(WaitAnimationFinish())
                              .Repeat()
                              .Subscribe(x => PlayAnimation(IdleKey, LoopInfinite));
+        }
+
+        /// <summary>
+        /// 死亡時のアニメーションを再生します。
+        /// </summary>
+        /// <returns>アニメーション終了時に値が発行されるストリーム。</returns>
+        public IObservable<Unit> AnimateDie()
+        {
+            IsDead = true;
+            PlayAnimation(DamageKey, 1);
+            return WaitAnimationFinish();
+        }
+
+        private IObservable<Unit> WaitAnimationFinish()
+        {
+            return this.UpdateAsObservable()
+		               .SkipWhile(x => Sprite.AnimationCheckPlay())
+		               .Select(x => Unit.Default)
+		               .FirstOrDefault();
         }
 
         private void PlayAnimation(string key, int loopTimes)

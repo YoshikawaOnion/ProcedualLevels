@@ -15,6 +15,7 @@ namespace ProcedualLevels.Views
 
         public Models.Enemy Enemy { get; private set; }
         public EnemyFindState FindState { get; set; }
+        private EnemyAnimationController Animation { get; set; }
 
         public void Initialize(Models.Enemy enemy, IGameEventReceiver eventReceiver)
         {
@@ -23,8 +24,8 @@ namespace ProcedualLevels.Views
             FindState = new EnemyFindStateLookingFor(this);
             FindState.Subscribe();
 
-            var animation = GetComponent<EnemyAnimationController>();
-            animation.Initialize(eventReceiver);
+            Animation = GetComponent<EnemyAnimationController>();
+            Animation.Initialize(eventReceiver);
         }
 		
 		public override void Control()
@@ -34,7 +35,11 @@ namespace ProcedualLevels.Views
 
         public override void Die()
         {
-            Destroy(gameObject);
+            Animation.AnimateDie()
+                     .Subscribe(x =>
+            {
+                Destroy(gameObject);
+            });
         }
     }   
 }
