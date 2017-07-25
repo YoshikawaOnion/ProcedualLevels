@@ -28,7 +28,7 @@ namespace ProcedualLevels.Views
             Context.Rigidbody.velocity = Vector3.zero;
             Context.Rigidbody.AddForce(force + jump);
 
-            ChangeState(new BattlerKnockbackStateKnockback(Context));
+            ChangeState(new BattlerKnockbackStateKnockback(Context, power));
 
             var jumpState = Context.GetComponent<HeroJumpController>();
             if (jumpState != null)
