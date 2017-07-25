@@ -6,13 +6,15 @@ namespace ProcedualLevels.Models
 {
     public class Hero : Battler
     {
-        public Hero(IAdventureView view)
-            : base(view)
+        public Hero(int index, IAdventureView view)
+            : base(index, view)
         {
             view.BattleObservable.Subscribe(x =>
             {
                 Hp.Value -= x.Attack.Value;
                 x.Hp.Value -= Attack.Value;
+                view.Knockback(this, x, x.Attack.Value);
+                view.Knockback(x, this, Attack.Value);
             });
         }
     }

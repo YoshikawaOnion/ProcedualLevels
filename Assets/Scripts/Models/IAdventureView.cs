@@ -8,5 +8,7 @@ namespace ProcedualLevels.Models
     {
         void Initialize(AdventureContext context);
         IObservable<Enemy> BattleObservable { get; }
+        void Knockback(Battler battlerSubject, Battler battlerAgainst, int power);
+        void ShowDeath(Battler subject);
     }
 }

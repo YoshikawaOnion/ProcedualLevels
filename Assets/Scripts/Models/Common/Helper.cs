@@ -1,6 +1,7 @@
 using UnityEngine;
 using System.Collections;
 using System;
+using System.Collections.Generic;
 
 public static class Helper
 {
@@ -19,5 +20,14 @@ public static class Helper
         {
             return value;
         }
+    }
+
+    public static IEnumerable<T> Append<T>(this IEnumerable<T> source, T value)
+    {
+        foreach (var item in source)
+        {
+            yield return item;
+        }
+        yield return value;
     }
 }

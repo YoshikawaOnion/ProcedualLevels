@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using ProcedualLevels.Common;
 using ProcedualLevels.Models;
 using UniRx;
@@ -17,11 +18,19 @@ namespace ProcedualLevels.Views
         [SerializeField]
         private GameObject gameUi;
 
-        private Player Player { get; set; }
         private GameEventFacade EventFacade { get; set; }
         private HeroController HeroController { get; set; }
-
+        private EnemyController[] EnemyControllers { get; set; }
         public IObservable<Models.Enemy> BattleObservable { get; private set; }
+        public BattlerController[] Battlers
+        {
+			get
+			{
+				return EnemyControllers.Cast<BattlerController>()
+									   .Append(HeroController)
+									   .ToArray();
+            }
+        }
 
         private void Start()
 		{
@@ -44,6 +53,7 @@ namespace ProcedualLevels.Views
         private void SetEnemiesUp(AdventureContext context)
         {
             var enemyPrefab = Resources.Load<EnemyController>("Prefabs/Character/Enemy_Control");
+            var list = new List<EnemyController>();
             foreach (var enemy in context.Enemeis)
             {
                 var obj = Instantiate(enemyPrefab);
@@ -51,7 +61,9 @@ namespace ProcedualLevels.Views
                     .MergeZ(enemyPrefab.transform.position.z);
                 obj.Initialize(enemy);
                 obj.transform.SetParent(managerDraw.transform);
+                list.Add(obj);
             }
+            EnemyControllers = list.ToArray();
         }
 
         private static void SetMaptipUp(AdventureContext context)
@@ -77,22 +89,34 @@ namespace ProcedualLevels.Views
 			HeroController.Initialize(context.Hero, EventFacade);
         }
 
-        private void SetPlayerUp(MapData map)
-        {
-            var playerPrefab = Resources.Load<Player>("Prefabs/Character/Player_Control");
-            Player = Instantiate(playerPrefab);
-            Player.transform.position = map.Divisions[0].Room.Position
-                + map.Divisions[0].Room.Size / 2;
-            Player.transform.SetPositionZ(-2);
-            Player.transform.SetParent(managerDraw.transform);
-            Player.Initialize(EventFacade, EventFacade);
-        }
-
         // Update is called once per frame
         void Update()
         {
-            camera.transform.position = HeroController.transform.position.MergeZ(-10);
+            if (HeroController != null)
+			{
+				camera.transform.position = HeroController.transform.position.MergeZ(-10);
+            }
         }
 
+        public void Knockback(Battler battlerSubject, Battler battlerAgainst, int power)
+        {
+            var battlers = Battlers;
+            var subject = battlers.FirstOrDefault(x => x.Battler.Index == battlerSubject.Index);
+            var against = battlers.FirstOrDefault(x => x.Battler.Index == battlerAgainst.Index);
+
+            if (subject != null && against != null)
+            {
+                subject.Knockback(against, power);
+            }
+        }
+
+        public void ShowDeath(Battler subject)
+        {
+            var obj = Battlers.FirstOrDefault(x => x.Battler.Index == subject.Index);
+            if (obj != null)
+            {
+                Destroy(obj.gameObject);
+            }
+        }
     }
 }

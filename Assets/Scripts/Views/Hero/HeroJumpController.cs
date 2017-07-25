@@ -3,6 +3,7 @@ using System.Collections;
 using UniRx;
 using UniRx.Triggers;
 using System;
+using ProcedualLevels.Common;
 
 namespace ProcedualLevels.Views
 {
@@ -13,15 +14,19 @@ namespace ProcedualLevels.Views
         [Tooltip("地形との接触時に法線のX要素の絶対値がどれだけの値以下なら着地とみなすか")]
         [SerializeField]
         private float groundNormalXRange;
+        [SerializeField]
+        private int maxJumpCount;
 
         private CompositeDisposable JumpStateDisposable { get; set; }
         private HeroController Hero { get; set; }
         private Rigidbody2D Rigidbody { get; set; }
+        private int JumpCount { get; set; }
 
         private void Start()
         {
 			Hero = GetComponent<HeroController>();
 			Rigidbody = GetComponent<Rigidbody2D>();
+            JumpCount = 0;
 			SetGroundState();
         }
 
@@ -34,7 +39,7 @@ namespace ProcedualLevels.Views
 			JumpStateDisposable = new CompositeDisposable();
 		}
 
-        private void SetGroundState()
+        public void SetGroundState()
 		{
 			InitializeJumpState();
 
@@ -44,7 +49,7 @@ namespace ProcedualLevels.Views
 		        .AddTo(JumpStateDisposable);
 		}
 
-		private void SetJumpState()
+		public void SetJumpState()
 		{
 			InitializeJumpState();
 
@@ -63,13 +68,19 @@ namespace ProcedualLevels.Views
 				&& contact.normal.y > 0)
 			{
 				SetGroundState();
+                JumpCount = 0;
 			}
 		}
 
         private void Jump()
         {
-			SetJumpState();
+            Rigidbody.velocity = Rigidbody.velocity.MergeY(0);
 			Rigidbody.AddForce(new Vector2(0, jumpPower));
+            ++JumpCount;
+            if (JumpCount >= maxJumpCount)
+            {
+				SetJumpState();
+			}
         }
     }
 }

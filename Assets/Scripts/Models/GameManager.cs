@@ -10,11 +10,11 @@ namespace ProcedualLevels.Models
         {
             var context = new AdventureContext()
             {
-                Hero = new Hero(view),
+                Hero = new Hero(0, view),
                 Map = GenerateMap(asset)
             };
             context.Enemeis = context.Map.EnemyLocations
-                .Select(x => new Enemy(x, view))
+                .Select((x, i) => new Enemy(i + 1, x, view))
                 .ToArray();
             view.Initialize(context);
         }

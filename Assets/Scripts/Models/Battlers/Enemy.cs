@@ -7,8 +7,8 @@ namespace ProcedualLevels.Models
     {
         public Vector2 InitialPosition { get; private set; }
 
-        public Enemy(Vector2 initialPos, IAdventureView view)
-            : base(view)
+        public Enemy(int index, Vector2 initialPos, IAdventureView view)
+            : base(index, view)
         {
             InitialPosition = initialPos;
         }

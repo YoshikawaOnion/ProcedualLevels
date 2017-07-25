@@ -21,6 +21,10 @@ namespace ProcedualLevels.Views
             Disposable.Dispose();
         }
 
+        public virtual void Subscribe()
+        {
+        }
+
         public virtual void OnDispose()
         {
         }
