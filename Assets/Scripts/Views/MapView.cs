@@ -10,10 +10,11 @@ namespace ProcedualLevels.Views
     {
         public void Initialize(MapData map, GameManager manager)
         {
-            var mazePrefab = Resources.Load<GameObject>("Prefabs/Dungeon/Maze_Root");
+            var mazePrefab = Resources.Load<GameObject>("Prefabs/Dungeon/Maze_Control");
             var maze = Instantiate(mazePrefab);
 
             ShowRooms(map, maze);
+            ShowPlatforms(map);
 
             var goalPrefab = Resources.Load<GameObject>("Prefabs/Dungeon/Goal_Control");
             var goal = Instantiate(goalPrefab);
@@ -21,20 +22,9 @@ namespace ProcedualLevels.Views
             goal.transform.SetParent(manager.managerDraw.transform);
         }
 
-        private void ShowEnemies(MapData map, GameManager manager)
-        {
-            var enemyPrefab = Resources.Load<GameObject>("Prefabs/Character/Enemy_Control");
-            foreach (var p in map.EnemyLocations)
-            {
-                var obj = Instantiate(enemyPrefab);
-                obj.transform.position = p.ToVector3().MergeZ(enemyPrefab.transform.position.z);
-                obj.transform.SetParent(manager.managerDraw.transform);
-            }
-        }
-
         private static void ShowRooms(MapData map, GameObject maze)
         {
-            var prefab = Resources.Load<GameObject>("Prefabs/Dungeon/Room_Root");
+            var prefab = Resources.Load<GameObject>("Prefabs/Dungeon/Room_Control");
             foreach (var division in map.Divisions)
             {
                 InstantiateRect(maze, prefab, division.Room);
@@ -44,6 +34,19 @@ namespace ProcedualLevels.Views
                     {
                         InstantiateRect(maze, prefab, segment);
                     }
+                }
+            }
+        }
+
+        private static void ShowPlatforms(MapData map)
+        {
+            var prefab = Resources.Load<GameObject>("Prefabs/Dungeon/Platform_Control");
+            foreach (var platform in map.Platforms)
+            {
+                for (int i = platform.Left; i < platform.Right - 1; i++)
+                {
+                    var obj = Instantiate(prefab);
+                    obj.transform.position = new Vector3(i, platform.Bottom, -1);
                 }
             }
         }

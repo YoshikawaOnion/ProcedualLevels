@@ -80,6 +80,7 @@ namespace ProcedualLevels.Models
             ReducePathesAtRandom(map);
             PlaceStartAndGoal(map);
             PlaceEnemies(map);
+            PlacePlatforms(map);
 
             PathThickness -= ColliderMargin * 2;
             RoomMinSize -= ColliderMargin * 2;
@@ -213,15 +214,15 @@ namespace ProcedualLevels.Models
 		{
 			var list = new List<MapConnection>();
 
-			foreach (var item in map.Divisions)
+            foreach (var bottomDiv in map.Divisions)
 			{
-				var adjacentes = map.Divisions
-									.Where(x => isAdjacent(item.Bound, x.Bound));
-				foreach (var a in adjacentes)
+                var topDivs = map.Divisions
+									.Where(x => isAdjacent(bottomDiv.Bound, x.Bound));
+                foreach (var topDiv in topDivs)
 				{
-					var path = CreatePath(item, a, horizontal, list);
-					var connection = new MapConnection(item, a, path, horizontal);
-					item.ConnectedDivisions.Add(connection);
+					var path = CreatePath(bottomDiv, topDiv, horizontal, list);
+					var connection = new MapConnection(bottomDiv, topDiv, path, horizontal);
+					bottomDiv.ConnectedDivisions.Add(connection);
 					list.Add(connection);
 				}
 			}
@@ -357,7 +358,10 @@ namespace ProcedualLevels.Models
             }
         }
 
-
+        /// <summary>
+        /// マップに配置されている通路を、部屋が孤立しないようにランダムに削減します。
+        /// </summary>
+        /// <param name="map">マップデータ。</param>
         private void ReducePathesAtRandom(MapData map)
         {
             var head = map.Divisions[0];
@@ -434,6 +438,28 @@ namespace ProcedualLevels.Models
 			}
 			map.GoalLocation = GetRandomLocation(map.Divisions[goalRoomIndex].Room, MarginSize);
 		}
+
+        private void PlacePlatforms(MapData map)
+        {
+            int platformSpan = 3;
+            var rooms = map.Divisions.Select(x => x.Room)
+                          .ToArray();
+            foreach (var room in rooms)
+            {
+                for (int i = room.Bottom + platformSpan; i < room.Top; i += platformSpan)
+                {
+                    var left = GetRandomInRange(room.Left, room.Right - 3);
+                    var right = GetRandomInRange(left + 1, room.Right);
+                    var platform = new MapPlatform()
+                    {
+                        Left = left,
+                        Bottom = i,
+                        Right = right
+                    };
+                    map.Platforms.Add(platform);
+                }
+            }
+        }
 
 
 		private int GetRandomInRange(int min, int max)

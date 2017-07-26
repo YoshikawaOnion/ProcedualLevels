@@ -21,12 +21,14 @@ namespace ProcedualLevels.Views
         private HeroController Hero { get; set; }
         private Rigidbody2D Rigidbody { get; set; }
         private int JumpCount { get; set; }
+        private float GravityScale { get; set; }
 
         private void Start()
         {
 			Hero = GetComponent<HeroController>();
 			Rigidbody = GetComponent<Rigidbody2D>();
             JumpCount = 0;
+            GravityScale = Rigidbody.gravityScale;
 			SetGroundState();
         }
 
@@ -74,8 +76,17 @@ namespace ProcedualLevels.Views
 
         private void Jump()
         {
-            Rigidbody.velocity = Rigidbody.velocity.MergeY(0);
-			Rigidbody.AddForce(new Vector2(0, jumpPower));
+            Rigidbody.velocity = Rigidbody.velocity.MergeY(jumpPower);
+            Rigidbody.gravityScale = 0;
+
+            var jumpStopper1 = this.UpdateAsObservable()
+                                   .SkipWhile(x => !Input.GetKeyUp(KeyCode.Space));
+            var jumpStopper2 = this.UpdateAsObservable()
+                                   .SkipUntil(Observable.Timer(TimeSpan.FromMilliseconds(250)));
+            jumpStopper1.Merge(jumpStopper2)
+                        .FirstOrDefault()
+                        .Subscribe(x => Rigidbody.gravityScale = GravityScale);
+
             ++JumpCount;
             if (JumpCount >= maxJumpCount)
             {
