@@ -3,16 +3,20 @@ using System.Collections;
 using System.Collections.Generic;
 using UniRx;
 
-public class MapDivision
+namespace ProcedualLevels.Models
 {
-    public MapRectangle Bound { get; set; }
-    public MapRectangle Room { get; set; }
-
-    public List<Tuple<MapDivision, MapPath>> ConnectedDivisions { get; private set; }
-    public int ReducingMarker { get; set; }
-
-    public MapDivision()
+    public class MapDivision
     {
-        ConnectedDivisions = new List<Tuple<MapDivision, MapPath>>();
+        public MapRectangle Bound { get; set; }
+        public MapRectangle Room { get; set; }
+        public int Index { get; set; }
+
+        public List<MapConnection> ConnectedDivisions { get; private set; }
+        public int ReducingMarker { get; set; }
+
+        public MapDivision()
+        {
+            ConnectedDivisions = new List<MapConnection>();
+        }
     }
 }

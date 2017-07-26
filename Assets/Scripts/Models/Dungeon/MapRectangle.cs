@@ -44,4 +44,15 @@ public class MapRectangle
     {
         return new MapRectangle(Left, Right, Bottom, Top);
     }
+
+    public MapRectangle ReduceOnEdge(int reduceAmount)
+    {
+        return new MapRectangle
+        {
+	        Left = Left + reduceAmount,
+	        Right = Right - reduceAmount,
+	        Bottom = Bottom + reduceAmount,
+	        Top = Top - reduceAmount,
+        };
+    }
 }

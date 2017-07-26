@@ -2,6 +2,7 @@ using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
 using Ist;
+using ProcedualLevels.Models;
 
 namespace ProcedualLevels.Views
 {

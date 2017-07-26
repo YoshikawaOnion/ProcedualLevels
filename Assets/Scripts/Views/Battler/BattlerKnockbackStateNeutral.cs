@@ -7,7 +7,7 @@ namespace ProcedualLevels.Views
 {
     public class BattlerKnockbackStateNeutral : BattlerKnockbackState
 	{
-		private static readonly float KnockbackFactor = 300;
+		private static readonly float KnockbackFactor = 200;
 		private static readonly float KnockbackJumpPower = 100;
 
         public BattlerKnockbackStateNeutral(BattlerController context) : base(context)
@@ -21,7 +21,9 @@ namespace ProcedualLevels.Views
 
         public override void Knockback(BattlerController against, int power)
         {
-            var direction = -(against.transform.position - Context.transform.position).normalized;
+            var direction = -(against.transform.position - Context.transform.position)
+                .MergeY(0)
+                .normalized;
             var force = direction * power * KnockbackFactor;
             var jump = new Vector3(0, KnockbackJumpPower, 0);
 

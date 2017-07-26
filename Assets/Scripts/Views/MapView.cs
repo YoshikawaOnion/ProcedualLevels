@@ -2,6 +2,7 @@ using UnityEngine;
 using System.Collections;
 using System;
 using ProcedualLevels.Common;
+using ProcedualLevels.Models;
 
 namespace ProcedualLevels.Views
 {
@@ -39,7 +40,7 @@ namespace ProcedualLevels.Views
                 InstantiateRect(maze, prefab, division.Room);
                 foreach (var connection in division.ConnectedDivisions)
                 {
-                    foreach (var segment in connection.Item2.Rooms)
+                    foreach (var segment in connection.Path.GetRooms())
                     {
                         InstantiateRect(maze, prefab, segment);
                     }
