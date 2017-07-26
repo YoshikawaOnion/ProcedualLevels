@@ -39,9 +39,12 @@ namespace ProcedualLevels.Views
             WalkSubject = new Subject<Unit>();
             JumpCount = 0;
             GravityScale = Rigidbody.gravityScale;
-			SetGroundState();
+			SetFullJumpState();
         }
 
+        /// <summary>
+        /// 現在の状態に紐づけられた振る舞いを停止します。
+        /// </summary>
         private void InitializeState()
 		{
 			if (JumpStateDisposable != null)
@@ -52,6 +55,9 @@ namespace ProcedualLevels.Views
 		}
 
 
+        /// <summary>
+        /// プレイヤーが地面に接している状態に遷移します。
+        /// </summary>
         public void SetGroundState()
         {
             InitializeState();
@@ -59,6 +65,9 @@ namespace ProcedualLevels.Views
             ActivateWalk();
         }
 
+        /// <summary>
+        /// プレイヤーがジャンプをしていて、かつ空中ジャンプが可能な状態に遷移します。
+        /// </summary>
         public void SetJumpState()
         {
             InitializeState();
@@ -68,6 +77,9 @@ namespace ProcedualLevels.Views
             ActivateWalk();
         }
 
+        /// <summary>
+        /// プレイヤーが空中ジャンプを使い果たした状態に遷移します。
+        /// </summary>
         public void SetFullJumpState()
 		{
 			InitializeState();
@@ -76,16 +88,21 @@ namespace ProcedualLevels.Views
             ActivateWalk();
 		}
 
+        /// <summary>
+        /// プレイヤーが壁に張り付いている状態に遷移します。
+        /// </summary>
+        /// <param name="direction">壁との接点の法線X方向。</param>
         public void SetGrabingWallState(float direction)
         {
-            Debug.Log("Grab: " + direction);
             InitializeState();
 
+            // ジャンプキーで壁蹴りジャンプ
 			Hero.UpdateAsObservable()
 				.Where(x => Input.GetKeyDown(KeyCode.Space))
 				.Subscribe(x => WallJump(direction))
 				.AddTo(JumpStateDisposable);
 
+            // 方向キーを離すとジャンプ状態に遷移
             Hero.UpdateAsObservable()
                 .SkipWhile(x => Input.GetAxis("Horizontal") * direction < 0)
                 .FirstOrDefault()
@@ -97,17 +114,25 @@ namespace ProcedualLevels.Views
                 .AddTo(JumpStateDisposable);
 		}
 
+        /// <summary>
+        /// プレイヤーが壁蹴りジャンプをしている状態に遷移します。
+        /// </summary>
         public void SetWallJumpState()
         {
             InitializeState();
             ActivateGroundCheck();
             ActivateGrab();
+
+            // 時間が経過するとジャンプ状態に遷移
             Observable.Timer(TimeSpan.FromMilliseconds(500))
                       .Subscribe(x => CheckJump())
                       .AddTo(JumpStateDisposable);
         }
 
 
+        /// <summary>
+        /// 現在の状態でジャンプができるようにします。
+        /// </summary>
 		private void ActivateJump()
 		{
 			// スペースキーでジャンプ
@@ -117,6 +142,9 @@ namespace ProcedualLevels.Views
 				.AddTo(JumpStateDisposable);
 		}
 
+        /// <summary>
+        /// 現在の状態で着地判定をするようにします。
+        /// </summary>
 		private void ActivateGroundCheck()
 		{
             // 地面に着地したら GroundState へ(ジャンプの瞬間に着地判定をしないように)
@@ -128,6 +156,9 @@ namespace ProcedualLevels.Views
 				.AddTo(JumpStateDisposable);
 		}
 
+        /// <summary>
+        /// 現在の状態で壁に張り付けるようにします。
+        /// </summary>
         private void ActivateGrab()
 		{
 			Hero.OnCollisionStay2DAsObservable()
@@ -137,6 +168,9 @@ namespace ProcedualLevels.Views
 				.AddTo(JumpStateDisposable);            
         }
 
+        /// <summary>
+        /// 現在の状態で歩行できるようにします。
+        /// </summary>
         private void ActivateWalk()
 		{
 			WalkSubject.Subscribe(x => ActualyWalk())
@@ -144,6 +178,10 @@ namespace ProcedualLevels.Views
         }
 
 
+        /// <summary>
+        /// 壁に張り付く状況であれば壁に張り付いた状態に遷移します。
+        /// </summary>
+        /// <param name="collision">Collision.</param>
         private void CheckGrabingWall(Collision2D collision)
         {
             var contact = collision.contacts[0];
@@ -157,6 +195,10 @@ namespace ProcedualLevels.Views
             }
         }
 
+        /// <summary>
+        /// 着地すべき状況であれば着地状態に遷移します。
+        /// </summary>
+        /// <param name="collision">Collision.</param>
 		private void CheckGround(Collision2D collision)
 		{
 			var contact = collision.contacts[0];
@@ -169,19 +211,25 @@ namespace ProcedualLevels.Views
 			}
 		}
 
+        /// <summary>
+        /// 空中ジャンプができるかどうかに応じて、どちらかのジャンプ状態に遷移します。
+        /// </summary>
         private void CheckJump()
-		{
-			if (JumpCount >= maxJumpCount)
-			{
-				SetFullJumpState();
-			}
-			else
-			{
-				SetJumpState();
-			}            
+        {
+            if (JumpCount >= maxJumpCount)
+            {
+                SetFullJumpState();
+            }
+            else
+            {
+                SetJumpState();
+            }
         }
 
 
+        /// <summary>
+        /// このプレイヤーにジャンプをさせます。
+        /// </summary>
         private void Jump()
         {
             Rigidbody.velocity = Rigidbody.velocity.MergeY(jumpPower);
@@ -199,12 +247,15 @@ namespace ProcedualLevels.Views
             CheckJump();
         }
 
+        /// <summary>
+        /// このプレイヤーに壁蹴りジャンプをさせます。
+        /// </summary>
+        /// <param name="direction">壁蹴りジャンプの方向。</param>
 		private void WallJump(float direction)
 		{
             var x = Mathf.Sign(direction) * wallJumpPower;
 			Rigidbody.velocity = new Vector2(x, jumpPower);
             Rigidbody.gravityScale = 0;
-            Debug.Log(Rigidbody.velocity);
 
 			var jumpStopper1 = this.UpdateAsObservable()
 								   .SkipWhile(t => !Input.GetKeyUp(KeyCode.Space));
@@ -218,11 +269,17 @@ namespace ProcedualLevels.Views
             SetWallJumpState();
         }
 
+        /// <summary>
+        /// このプレイヤーが歩ける状況であれば歩かせます。
+        /// </summary>
         public void Walk()
 		{
             WalkSubject.OnNext(Unit.Default);
         }
 
+        /// <summary>
+        /// このプレイヤーに歩かせます。
+        /// </summary>
         private void ActualyWalk()
 		{
 			float velocity = 0;

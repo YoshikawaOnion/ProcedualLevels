@@ -5,12 +5,29 @@ using System;
 
 namespace ProcedualLevels.Models
 {
+    /// <summary>
+    /// マップ内の通路を表すクラス。
+    /// </summary>
     public class MapPath
     {
+        /// <summary>
+        /// 座標の大きな方の部屋から伸びている通路のパーツを取得または設定します。
+        /// </summary>
         public MapRectangle TopPath { get; set; }
+        /// <summary>
+        /// 座標の小さな方の部屋から伸びている通路のパーツを取得または設定します。
+        /// </summary>
         public MapRectangle BottomPath { get; set; }
+        /// <summary>
+        /// 2つの通路パーツを繋ぐ通路パーツを取得または設定します。
+        /// </summary>
+        /// <value>The connection.</value>
         public MapRectangle Connection { get; set; }
 
+        /// <summary>
+        /// 全ての通路パーツを列挙します。
+        /// </summary>
+        /// <returns>全ての通路パーツを列挙するコレクション。</returns>
         public IEnumerable<MapRectangle> GetRooms()
         {
             yield return BottomPath;
@@ -18,6 +35,12 @@ namespace ProcedualLevels.Models
             yield return TopPath;
         }
 
+        /// <summary>
+        /// MapPath の新しいインスタンスを初期化します。
+        /// </summary>
+        /// <param name="bottomPath">座標の小さな方から伸びている通路パーツ。</param>
+        /// <param name="connection">他の2つの通路パーツを繋ぐ通路パーツ。</param>
+        /// <param name="topPath">座標の大きな方から伸びている通路パーツ。</param>
         public MapPath(MapRectangle bottomPath, MapRectangle connection, MapRectangle topPath)
         {
             BottomPath = bottomPath;
@@ -25,6 +48,10 @@ namespace ProcedualLevels.Models
             TopPath = topPath;
         }
 
+        /// <summary>
+        /// この通路を複製します。
+        /// </summary>
+        /// <returns>複製された通路。</returns>
         internal MapPath Clone()
         {
             return new MapPath(BottomPath.Clone(), Connection.Clone(), TopPath.Clone());

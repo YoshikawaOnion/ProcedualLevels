@@ -6,6 +6,9 @@ using UniRx.Triggers;
 
 namespace ProcedualLevels.Views
 {
+    /// <summary>
+    /// 敵キャラクターのアニメーションを管理するクラス。
+    /// </summary>
     public class EnemyAnimationController : MonoBehaviour
     {
 		public static readonly string IdleKey = "Idle_1";

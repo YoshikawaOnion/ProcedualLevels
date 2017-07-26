@@ -8,6 +8,9 @@ using ProcedualLevels.Common;
 
 namespace ProcedualLevels.Views
 {
+    /// <summary>
+    /// 敵キャラクターの振る舞いを提供するクラス。
+    /// </summary>
     public class EnemyController : BattlerController
     {
         [SerializeField]

@@ -9,6 +9,9 @@ using System;
 
 namespace ProcedualLevels.Views
 {
+    /// <summary>
+    /// プレイヤーキャラクターの振る舞いを制御するクラス。
+    /// </summary>
     public class HeroController : BattlerController
     {
         public Hero Hero { get; private set; }
@@ -16,6 +19,11 @@ namespace ProcedualLevels.Views
         private HeroAnimationController Animation { get; set; }
         private HeroJumpController JumpController { get; set; }
 
+        /// <summary>
+        /// プレイヤーキャラクターの制御を開始します。
+        /// </summary>
+        /// <param name="hero">プレイヤーキャラクターのモデル クラス。</param>
+        /// <param name="eventAccepter">このクラスからのイベントを受け付けるインスタンス。</param>
         public void Initialize(Hero hero,
                                IPlayerEventAccepter eventAccepter)
 		{

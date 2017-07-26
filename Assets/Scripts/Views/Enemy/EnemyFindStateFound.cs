@@ -6,10 +6,18 @@ using UnityEngine;
 
 namespace ProcedualLevels.Views
 {
+    /// <summary>
+    /// 敵キャラクターがプレイヤーを見つけた状態の機能を提供します。
+    /// </summary>
     public class EnemyFindStateFound : EnemyFindState
     {
         readonly HeroController hero;
 
+        /// <summary>
+        /// EnemyFindStateFound の新しいインスタンスを初期化します。
+        /// </summary>
+        /// <param name="context">この状態を持つ敵キャラクターのビュー。</param>
+        /// <param name="hero">敵キャラクターが見つけたプレイヤーのビュー。</param>
         public EnemyFindStateFound(EnemyController context, HeroController hero) : base(context)
         {
             this.hero = hero;

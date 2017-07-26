@@ -5,7 +5,10 @@ using UnityEngine;
 
 namespace ProcedualLevels.Views
 {
-    public class BattlerKnockbackStateNeutral : BattlerKnockbackState
+	/// <summary>
+	/// ノックバックをしていない状態の機能を提供します。
+	/// </summary>
+	public class BattlerKnockbackStateNeutral : BattlerKnockbackState
 	{
 		private static readonly float KnockbackFactor = 100;
 		private static readonly float KnockbackJumpPower = 100;

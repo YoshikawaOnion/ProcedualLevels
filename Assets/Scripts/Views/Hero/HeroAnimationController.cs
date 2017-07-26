@@ -6,6 +6,9 @@ using UniRx.Triggers;
 
 namespace ProcedualLevels.Views
 {
+    /// <summary>
+    /// プレイヤーキャラクターのアニメーションを管理するクラス。
+    /// </summary>
     public class HeroAnimationController : MonoBehaviour
 	{
 		public static readonly string IdleLeftAnimation = "Idle_Left";
@@ -26,6 +29,9 @@ namespace ProcedualLevels.Views
         private Subject<float> DirectionSubject { get; set; }
         private bool IsDead { get; set; }
 
+        /// <summary>
+        /// アニメーションの管理を開始します。
+        /// </summary>
 		public void Initialize()
 		{
             Disposable = new CompositeDisposable();
@@ -122,6 +128,10 @@ namespace ProcedualLevels.Views
             return WaitAnimationFinish();
         }
 
+        /// <summary>
+        /// 現在再生しているアニメーションが終了するのを待機します。
+        /// </summary>
+        /// <returns>現在再生しているアニメーションが終了すると値が発行されるストリーム。</returns>
         private IObservable<Unit> WaitAnimationFinish()
         {
             return this.UpdateAsObservable()

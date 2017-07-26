@@ -7,6 +7,9 @@ using UniRx.Triggers;
 
 namespace ProcedualLevels.Views
 {
+    /// <summary>
+    /// キャラクターがノックバックをしている状態の機能を提供するクラス。
+    /// </summary>
     public class BattlerKnockbackStateKnockback : BattlerKnockbackState
     {
         private int Power { get; set; }
@@ -19,6 +22,8 @@ namespace ProcedualLevels.Views
         public override void Subscribe()
         {
             base.Subscribe();
+
+            // 一定時間で通常の状態に戻る
             Observable.Timer(TimeSpan.FromMilliseconds(500))
                       .Subscribe(x =>
             {
@@ -26,6 +31,7 @@ namespace ProcedualLevels.Views
             })
                       .AddTo(Disposable);
 
+            // 他のキャラクターにぶつかったらそれも押し飛ばす
             Context.OnCollisionStay2DAsObservable()
                    .Select(x => x.gameObject.GetComponent<BattlerController>())
                    .Where(x => x != null)

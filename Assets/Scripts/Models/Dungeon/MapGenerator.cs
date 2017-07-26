@@ -8,6 +8,9 @@ using ProcedualLevels.Common;
 
 namespace ProcedualLevels.Models
 {
+    /// <summary>
+    /// ダンジョンを生成する機能を提供するクラス。
+    /// </summary>
     public class MapGenerator
     {
         /// <summary>
@@ -89,6 +92,12 @@ namespace ProcedualLevels.Models
             return map;
         }
 
+        /// <summary>
+        /// 全ての部屋を生成します。
+        /// </summary>
+        /// <param name="leftBottom">部屋を生成できる範囲の左下座標。</param>
+        /// <param name="rightTop">部屋を生成できる範囲の右上座標。</param>
+        /// <param name="map">結果を書き込むマップデータ。</param>
 		private void GenerateRooms(Vector2 leftBottom, Vector2 rightTop, MapData map)
 		{
 			var parent = new MapRectangle(
@@ -183,6 +192,11 @@ namespace ProcedualLevels.Models
 			}
 		}
 
+        /// <summary>
+        /// 区画の中に部屋を生成します。
+        /// </summary>
+        /// <returns>生成した部屋の範囲。</returns>
+        /// <param name="bound">部屋を生成できる区画の範囲。</param>
 		private MapRectangle CreateRoom(MapRectangle bound)
 		{
 			var room = bound.Clone();
@@ -209,7 +223,7 @@ namespace ProcedualLevels.Models
 		/// <param name="map">更新する MapData。</param>
 		/// <param name="horizontal"><c>true</c> の時、水平な通路を生成できる時のみ生成します。
 		/// <c>false</c> の時、鉛直な通路を生成できる時のみ生成します。</param>
-		/// <param name="isAdjacent">2つの部屋が隣接しているかどうかを判定する述語。</param>
+		/// <param name="isAdjacent">第二引数の部屋が第一引数の部屋から見て右上に隣接しているかどうかを判定する述語。</param>
 		private void ConnectRooms(MapData map, bool horizontal, Func<MapRectangle, MapRectangle, bool> isAdjacent)
 		{
 			var list = new List<MapConnection>();
@@ -232,8 +246,8 @@ namespace ProcedualLevels.Models
         /// 指定した二つの区画を繋ぐ通路を生成します。
         /// </summary>
         /// <returns>生成された通路のサイズを表す矩形。</returns>
-        /// <param name="bottomDiv">もう一方の区画と繋ぐ区画。</param>
-        /// <param name="topDiv">もう一方の区画と繋ぐ区画。</param>
+        /// <param name="bottomDiv">もう一方の区画と繋ぐ、座標の小さな方の区画。</param>
+        /// <param name="topDiv">もう一方の区画と繋ぐ、座標の大きな方の区画。</param>
         /// <param name="horizontal"><c>true</c> を指定すると、水平な通路を生成します。
         /// <c>false</c>を指定すると、鉛直な通路を生成します。</param>
         private MapPath CreatePath(MapDivision bottomDiv,
@@ -334,6 +348,15 @@ namespace ProcedualLevels.Models
 			return rect;
 		}
 
+        /// <summary>
+        /// 指定した通路が伸びている元の部屋と同じ部屋から伸びている通路があれば、通路の開始点を一つにまとめます。
+        /// </summary>
+        /// <param name="connections">すでに生成されている部屋の接続情報のコレクション。</param>
+        /// <param name="selectDivision">部屋の接続情報から判定対象の部屋を選ぶデリゲート。</param>
+        /// <param name="division">判定対象の通路が伸びている元の部屋。</param>
+        /// <param name="selectRect">同じ部屋から伸びていた通路から、まとめる先の矩形範囲を選ぶデリゲート。</param>
+        /// <param name="path">まとめる対象の通路。</param>
+        /// <param name="horizontal"><c>true</c> なら水平方向に、<c>false</c> なら垂直方向の通路とみなしてまとめます。</param>
 		private void MergePath(IEnumerable<MapConnection> connections,
                                Func<MapConnection, MapDivision> selectDivision,
                                MapDivision division,
@@ -392,6 +415,11 @@ namespace ProcedualLevels.Models
             }
         }
 
+        /// <summary>
+        /// 指定した部屋と繋がっている部屋をマーキングします。
+        /// </summary>
+        /// <param name="root">繋がっていると判定する根元の部屋。</param>
+        /// <param name="index">マークの値。</param>
         private void MarkConnectedRooms(MapDivision root, int index)
         {
             if (root.ReducingMarker == index)
@@ -405,6 +433,10 @@ namespace ProcedualLevels.Models
             }
         }
 
+        /// <summary>
+        /// 敵キャラクターの配置を設定します。
+        /// </summary>
+        /// <param name="map">設定を書き込むマップデータ。</param>
 		private void PlaceEnemies(MapData map)
 		{
 			foreach (var item in map.Divisions)
@@ -422,6 +454,10 @@ namespace ProcedualLevels.Models
 			}
 		}
 
+        /// <summary>
+        /// スタート地点とゴール地点を設定します。
+        /// </summary>
+        /// <param name="map">設定を書き込むマップデータ。</param>
 		private void PlaceStartAndGoal(MapData map)
 		{
 			var startRoomIndex = GetRandomInRange(0, map.Divisions.Count - 1);
@@ -439,6 +475,10 @@ namespace ProcedualLevels.Models
 			map.GoalLocation = GetRandomLocation(map.Divisions[goalRoomIndex].Room, MarginSize);
 		}
 
+        /// <summary>
+        /// 空中の足場を生成します。
+        /// </summary>
+        /// <param name="map">設定を書き込むマップデータ。</param>
         private void PlacePlatforms(MapData map)
         {
             int platformSpan = 3;
@@ -462,6 +502,12 @@ namespace ProcedualLevels.Models
         }
 
 
+        /// <summary>
+        /// 指定した範囲内の乱数を返します。
+        /// </summary>
+        /// <returns>範囲内の乱数。</returns>
+        /// <param name="min">乱数の最小値。</param>
+        /// <param name="max">乱数の最大値。</param>
 		private int GetRandomInRange(int min, int max)
         {
             return (int)(UnityEngine.Random.value * (max - min)) + min;
@@ -479,6 +525,12 @@ namespace ProcedualLevels.Models
             return Mathf.Clamp(rand, ChildBoundMinSize, size - ParentBoundMinSize);
         }
 
+        /// <summary>
+        /// 部屋の中からランダムな一点を返します。
+        /// </summary>
+        /// <returns>部屋の中のランダムな点。</returns>
+        /// <param name="room">点が含まれる部屋。</param>
+        /// <param name="margin">部屋の外周からの最小距離。</param>
 		private Vector2 GetRandomLocation(MapRectangle room, int margin)
 		{
 			var x = GetRandomInRange(room.Left + margin, room.Right - margin);
