@@ -23,7 +23,8 @@ namespace ProcedualLevels.Views
                       .Subscribe(x =>
             {
                 ChangeState(new BattlerKnockbackStateNeutral(Context));
-            });
+            })
+                      .AddTo(Disposable);
 
             Context.OnCollisionStay2DAsObservable()
                    .Select(x => x.gameObject.GetComponent<BattlerController>())

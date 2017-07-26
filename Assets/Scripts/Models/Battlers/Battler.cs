@@ -30,8 +30,8 @@ namespace ProcedualLevels.Models
 			  .Subscribe(x => 
             {
                 Hp.Value = Helper.Clamp(Hp.Value, 0, MaxHp.Value);
-                IsAlive.Value = Hp.Value > 0;
             });
+            Hp.Subscribe(x => IsAlive.Value = x > 0);
             IsAlive.Where(x => !x)
                    .Subscribe(x => view.ShowDeath(this));
 		}

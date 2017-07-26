@@ -7,4 +7,5 @@ public static class Def
     public static readonly string EggTag = "Egg";
     public static readonly string TerrainTag = "Terrain";
     public static readonly string EnemyTag = "Enemy";
+    public static readonly string PlatformTag = "Platform";
 }

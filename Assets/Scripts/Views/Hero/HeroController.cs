@@ -11,12 +11,10 @@ namespace ProcedualLevels.Views
 {
     public class HeroController : BattlerController
     {
-        [SerializeField]
-        private float walkSpeed;
-
         public Hero Hero { get; private set; }
         private IPlayerEventAccepter EventAccepter { get; set; }
         private HeroAnimationController Animation { get; set; }
+        private HeroJumpController JumpController { get; set; }
 
         public void Initialize(Hero hero,
                                IPlayerEventAccepter eventAccepter)
@@ -24,6 +22,7 @@ namespace ProcedualLevels.Views
 			base.Initialize(hero);
             Hero = hero;
             EventAccepter = eventAccepter;
+            JumpController = GetComponent<HeroJumpController>();
 
             Animation = GetComponent<HeroAnimationController>();
             Animation.Initialize();
@@ -43,18 +42,7 @@ namespace ProcedualLevels.Views
 		
 		public override void Control()
 		{
-			float velocity = 0;
-			if (Input.GetKey(KeyCode.RightArrow))
-			{
-				velocity += walkSpeed;
-			}
-			if (Input.GetKey(KeyCode.LeftArrow))
-			{
-				velocity -= walkSpeed;
-			}
-			Rigidbody.velocity = Rigidbody.velocity.MergeX(velocity);
-
-            Animation.AnimateWalk(velocity);
+            JumpController.Walk();
 		}
 
         public override void Die()

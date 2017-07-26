@@ -12,10 +12,12 @@ namespace ProcedualLevels.Views
         public Models.Battler Battler { get; private set; }
         public Rigidbody2D Rigidbody { get; private set; }
         public BattlerKnockbackState KnockbackState { get; set; }
+        private CompositeDisposable Disposable { get; set; }
 
         public void Initialize(Models.Battler battler)
 		{
             this.Battler = battler;
+            Disposable = new CompositeDisposable();
 
             var canvasPrefab = Resources.Load<GameObject>("Prefabs/Character/BattlerCanvas");
             var canvas = Instantiate(canvasPrefab);
@@ -27,7 +29,7 @@ namespace ProcedualLevels.Views
             {
                 var ratio = (float)x / battler.MaxHp.Value;
                 hpBar.fillAmount = ratio;
-            });
+            }).AddTo(Disposable);
 
             Rigidbody = GetComponent<Rigidbody2D>();
             KnockbackState = new BattlerKnockbackStateNeutral(this);
@@ -41,5 +43,10 @@ namespace ProcedualLevels.Views
 
         public abstract void Control();
         public abstract void Die();
+
+        private void OnDestroy()
+        {
+            Disposable.Dispose();
+        }
     }
 }

@@ -22,6 +22,10 @@ namespace ProcedualLevels.Views
 
         public void ChangeState(BattlerKnockbackState state)
         {
+            if (state.GetType() == GetType())
+            {
+                Debug.LogWarning("Transit to same state!");
+            }
             Context.KnockbackState = state;
             state.Subscribe();
             Dispose();

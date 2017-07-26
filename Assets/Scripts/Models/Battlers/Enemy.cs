@@ -1,5 +1,7 @@
 using UnityEngine;
 using System.Collections;
+using UniRx;
+using System;
 
 namespace ProcedualLevels.Models
 {
@@ -11,6 +13,15 @@ namespace ProcedualLevels.Models
             : base(index, view)
         {
             InitialPosition = initialPos;
+
+			Observable.Interval(TimeSpan.FromMilliseconds(500))
+					  .Skip(2)
+					  .TakeUntil(view.BattleObservable)
+					  .Repeat()
+					  .Subscribe(x =>
+			{
+				Hp.Value += 1;
+			});
         }
     }
 }
