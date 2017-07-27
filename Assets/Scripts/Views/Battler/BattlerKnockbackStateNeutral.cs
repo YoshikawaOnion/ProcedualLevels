@@ -10,7 +10,7 @@ namespace ProcedualLevels.Views
 	/// </summary>
 	public class BattlerKnockbackStateNeutral : BattlerKnockbackState
 	{
-		private static readonly float KnockbackFactor = 100;
+		private static readonly float KnockbackFactor = 150;
 		private static readonly float KnockbackJumpPower = 100;
 
         public BattlerKnockbackStateNeutral(BattlerController context) : base(context)

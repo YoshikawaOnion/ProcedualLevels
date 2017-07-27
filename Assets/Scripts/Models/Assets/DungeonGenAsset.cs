@@ -14,9 +14,12 @@ namespace ProcedualLevels.Models
 		[Tooltip("部屋の属する区画に対する余白サイズ")]
 		[SerializeField]
         public int MarginSize = 4;
-		[Tooltip("通路の幅")]
+		[Tooltip("水平な通路の幅")]
 		[SerializeField]
-        public int PathThickness = 2;
+		public int HorizontalPathThickness = 1;
+		[Tooltip("鉛直な通路の幅")]
+		[SerializeField]
+		public int VerticalPathThickness = 1;
 		[SerializeField]
         public int WorldWidth = 640;
 		[SerializeField]

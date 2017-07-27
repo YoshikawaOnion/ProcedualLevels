@@ -43,7 +43,7 @@ namespace ProcedualLevels.Views
             var prefab = Resources.Load<GameObject>("Prefabs/Dungeon/Platform_Control");
             foreach (var platform in map.Platforms)
             {
-                for (int i = platform.Left; i < platform.Right - 1; i++)
+                for (int i = platform.Left; i < platform.Right; i++)
                 {
                     var obj = Instantiate(prefab);
                     obj.transform.position = new Vector3(i, platform.Bottom, -1);
