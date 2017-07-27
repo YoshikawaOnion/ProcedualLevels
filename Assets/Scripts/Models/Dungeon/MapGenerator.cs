@@ -130,16 +130,6 @@ namespace ProcedualLevels.Models
 			}
 		}
 
-        private void DetermineChildRange(int parentBottom, int parentTop, out int bottom, out int top)
-		{
-			var length = parentTop - parentBottom;
-            var availableDivisionCount = length / ChildBoundMinSize;
-            var extra = (length % ChildBoundMinSize) / availableDivisionCount;
-			var rand = GetRandomInRange(0, extra) + ChildBoundMinSize;
-			bottom = parentBottom + rand;
-			top = parentTop;
-        }
-
 		/// <summary>
 		/// 指定した親区画を分割した区画のコレクションを、親から順に返します。
 		/// </summary>
@@ -153,51 +143,59 @@ namespace ProcedualLevels.Models
 			bool parentIsToBeDivided = false;
 			var sizeToBeDivided = ChildBoundMinSize + ParentBoundMinSize;
 
-            bool canVerticallyDivide = parent.Width > sizeToBeDivided;
-            bool canHorizontallyDivide = parent.Height > sizeToBeDivided;
-            if (canVerticallyDivide && !canHorizontallyDivide)
-            {
-                vertical = true;
-            }
-            else if(!canVerticallyDivide && canHorizontallyDivide)
-            {
-                vertical = false;
-            }
-            else if(!canVerticallyDivide && !canHorizontallyDivide)
-            {
-                yield return parent;
-                yield break;
-            }
-
-            if (vertical)
+			if (vertical)
 			{
-                int left, right;
-                DetermineChildRange(parent.Left, parent.Right, out left, out right);
+				var rand = GetRandInRoom(parent.Width);
+				var left = parent.Left + rand;
+				var right = parent.Right;
 				child = new MapRectangle(left, right, parent.Bottom, parent.Top);
 				parent.Right = left;
+
+				childIsToBeDivided = child.Height > sizeToBeDivided;
+				parentIsToBeDivided = parent.Height > sizeToBeDivided;
 			}
 			else
 			{
-                int bottom, top;
-                DetermineChildRange(parent.Bottom, parent.Top, out bottom, out top);
+				var rand = GetRandInRoom(parent.Height);
+				var bottom = parent.Bottom + rand;
+				var top = parent.Top;
 				child = new MapRectangle(parent.Left, parent.Right, bottom, top);
 				parent.Top = bottom;
+
+				childIsToBeDivided = child.Width > sizeToBeDivided;
+				parentIsToBeDivided = parent.Width > sizeToBeDivided;
 			}
 
-            yield return parent;
-			if (UnityEngine.Random.value < 0.8f)
+			if (UnityEngine.Random.value < 0.2f)
+			{
+				parentIsToBeDivided = false;
+			}
+			if (UnityEngine.Random.value < 0.2f)
+			{
+				childIsToBeDivided = false;
+			}
+
+			if (parentIsToBeDivided)
 			{
 				foreach (var item in GenerateDivisions(parent, !vertical))
 				{
 					yield return item;
 				}
 			}
-			if (UnityEngine.Random.value < 0.8f)
+			else
+			{
+				yield return parent;
+			}
+			if (childIsToBeDivided)
 			{
 				foreach (var item in GenerateDivisions(child, !vertical))
 				{
 					yield return item;
 				}
+			}
+			else
+			{
+				yield return child;
 			}
 		}
 
@@ -214,8 +212,10 @@ namespace ProcedualLevels.Models
 			var heightMinReduce = Mathf.Max(2 * MarginSize, bound.Height - RoomMaxSize);
             var widthMaxReduce = Mathf.Max(2 * MarginSize, bound.Width - RoomMinSize);
             var heightMaxReduce = Mathf.Max(2 * MarginSize, bound.Height - RoomMinSize);
+			Debug.Log("WidthMin: " + widthMinReduce + ", HeightMin: " + heightMinReduce);
             var widthReduce = GetRandomInRange(widthMinReduce, widthMaxReduce);
 			var heightReduce = GetRandomInRange(heightMinReduce, heightMaxReduce);
+            Debug.Log("Width: " + widthReduce + ", Height: " + heightReduce);
 			room.Left += widthReduce / 2;
 			room.Right -= widthReduce / 2;
 			room.Bottom += heightReduce / 2;
@@ -400,16 +400,13 @@ namespace ProcedualLevels.Models
             for (int i = 0; i < loop; i++)
             {
                 var divIndex = GetRandomInRange(0, map.Divisions.Count - 1);
-                var connectedDivisions = map.Divisions[divIndex].ConnectedDivisions;
-
-                if (connectedDivisions.Count == 0)
+                var pathIndex = GetRandomInRange(0, map.Divisions[divIndex].ConnectedDivisions.Count - 1);
+                if (pathIndex >= map.Divisions[divIndex].ConnectedDivisions.Count)
                 {
                     continue;
                 }
-
-                var pathIndex = GetRandomInRange(0, connectedDivisions.Count - 1);
-                var path = connectedDivisions[pathIndex];
-                connectedDivisions.RemoveAt(pathIndex);
+                var path = map.Divisions[divIndex].ConnectedDivisions[pathIndex];
+                map.Divisions[divIndex].ConnectedDivisions.RemoveAt(pathIndex);
 
                 MarkConnectedRooms(head, i + 1);
 
@@ -417,7 +414,7 @@ namespace ProcedualLevels.Models
                 {
                     if (item.ReducingMarker != i + 1)
                     {
-                        connectedDivisions.Add(path);
+                        map.Divisions[divIndex].ConnectedDivisions.Add(path);
                         break;
                     }
                 }
@@ -453,7 +450,7 @@ namespace ProcedualLevels.Models
 				var count = (int)(item.Room.Width * item.Room.Height * EnemyCountRatio);
 				for (int i = 0; i < count; i++)
 				{
-					var pos = GetRandomLocation(item.Room, MarginSize);
+					var pos = GetRandomLocation(item.Room, 0);
 					if (pos != map.GoalLocation
 					   && pos.x != map.StartLocation.x)
 					{
@@ -470,7 +467,7 @@ namespace ProcedualLevels.Models
 		private void PlaceStartAndGoal(MapData map)
 		{
 			var startRoomIndex = GetRandomInRange(0, map.Divisions.Count - 1);
-			map.StartLocation = GetRandomLocation(map.Divisions[startRoomIndex].Room, MarginSize);
+			map.StartLocation = GetRandomLocation(map.Divisions[startRoomIndex].Room, MarginSize + ColliderMargin);
 
 			int goalRoomIndex;
 			while (true)
@@ -481,7 +478,7 @@ namespace ProcedualLevels.Models
 					break;
 				}
 			}
-			map.GoalLocation = GetRandomLocation(map.Divisions[goalRoomIndex].Room, ColliderMargin);
+			map.GoalLocation = GetRandomLocation(map.Divisions[goalRoomIndex].Room, MarginSize + ColliderMargin);
 		}
 
         /// <summary>
