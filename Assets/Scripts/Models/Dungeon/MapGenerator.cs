@@ -212,10 +212,8 @@ namespace ProcedualLevels.Models
 			var heightMinReduce = Mathf.Max(2 * MarginSize, bound.Height - RoomMaxSize);
             var widthMaxReduce = Mathf.Max(2 * MarginSize, bound.Width - RoomMinSize);
             var heightMaxReduce = Mathf.Max(2 * MarginSize, bound.Height - RoomMinSize);
-			Debug.Log("WidthMin: " + widthMinReduce + ", HeightMin: " + heightMinReduce);
             var widthReduce = GetRandomInRange(widthMinReduce, widthMaxReduce);
 			var heightReduce = GetRandomInRange(heightMinReduce, heightMaxReduce);
-            Debug.Log("Width: " + widthReduce + ", Height: " + heightReduce);
 			room.Left += widthReduce / 2;
 			room.Right -= widthReduce / 2;
 			room.Bottom += heightReduce / 2;
@@ -450,7 +448,7 @@ namespace ProcedualLevels.Models
 				var count = (int)(item.Room.Width * item.Room.Height * EnemyCountRatio);
 				for (int i = 0; i < count; i++)
 				{
-					var pos = GetRandomLocation(item.Room, 0);
+					var pos = GetRandomLocation(item.Room, ColliderMargin);
 					if (pos != map.GoalLocation
 					   && pos.x != map.StartLocation.x)
 					{
@@ -467,7 +465,7 @@ namespace ProcedualLevels.Models
 		private void PlaceStartAndGoal(MapData map)
 		{
 			var startRoomIndex = GetRandomInRange(0, map.Divisions.Count - 1);
-			map.StartLocation = GetRandomLocation(map.Divisions[startRoomIndex].Room, MarginSize + ColliderMargin);
+			map.StartLocation = GetRandomLocation(map.Divisions[startRoomIndex].Room, ColliderMargin);
 
 			int goalRoomIndex;
 			while (true)
@@ -478,7 +476,7 @@ namespace ProcedualLevels.Models
 					break;
 				}
 			}
-			map.GoalLocation = GetRandomLocation(map.Divisions[goalRoomIndex].Room, MarginSize + ColliderMargin);
+			map.GoalLocation = GetRandomLocation(map.Divisions[goalRoomIndex].Room, ColliderMargin);
 		}
 
         /// <summary>
