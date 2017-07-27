@@ -79,39 +79,26 @@ namespace ProcedualLevels.Models
                                    bool horizontal,
                                    IEnumerable<MapConnection> connections)
         {
-            MapRectangle path1 = CreatePathSegment(bottomDiv, horizontal, false);
-            MapRectangle path2 = CreatePathSegment(topDiv, horizontal, true);
+            var path1 = CreatePathSegment(bottomDiv, horizontal, false);
+            var path2 = CreatePathSegment(topDiv, horizontal, true);
+            MergePath(connections, bottomDiv, path1, horizontal, false);
+            MergePath(connections, topDiv, path2, horizontal, true);
 
-            MergePath(connections,
-                     c => c.BottomDivision,
-                     bottomDiv,
-                     p => p.BottomPath,
-                     path1,
-                     horizontal);
-            MergePath(connections,
-                     c => c.TopDivision,
-                     topDiv,
-                     p => p.TopPath,
-                     path2,
-                     horizontal);
+            int primaryThickness, secondaryThickness;
+            AxisHelper.GetAligned(horizontal,
+                                  ActualHorizontalPathThickness,
+                                  ActualVerticalPathThickness,
+                                  out primaryThickness,
+                                  out secondaryThickness);
 
             var connection = new MapRectangle();
-            if (horizontal)
-            {
-                connection.Left = path1.Right - ActualVerticalPathThickness;
-                connection.Right = path2.Left + ActualVerticalPathThickness;
-                connection.Bottom = Mathf.Min(path1.Bottom, path2.Bottom);
-                connection.Top = Mathf.Max(path1.Top, path2.Top);
-            }
-            else
-            {
-                connection.Bottom = path1.Top - ActualHorizontalPathThickness;
-                connection.Top = path2.Bottom + ActualHorizontalPathThickness;
-                connection.Left = Mathf.Min(path1.Left, path2.Left);
-                connection.Right = Mathf.Max(path1.Right, path2.Right);
-            }
+            var conProxy = new RectangleProxy(connection, horizontal);
+            conProxy.PrimalMinor = path1.PrimalMajor - secondaryThickness;
+            conProxy.PrimalMajor = path2.PrimalMinor + secondaryThickness;
+            conProxy.SecondMinor = Mathf.Min(path1.SecondMinor, path2.SecondMinor);
+            conProxy.SecondMajor = Mathf.Max(path1.SecondMajor, path2.SecondMajor);
 
-            return new MapPath(path1, connection, path2);
+            return new MapPath(path1.Original, connection, path2.Original);
         }
 
         /// <summary>
@@ -123,84 +110,63 @@ namespace ProcedualLevels.Models
         /// <c>false</c>の時、鉛直に通路を伸ばします。</param>
         /// <param name="isTopDiv"><c>true</c> の時、繋ぎたい2つの部屋のうち座標の大きな方から伸ばしているとみなします。
         /// <c>false</c>の時、座標の小さな方から伸ばしているとみなします。</param>
-        private MapRectangle CreatePathSegment(MapDivision div, bool horizontal, bool isTopDiv)
+        private RectangleProxy CreatePathSegment(MapDivision div, bool horizontal, bool isTopDiv)
         {
             var rect = new MapRectangle();
+            var rectProxy = new RectangleProxy(rect, horizontal);
+            var roomProxy = new RectangleProxy(div.Room, horizontal);
+            var boundProxy = new RectangleProxy(div.Bound, horizontal);
 
-            if (horizontal)
+            int primaryThickness, secondaryThickness;
+            AxisHelper.GetAligned(horizontal,
+                                  ActualHorizontalPathThickness,
+                                  ActualVerticalPathThickness,
+                                  out primaryThickness,
+                                  out secondaryThickness);
+
+            if (isTopDiv)
             {
-                if (isTopDiv)
-                {
-                    rect.Left = div.Bound.Left - ActualVerticalPathThickness;
-                    rect.Right = div.Room.Left + ActualVerticalPathThickness;
-                }
-                else
-                {
-                    // 2つの通路パーツが同じX座標まで伸びるようにするため、
-                    // 伸ばすのは片方だけにする(こちらは伸ばさない)
-                    rect.Left = div.Room.Right - ActualVerticalPathThickness;
-                    rect.Right = div.Bound.Right;
-                }
-                var pos = Helper.GetRandomInRange(
-                    div.Room.Bottom,
-                    div.Room.Top - ActualHorizontalPathThickness);
-                rect.Bottom = pos;
-                rect.Top = pos + ActualHorizontalPathThickness;
+                // こちら側は、境界に沿う通路の幅を確保するために Major を少し伸ばす
+                rectProxy.PrimalMinor = boundProxy.PrimalMinor - secondaryThickness;
+                rectProxy.PrimalMajor = roomProxy.PrimalMinor + secondaryThickness;
             }
             else
             {
-                if (isTopDiv)
-                {
-                    rect.Bottom = div.Bound.Bottom - ActualHorizontalPathThickness;
-                    rect.Top = div.Room.Bottom + ActualHorizontalPathThickness;
-                }
-                else
-                {
-                    // 2つの通路パーツが同じY座標まで伸びるようにするため、
-                    // 伸ばすのは片方だけにする(こちらは伸ばさない)
-                    rect.Bottom = div.Room.Top - ActualHorizontalPathThickness;
-                    rect.Top = div.Bound.Top;
-                }
-                var pos = Helper.GetRandomInRange(
-                    div.Room.Left,
-                    div.Room.Right - ActualVerticalPathThickness);
-                rect.Left = pos;
-                rect.Right = pos + ActualVerticalPathThickness;
+                rectProxy.PrimalMinor = roomProxy.PrimalMajor - secondaryThickness;
+                rectProxy.PrimalMajor = boundProxy.PrimalMajor;
             }
+            var pos = Helper.GetRandomInRange(roomProxy.SecondMinor,
+                                              roomProxy.SecondMajor - primaryThickness);
+            rectProxy.SecondMinor = pos;
+            rectProxy.SecondMajor = pos + primaryThickness;
 
-            return rect;
+            return rectProxy;
         }
 
         /// <summary>
         /// 指定した通路が伸びている元の部屋と同じ部屋から伸びている通路があれば、通路の開始点を一つにまとめます。
         /// </summary>
         /// <param name="connections">すでに生成されている部屋の接続情報のコレクション。</param>
-        /// <param name="selectDivision">部屋の接続情報から判定対象の部屋を選ぶデリゲート。</param>
         /// <param name="division">判定対象の通路が伸びている元の部屋。</param>
-        /// <param name="selectRect">同じ部屋から伸びていた通路から、まとめる先の矩形範囲を選ぶデリゲート。</param>
         /// <param name="path">まとめる対象の通路。</param>
         /// <param name="horizontal"><c>true</c> なら水平方向に、<c>false</c> なら垂直方向の通路とみなしてまとめます。</param>
         private void MergePath(IEnumerable<MapConnection> connections,
-                               Func<MapConnection, MapDivision> selectDivision,
                                MapDivision division,
-                               Func<MapPath, MapRectangle> selectRect,
-                               MapRectangle path,
-                              bool horizontal)
+                               RectangleProxy path,
+                               bool horizontal,
+                               bool isTop)
         {
+            Func<MapConnection, MapDivision> selectDivision = c =>
+                isTop ? c.TopDivision : c.BottomDivision;
+            Func<MapPath, MapRectangle> selectRect = p =>
+                isTop ? p.TopPath : p.BottomPath;
+
             var connection = connections.FirstOrDefault(x => selectDivision(x).Index == division.Index);
             if (connection != null && connection.Horizontal == horizontal)
             {
-                var clone = selectRect(connection.Path).Clone();
-                if (horizontal)
-                {
-                    path.Bottom = clone.Bottom;
-                    path.Top = clone.Top;
-                }
-                else
-                {
-                    path.Left = clone.Left;
-                    path.Right = clone.Right;
-                }
+                var clone = new RectangleProxy(selectRect(connection.Path).Clone(), horizontal);
+                path.SecondMinor = clone.SecondMinor;
+                path.SecondMajor = clone.SecondMajor;
             }
         }
     }

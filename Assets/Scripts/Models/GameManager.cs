@@ -33,13 +33,9 @@ namespace ProcedualLevels.Models
         {
             var generator = new MapGenerator()
             {
-                ChildBoundMinSize = asset.ChildBoundMinSize,
-                ParentBoundMinSize = asset.ParentBoundMinSize,
                 MarginSize = asset.MarginSize,
                 HorizontalPathThickness = asset.HorizontalPathThickness,
                 VerticalPathThickness = asset.VerticalPathThickness,
-                RoomMinSize = asset.RoomMinSize,
-                RoomMaxSize = asset.RoomMaxSize,
                 PathReducingChance = asset.PathReducingChance,
                 EnemyCountRatio = asset.EnemyCountRatio,
             };

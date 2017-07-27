@@ -14,14 +14,6 @@ namespace ProcedualLevels.Models
     public class MapGenerator
     {
         /// <summary>
-        /// 部屋を分割する際の子区画の最小サイズを取得または設定します。
-        /// </summary>
-        public int ChildBoundMinSize { get; set; }
-        /// <summary>
-        /// 部屋を分割する際の親区画の最小サイズを取得または設定します。
-        /// </summary>
-        public int ParentBoundMinSize { get; set; }
-        /// <summary>
         /// 部屋の属する区画に対する余白サイズを取得または設定します。
         /// </summary>
         public int MarginSize { get; set; }
@@ -33,14 +25,6 @@ namespace ProcedualLevels.Models
         /// 鉛直な通路の幅を取得または設定します。
         /// </summary>
         public int VerticalPathThickness { get; set; }
-        /// <summary>
-        /// 部屋の最小サイズを取得または設定します。
-        /// </summary>
-        public int RoomMinSize { get; set; }
-        /// <summary>
-        /// 部屋の最大サイズを取得または設定します。
-        /// </summary>
-        public int RoomMaxSize { get; set; }
         /// <summary>
         /// 一部屋あたりの、通路の削除を試みる回数を取得または設定します。
         /// </summary>
@@ -66,12 +50,8 @@ namespace ProcedualLevels.Models
 
         public MapGenerator()
         {
-            ChildBoundMinSize = 6;
-            ParentBoundMinSize = 12;
             MarginSize = 2;
             HorizontalPathThickness = 2;
-            RoomMinSize = 24;
-            RoomMaxSize = 64;
             PathReducingChance = 4;
             EnemyCountRatio = 0.03f;
             ColliderMargin = 1;
@@ -254,18 +234,6 @@ namespace ProcedualLevels.Models
                 Debug.LogWarning("min:" + min + " is greater than max:" + max + ".");
             }
             return (int)(UnityEngine.Random.value * (max - min)) + min;
-        }
-
-        /// <summary>
-        /// 0から指定した値までの間の乱数を返します。
-        /// ただし、部屋の最小・最大サイズを守るよう範囲を制限します。
-        /// </summary>
-        /// <returns>乱数</returns>
-        /// <param name="size">乱数の最大値。</param>
-        private int GetRandInRoom(int size)
-        {
-            var rand = (int)(UnityEngine.Random.value * size);
-            return Mathf.Clamp(rand, ChildBoundMinSize, size - ParentBoundMinSize);
         }
 
         /// <summary>

@@ -55,4 +55,58 @@ public class MapRectangle
 	        Top = Top - reduceAmount,
         };
     }
+
+	/// <summary>
+	/// 指定した軸に沿った正の方向の端の座標を取得します。
+	/// </summary>
+	/// <returns>指定した軸の正の方向の端の座標。</returns>
+	/// <param name="horizontal"><c>true</c> なら水平方向、<c>false</c>なら鉛直方向。</param>
+	public int GetMajor(bool horizontal)
+    {
+        return horizontal ? Right : Top;
+    }
+
+	/// <summary>
+	/// 指定した軸に沿った負の方向の端の座標を取得します。
+	/// </summary>
+	/// <returns>指定した軸の負の方向の端の座標。</returns>
+	/// <param name="horizontal"><c>true</c> なら水平方向、<c>false</c>なら鉛直方向。</param>
+	public int GetMinor(bool horizontal)
+    {
+        return horizontal ? Left : Bottom;
+    }
+
+	/// <summary>
+	/// 指定した軸に沿った正の方向の端の座標を取得します。
+	/// </summary>
+	/// <param name="horizontal"><c>true</c> なら水平方向、<c>false</c>なら鉛直方向。</param>
+	/// <param name="value">設定する値。</param>
+	public void SetMajor(bool horizontal, int value)
+    {
+        if (horizontal)
+        {
+            Right = value;
+        }
+        else
+        {
+            Top = value;
+        }
+    }
+
+	/// <summary>
+	/// 指定した軸に沿った負の方向の端の座標を取得します。
+	/// </summary>
+	/// <param name="horizontal"><c>true</c> なら水平方向、<c>false</c>なら鉛直方向。</param>
+	/// <param name="value">設定する値。</param>
+	public void SetMinor(bool horizontal, int value)
+    {
+        if (horizontal)
+        {
+            Left = value;
+        }
+        else
+        {
+            Bottom = value;
+        }
+    }
 }

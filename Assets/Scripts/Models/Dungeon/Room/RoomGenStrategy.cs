@@ -46,43 +46,32 @@ namespace ProcedualLevels.Models
 		/// <param name="vertical"><c>true</c> を指定すると、垂直な線で分割します。</param>
 		private IEnumerable<MapRectangle> GenerateDivisions(MapRectangle parent, bool vertical)
 		{
-			MapRectangle child = null;
+			MapRectangle child = new MapRectangle();
 			bool childIsToBeDivided = false;
 			bool parentIsToBeDivided = false;
 			var sizeToBeDivided = ChildBoundMinSize + ParentBoundMinSize;
 
-            if (vertical)
-			{
-                if (parent.Width < sizeToBeDivided)
-                {
-                    yield return parent;
-                    yield break;
-                }
-                var rand = Helper.GetRandomInRange(ParentBoundMinSize, parent.Width - ChildBoundMinSize);
-				var left = parent.Left + rand;
-				var right = parent.Right;
-				child = new MapRectangle(left, right, parent.Bottom, parent.Top);
-				parent.Right = left;
+            var childProxy = new RectangleProxy(child, vertical);
+            var parentProxy = new RectangleProxy(parent, vertical);
 
-				childIsToBeDivided = child.Height > sizeToBeDivided;
-				parentIsToBeDivided = parent.Height > sizeToBeDivided;
-			}
-			else
-			{
-				if (parent.Height < sizeToBeDivided)
-				{
-					yield return parent;
-                    yield break;
-				}
-				var rand = Helper.GetRandomInRange(ParentBoundMinSize, parent.Height - ChildBoundMinSize);
-				var bottom = parent.Bottom + rand;
-				var top = parent.Top;
-				child = new MapRectangle(parent.Left, parent.Right, bottom, top);
-				parent.Top = bottom;
+            if (parentProxy.PrimalLength < sizeToBeDivided)
+            {
+                yield return parent;
+                yield break;
+            }
+            else
+            {
+                var rand = Helper.GetRandomInRange(ParentBoundMinSize,
+                                                   parentProxy.PrimalLength - ChildBoundMinSize);
+                childProxy.PrimalMinor = parentProxy.PrimalMinor + rand;
+                childProxy.PrimalMajor = parentProxy.PrimalMajor;
+                childProxy.SecondMinor = parentProxy.SecondMinor;
+                childProxy.SecondMajor = parentProxy.SecondMajor;
+                parentProxy.PrimalMajor = childProxy.PrimalMinor;
+                childIsToBeDivided = childProxy.SecondLength > sizeToBeDivided;
+                parentIsToBeDivided = parentProxy.SecondLength > sizeToBeDivided;
+            }
 
-				childIsToBeDivided = child.Width > sizeToBeDivided;
-				parentIsToBeDivided = parent.Width > sizeToBeDivided;
-			}
 
 			if (UnityEngine.Random.value < 0.2f)
 			{
