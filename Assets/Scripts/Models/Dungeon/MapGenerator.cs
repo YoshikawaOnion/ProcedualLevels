@@ -70,7 +70,7 @@ namespace ProcedualLevels.Models
             MarginSize = Mathf.Max(ActualVerticalPathThickness, ActualHorizontalPathThickness) + 1;
             GenerateRooms(leftBottom, rightTop, map);
 
-            var pathGen = new OnBorderPathGenStrategy();
+            var pathGen = new OnBottomPathGenStrategy();
             pathGen.ConnectRooms(map);
 
             ReducePathesAtRandom(map);

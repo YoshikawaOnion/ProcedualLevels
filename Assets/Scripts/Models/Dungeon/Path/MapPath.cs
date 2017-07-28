@@ -8,7 +8,7 @@ namespace ProcedualLevels.Models
     /// <summary>
     /// マップ内の通路を表すクラス。
     /// </summary>
-    public class MapPath
+    public class MapPath : IMapPath
     {
         /// <summary>
         /// 座標の大きな方の部屋から伸びている通路のパーツを取得または設定します。

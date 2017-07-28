@@ -6,34 +6,9 @@ using UnityEngine;
 
 namespace ProcedualLevels.Models
 {
-    public class OnBorderPathGenStrategy
+    public class OnBorderPathGenStrategy : PathGenStrategy
     {
-        private DungeonGenAsset DungeonGenAsset { get; set; }
-        private OnBorderPathGenAsset Asset { get; set; }
-        private int VerticalPathThickness { get { return Asset.VerticalPathThickness; } }
-        private int HorizontalPathThickness { get { return Asset.HorizontalPathThickness; } }
-        private int ActualVerticalPathThickness
-        {
-            get
-            {
-                return VerticalPathThickness + DungeonGenAsset.ColliderMargin * 2;
-            }
-        }
-        private int ActualHorizontalPathThickness
-        {
-            get
-            {
-                return HorizontalPathThickness + DungeonGenAsset.ColliderMargin * 2;
-            }
-        }
-
-        public OnBorderPathGenStrategy()
-        {
-            DungeonGenAsset = Resources.Load<DungeonGenAsset>("Assets/DungeonGenAsset");
-            Asset = Resources.Load<OnBorderPathGenAsset>("Assets/OnBorderPathGenAsset");
-        }
-
-        public void ConnectRooms(MapData map)
+        public override void ConnectRooms(MapData map)
         {
             ConnectRooms(map, true, (me, other) => me.Right == other.Left);
             ConnectRooms(map, false, (me, other) => me.Top == other.Bottom);
@@ -164,7 +139,7 @@ namespace ProcedualLevels.Models
             var connection = connections.FirstOrDefault(x => selectDivision(x).Index == division.Index);
             if (connection != null && connection.Horizontal == horizontal)
             {
-                var clone = new RectangleProxy(selectRect(connection.Path).Clone(), horizontal);
+                var clone = new RectangleProxy(selectRect((MapPath)connection.Path).Clone(), horizontal);
                 path.SecondMinor = clone.SecondMinor;
                 path.SecondMajor = clone.SecondMajor;
             }

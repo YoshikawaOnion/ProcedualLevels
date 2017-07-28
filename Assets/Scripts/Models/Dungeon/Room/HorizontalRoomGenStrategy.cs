@@ -8,6 +8,13 @@ namespace ProcedualLevels.Models
 {
     public class HorizontalRoomGenStrategy : RoomGenStrategy
 	{
+        private HorizontalRoomGenAsset RoomGenAsset { get; set; }
+
+        public HorizontalRoomGenStrategy()
+        {
+            RoomGenAsset = Resources.Load<HorizontalRoomGenAsset>("Assets/HorizontalRoomGenAsset");
+        }
+
         public override IEnumerable<MapDivision> GenerateRooms(MapRectangle root)
 		{
 			var divisions = GenerateDivisions(root, true)
@@ -40,7 +47,9 @@ namespace ProcedualLevels.Models
                     && UnityEngine.Random.value <= 1
                     && adjacent.Room.Bottom < item.Room.Top - RoomMinSize)
                 {
-                    item.Room.Bottom = adjacent.Room.Bottom;
+                    var distance = item.Room.Bottom - adjacent.Room.Bottom;
+                    item.Room.Bottom -= distance;
+                    item.Room.Top -= distance;
                 }
             }
         }
@@ -54,7 +63,7 @@ namespace ProcedualLevels.Models
             var rootProxy = new RectangleProxy(root, horizontal);
 
             if (rootProxy.PrimalLength < sizeToBeDivided
-               || (!horizontal && UnityEngine.Random.value <= 0.8f))
+                || (!horizontal && UnityEngine.Random.value <= 1 - RoomGenAsset.VerticalSplitProbability))
             {
                 yield return root;
                 yield break;

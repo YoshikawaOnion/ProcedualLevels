@@ -21,14 +21,14 @@ namespace ProcedualLevels.Models
         /// <summary>
         /// 2つの部屋を接続している通路を取得または設定します。
         /// </summary>
-        public MapPath Path { get; set; }
+        public IMapPath Path { get; set; }
         /// <summary>
         /// 通路が水平方向に伸びているかどうかを表す真偽値を取得または設定します。
         /// </summary>
         /// <value><c>true</c> の時は水平、<c>false</c> の時は鉛直。</value>
         public bool Horizontal { get; set; }
 
-        public MapConnection(MapDivision bottomDivision, MapDivision topDivision, MapPath path, bool horizontal)
+        public MapConnection(MapDivision bottomDivision, MapDivision topDivision, IMapPath path, bool horizontal)
         {
             TopDivision = topDivision;
             BottomDivision = bottomDivision;
