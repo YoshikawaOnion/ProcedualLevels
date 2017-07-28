@@ -12,7 +12,8 @@ namespace ProcedualLevels.Models
         {
 			var list = new List<MapConnection>();
 			Func<MapRectangle, MapRectangle, bool> isAdjacentOnRight = (b, t) => b.Right == t.Left;
-			Func<MapRectangle, MapRectangle, bool> isAdjacentOnTop = (b, t) => b.Top == t.Bottom;
+            Func<MapRectangle, MapRectangle, bool> isAdjacentOnTop = (b, t) => b.Top == t.Bottom
+                                                                                && b.Left == t.Left;
 
 			foreach (var bottomDiv in map.Divisions)
 			{
@@ -33,10 +34,13 @@ namespace ProcedualLevels.Models
                                            .Where(x => isAdjacentOnTop(bottomDiv.Bound, x.Bound));
                 foreach (var topDiv in verticalAdjacents)
                 {
-					var path = CreateVerticalPath(bottomDiv, topDiv, list);
-					var connection = new MapConnection(bottomDiv, topDiv, path, true);
-					bottomDiv.ConnectedDivisions.Add(connection);
-					list.Add(connection);
+                    if (topDiv.Room.Right <= bottomDiv.Room.Right)
+					{
+						var path = CreateVerticalPath(bottomDiv, topDiv, list);
+						var connection = new MapConnection(bottomDiv, topDiv, path, true);
+						bottomDiv.ConnectedDivisions.Add(connection);
+						list.Add(connection);
+                    }
                 }
                 //*/
             }
@@ -48,7 +52,7 @@ namespace ProcedualLevels.Models
 		{
 			var list = new List<MapRectangle>();
             var x = Helper.GetRandomInRange(bottomDiv.Room.Right + DungeonGenAsset.MarginSize + 1,
-                                            bottomDiv.Bound.Right - 1);
+                                            bottomDiv.Bound.Right + DungeonGenAsset.MarginSize - 1);
 
             var path1 = new MapRectangle();
             path1.Bottom = bottomDiv.Room.Bottom;

@@ -72,7 +72,9 @@ namespace ProcedualLevels.Models
                 yield break;
             }
 
-            var max = Mathf.Min(Asset.BoundMaxSize, rootProxy.PrimalLength - ChildBoundMinSize);
+            var boundMax = horizontal ? Asset.BoundMaxWidth : Asset.BoundMaxHeight;
+
+            var max = Mathf.Min(boundMax, rootProxy.PrimalLength - ChildBoundMinSize);
             var rand = Helper.GetRandomInRange(ParentBoundMinSize, max);
 			childProxy.PrimalMinor = rootProxy.PrimalMinor + rand;
 			childProxy.PrimalMajor = rootProxy.PrimalMajor;

@@ -113,6 +113,11 @@ namespace ProcedualLevels.Models
             for (int i = 0; i < loop; i++)
             {
                 var divIndex = GetRandomInRange(0, map.Divisions.Count - 1);
+                if (map.Divisions[divIndex].ConnectedDivisions.Count == 0)
+                {
+                    continue;
+                }
+
                 var pathIndex = GetRandomInRange(0, map.Divisions[divIndex].ConnectedDivisions.Count - 1);
                 if (pathIndex >= map.Divisions[divIndex].ConnectedDivisions.Count)
                 {
