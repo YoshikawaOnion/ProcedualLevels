@@ -9,7 +9,9 @@ namespace ProcedualLevels.Models
         public int ParentBoundMinSize;
         public int MarginSize;
         public int BoundMaxSize;
-        public int RoomMinSize;
-        public int RoomMaxSize;
+        public int RoomMinWidth;
+        public int RoomMaxWidth;
+        public int RoomMinHeight;
+        public int RoomMaxHeight;
     }
 }

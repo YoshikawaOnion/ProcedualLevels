@@ -110,6 +110,7 @@ namespace ProcedualLevels.Views
                 .Subscribe(x => 
             {
                 Rigidbody.gravityScale = GravityScale;
+                Rigidbody.velocity = new Vector2(0, -1);
                 CheckJump();
             })
                 .AddTo(JumpStateDisposable);

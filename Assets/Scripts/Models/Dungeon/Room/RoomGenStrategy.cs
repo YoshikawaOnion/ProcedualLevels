@@ -10,8 +10,10 @@ namespace ProcedualLevels.Models
 		protected int ChildBoundMinSize { get { return Asset.ChildBoundMinSize; } }
 		protected int ParentBoundMinSize { get { return Asset.ParentBoundMinSize; } }
 		protected int MarginSize { get { return Asset.MarginSize; } }
-		protected int RoomMinSize { get { return Asset.RoomMinSize; } }
-		protected int RoomMaxSize { get { return Asset.RoomMaxSize; } }
+		protected int RoomMinWidth { get { return Asset.RoomMinWidth; } }
+		protected int RoomMaxWidth { get { return Asset.RoomMaxWidth; } }
+		protected int RoomMinHeight { get { return Asset.RoomMinHeight; } }
+		protected int RoomMaxHeight { get { return Asset.RoomMaxHeight; } }
 
         public RoomGenStrategy()
 		{
@@ -29,10 +31,10 @@ namespace ProcedualLevels.Models
 		{
 			var room = bound.Clone();
 
-			var widthMinReduce = Mathf.Max(2 * MarginSize, bound.Width - RoomMaxSize);
-			var heightMinReduce = Mathf.Max(2 * MarginSize, bound.Height - RoomMaxSize);
-			var widthMaxReduce = Mathf.Max(2 * MarginSize, bound.Width - RoomMinSize);
-			var heightMaxReduce = Mathf.Max(2 * MarginSize, bound.Height - RoomMinSize);
+			var widthMinReduce = Mathf.Max(2 * MarginSize, bound.Width - RoomMaxWidth);
+			var heightMinReduce = Mathf.Max(2 * MarginSize, bound.Height - RoomMaxHeight);
+			var widthMaxReduce = Mathf.Max(2 * MarginSize, bound.Width - RoomMinWidth);
+			var heightMaxReduce = Mathf.Max(2 * MarginSize, bound.Height - RoomMinHeight);
 			var widthReduce = Helper.GetRandomInRange(widthMinReduce, widthMaxReduce);
 			var heightReduce = Helper.GetRandomInRange(heightMinReduce, heightMaxReduce);
 			room.Left += widthReduce / 2;

@@ -47,7 +47,7 @@ namespace ProcedualLevels.Models
 				var adjacent = list.FirstOrDefault(x => x.Bound.Left == item.Bound.Right);
                 if (adjacent != null
                     && UnityEngine.Random.value <= 1
-                    && adjacent.Room.Bottom < item.Room.Top - RoomMinSize
+                    && adjacent.Room.Bottom < item.Room.Top - RoomMinHeight
                     && adjacent.Room.Bottom >= item.Bound.Bottom)
                 {
                     var distance = item.Room.Bottom - adjacent.Room.Bottom;
