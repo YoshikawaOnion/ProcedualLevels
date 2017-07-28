@@ -30,6 +30,8 @@ namespace ProcedualLevels.Models
 					Room = room,
 					Index = list.Count
 				};
+                element.Bound.Name = "Division";
+                element.Room.Name = "Room";
                 list.Add(element);
 			}
 
@@ -45,7 +47,8 @@ namespace ProcedualLevels.Models
 				var adjacent = list.FirstOrDefault(x => x.Bound.Left == item.Bound.Right);
                 if (adjacent != null
                     && UnityEngine.Random.value <= 1
-                    && adjacent.Room.Bottom < item.Room.Top - RoomMinSize)
+                    && adjacent.Room.Bottom < item.Room.Top - RoomMinSize
+                    && adjacent.Room.Bottom >= item.Bound.Bottom)
                 {
                     var distance = item.Room.Bottom - adjacent.Room.Bottom;
                     item.Room.Bottom -= distance;

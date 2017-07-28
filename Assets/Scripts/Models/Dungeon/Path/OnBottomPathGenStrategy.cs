@@ -16,6 +16,7 @@ namespace ProcedualLevels.Models
 
 			foreach (var bottomDiv in map.Divisions)
 			{
+                //*
 				var horizontalAdjacents = map.Divisions
                                              .Where(x => isAdjacentOnRight(bottomDiv.Bound, x.Bound));
 				foreach (var topDiv in horizontalAdjacents)
@@ -25,8 +26,9 @@ namespace ProcedualLevels.Models
 					bottomDiv.ConnectedDivisions.Add(connection);
 					list.Add(connection);
 				}
+                //*/
 
-                /*
+                //*
 				var verticalAdjacents = map.Divisions
                                            .Where(x => isAdjacentOnTop(bottomDiv.Bound, x.Bound));
                 foreach (var topDiv in verticalAdjacents)
@@ -40,11 +42,36 @@ namespace ProcedualLevels.Models
             }
         }
 
-        private MapPath CreateVerticalPath(MapDivision bottomDiv,
+        private IMapPath CreateVerticalPath(MapDivision bottomDiv,
                                            MapDivision topDiv,
-                                           List<MapConnection> list)
-        {
-            throw new NotImplementedException();
+                                           List<MapConnection> connections)
+		{
+			var list = new List<MapRectangle>();
+            var x = Helper.GetRandomInRange(bottomDiv.Room.Right + DungeonGenAsset.MarginSize + 1,
+                                            bottomDiv.Bound.Right - 1);
+
+            var path1 = new MapRectangle();
+            path1.Bottom = bottomDiv.Room.Bottom;
+            path1.Top = path1.Bottom + ActualHorizontalPathThickness;
+            path1.Left = bottomDiv.Room.Right - ActualVerticalPathThickness;
+            path1.Right = x;
+            path1.Name = "Path1";
+
+            var path2 = new MapRectangle();
+            path2.Bottom = path1.Bottom;
+            path2.Top = topDiv.Room.Bottom + ActualHorizontalPathThickness;
+            path2.Left = path1.Right - ActualVerticalPathThickness;
+            path2.Right = path1.Right;
+            path2.Name = "Path2";
+
+            var path3 = new MapRectangle();
+            path3.Bottom = path2.Top - ActualHorizontalPathThickness;
+            path3.Top = path2.Top;
+            path3.Left = topDiv.Room.Right - ActualVerticalPathThickness;
+            path3.Right = path2.Right;
+            path3.Name = "Path3";
+
+            return new GenericMapPath(new[] { path1, path2, path3 });
         }
 
         private IMapPath CreatePath(MapDivision bottomDiv,
@@ -68,6 +95,15 @@ namespace ProcedualLevels.Models
                 path2.Left = path1.Right - ActualVerticalPathThickness;
                 path2.Right = path1.Right;
                 list.Add(path2);
+            }
+            else if(path1.Bottom >= topDiv.Room.Top - DungeonGenAsset.ColliderMargin)
+			{
+				var path2 = new MapRectangle();
+                path2.Bottom = topDiv.Room.Top - ActualHorizontalPathThickness;
+				path2.Top = path1.Top;
+				path2.Left = path1.Right - ActualVerticalPathThickness;
+				path2.Right = path1.Right;
+				list.Add(path2);
             }
 
             return new GenericMapPath(list);

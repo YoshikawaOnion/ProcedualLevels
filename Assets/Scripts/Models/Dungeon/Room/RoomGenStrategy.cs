@@ -40,17 +40,6 @@ namespace ProcedualLevels.Models
 			room.Bottom += heightReduce / 2;
 			room.Top -= heightReduce / 2;
 
-            Debug.Log(string.Format("X: {0} - [{1}, {2}] = {3}",
-                                    bound.Width,
-                                    widthMinReduce,
-                                    widthMaxReduce,
-									room.Width));
-			Debug.Log(string.Format("Y: {0} - [{1}, {2}] = {3}",
-									bound.Height,
-									heightMinReduce,
-									heightMaxReduce,
-									room.Height));
-
 			return room;
 		}
     }

@@ -7,6 +7,7 @@ public class MapRectangle
     public int Right { get; set; }
     public int Top { get; set; }
     public int Bottom { get; set; }
+    public string Name { get; set; }
 
     public Vector2 Position
     {

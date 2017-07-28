@@ -28,8 +28,6 @@ namespace ProcedualLevels.Views
             foreach (var division in map.Divisions)
             {
                 var obj = InstantiateRect(null, prefab, division.Bound);
-                obj.transform.SetParent(null);
-                obj.name = "Division";
                 obj.GetComponent<BoxCollider2D>().enabled = false;
 
                 InstantiateRect(maze, prefab, division.Room);
@@ -62,6 +60,7 @@ namespace ProcedualLevels.Views
             var obj = Instantiate(prefab);
             obj.transform.position = room.Position + room.Size / 2;
             obj.transform.localScale = room.Size;
+            obj.name = string.IsNullOrEmpty(room.Name) ? prefab.name : room.Name;
             if (maze != null)
             {
                 obj.transform.parent = maze.transform;

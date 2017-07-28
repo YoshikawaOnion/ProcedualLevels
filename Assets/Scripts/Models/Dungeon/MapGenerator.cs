@@ -148,7 +148,8 @@ namespace ProcedualLevels.Models
             root.ReducingMarker = index;
             foreach (var item in root.ConnectedDivisions)
             {
-                MarkConnectedRooms(item.BottomDivision, index);
+				MarkConnectedRooms(item.BottomDivision, index);
+				MarkConnectedRooms(item.TopDivision, index);
             }
         }
 
