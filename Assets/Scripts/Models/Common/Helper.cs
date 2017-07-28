@@ -2,6 +2,7 @@ using UnityEngine;
 using System.Collections;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 public static class Helper
 {
@@ -57,5 +58,19 @@ public static class Helper
 		var x = GetRandomInRange(room.Left + margin, room.Right - margin);
 		var y = GetRandomInRange(room.Bottom + margin, room.Top - margin);
 		return new Vector2(x + 0.5f, y + 0.5f);
+	}
+
+    public static T MinItem<T, U>(this IEnumerable<T> source, Func<T, U> selector)
+        where U : IComparable<U>
+    {
+        var min = source.Min(selector);
+        return source.First(x => selector(x).CompareTo(min) == 0);
+    }
+
+	public static T MaxItem<T, U>(this IEnumerable<T> source, Func<T, U> selector)
+		where U : IComparable<U>
+	{
+		var max = source.Max(selector);
+        return source.First(x => selector(x).CompareTo(max) == 0);
 	}
 }

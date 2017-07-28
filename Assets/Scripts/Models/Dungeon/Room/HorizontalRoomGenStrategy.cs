@@ -40,8 +40,24 @@ namespace ProcedualLevels.Models
                 list.Add(element);
 			}
 
+            AlignBottom(list);
+
             return list;
 		}
+
+        private void AlignBottom(List<MapDivision> list)
+		{
+            foreach (var item in list)
+			{
+				var adjacent = list.FirstOrDefault(x => x.Bound.Left == item.Bound.Right);
+                if (adjacent != null
+                    && UnityEngine.Random.value <= 1
+                    && adjacent.Room.Bottom < item.Room.Top - RoomMinSize)
+                {
+                    item.Room.Bottom = adjacent.Room.Bottom;
+                }
+            }
+        }
 
         private IEnumerable<MapRectangle> GenerateDivisions(MapRectangle root, bool horizontal)
         {
@@ -52,7 +68,7 @@ namespace ProcedualLevels.Models
             var rootProxy = new RectangleProxy(root, horizontal);
 
             if (rootProxy.PrimalLength < sizeToBeDivided
-               || (!horizontal && UnityEngine.Random.value <= 0.5f))
+               || (!horizontal && UnityEngine.Random.value <= 0.8f))
             {
                 yield return root;
                 yield break;
@@ -103,14 +119,6 @@ namespace ProcedualLevels.Models
 			room.Right -= widthReduce / 2;
 			room.Bottom += heightReduce / 2;
 			room.Top -= heightReduce / 2;
-
-            var adjacent = divisions.FirstOrDefault(x => x.Bound.Left == bound.Right);
-            if (adjacent != null
-                && UnityEngine.Random.value <= 0.95f
-                && adjacent.Room.Bottom < room.Top - RoomMinSize)
-            {
-                room.Bottom = adjacent.Room.Bottom;
-            }
 
             return room;
 		}

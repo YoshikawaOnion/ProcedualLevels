@@ -179,20 +179,22 @@ namespace ProcedualLevels.Models
         /// <param name="map">設定を書き込むマップデータ。</param>
 		private void PlaceStartAndGoal(MapData map)
 		{
-			var startRoomIndex = GetRandomInRange(0, map.Divisions.Count - 1);
-			map.StartLocation = GetRandomLocation(map.Divisions[startRoomIndex].Room, ColliderMargin);
+            var startDivision = map.Divisions.MinItem(x => x.Room.Left);
 
-			int goalRoomIndex;
+            map.StartLocation = GetRandomLocation(startDivision.Room, ColliderMargin);
+
+            MapDivision goalDivision;
 			while (true)
 			{
-				goalRoomIndex = GetRandomInRange(0, map.Divisions.Count - 1);
-				if (startRoomIndex != goalRoomIndex
+                goalDivision = map.Divisions.MaxItem(x => x.Room.Right);
+				if (startDivision.Index != goalDivision.Index
                    || map.Divisions.Count < 2)
 				{
 					break;
 				}
 			}
-			map.GoalLocation = GetRandomLocation(map.Divisions[goalRoomIndex].Room, ColliderMargin);
+
+			map.GoalLocation = GetRandomLocation(goalDivision.Room, ColliderMargin);
 		}
 
         /// <summary>
