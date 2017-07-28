@@ -17,7 +17,7 @@ namespace ProcedualLevels.Views
         public Hero Hero { get; private set; }
         private IPlayerEventAccepter EventAccepter { get; set; }
         private HeroAnimationController Animation { get; set; }
-        private HeroJumpController JumpController { get; set; }
+        private HeroMoveController JumpController { get; set; }
 
         /// <summary>
         /// プレイヤーキャラクターの制御を開始します。
@@ -30,7 +30,7 @@ namespace ProcedualLevels.Views
 			base.Initialize(hero);
             Hero = hero;
             EventAccepter = eventAccepter;
-            JumpController = GetComponent<HeroJumpController>();
+            JumpController = GetComponent<HeroMoveController>();
 
             Animation = GetComponent<HeroAnimationController>();
             Animation.Initialize();

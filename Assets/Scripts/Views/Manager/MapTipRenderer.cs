@@ -12,18 +12,24 @@ namespace ProcedualLevels.Views
         private BatchRenderer wallRendererPrefab;
         [SerializeField]
         private BatchRenderer roomRendererPrefab;
+        [SerializeField]
+        private BatchRenderer platformRendererPrefab;
 
 		private List<Vector3> WallLocations { get; set; }
 		private List<Vector3> RoomLocations { get; set; }
+        private List<Vector3> PlatformLocations { get; set; }
         private BatchRenderer WallRenderer { get; set; }
         private BatchRenderer RoomRenderer { get; set; }
+        private BatchRenderer PlatformRenderer { get; set; }
 
         private void Awake()
 		{
 			RoomLocations = new List<Vector3>();
 			WallLocations = new List<Vector3>();
+            PlatformLocations = new List<Vector3>();
             WallRenderer = Instantiate(wallRendererPrefab);
             RoomRenderer = Instantiate(roomRendererPrefab);
+            PlatformRenderer = Instantiate(platformRendererPrefab);
         }
 
         private void OnDestroy()
@@ -55,6 +61,15 @@ namespace ProcedualLevels.Views
                     }
                 }
             }
+
+            foreach (var platform in map.Platforms)
+            {
+                for (int i = platform.Left; i < platform.Right; i++)
+                {
+                    var p = new Vector3(i, platform.Bottom, 0) + offset;
+                    PlatformLocations.Add(p);
+                }
+            }
         }
 
         // Update is called once per frame
@@ -67,6 +82,10 @@ namespace ProcedualLevels.Views
             foreach (var p in RoomLocations)
             {
                 RoomRenderer.AddInstanceT(p);
+            }
+            foreach (var p in PlatformLocations)
+            {
+                PlatformRenderer.AddInstanceT(p);
             }
         }
     }

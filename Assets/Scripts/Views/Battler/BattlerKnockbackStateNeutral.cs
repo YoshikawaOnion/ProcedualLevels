@@ -35,7 +35,7 @@ namespace ProcedualLevels.Views
 
             ChangeState(new BattlerKnockbackStateKnockback(Context, power));
 
-            var jumpState = Context.GetComponent<HeroJumpController>();
+            var jumpState = Context.GetComponent<HeroMoveController>();
             if (jumpState != null)
             {
                 jumpState.SetJumpState();
