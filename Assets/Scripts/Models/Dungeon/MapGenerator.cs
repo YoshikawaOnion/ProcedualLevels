@@ -70,7 +70,7 @@ namespace ProcedualLevels.Models
             MarginSize = Mathf.Max(ActualVerticalPathThickness, ActualHorizontalPathThickness) + 1;
             GenerateRooms(leftBottom, rightTop, map);
 
-            var pathGen = new PathGenStrategy();
+            var pathGen = new OnBorderPathGenStrategy();
             pathGen.ConnectRooms(map);
 
             ReducePathesAtRandom(map);
@@ -90,7 +90,7 @@ namespace ProcedualLevels.Models
         /// <param name="map">結果を書き込むマップデータ。</param>
 		private void GenerateRooms(Vector2 leftBottom, Vector2 rightTop, MapData map)
 		{
-            var roomGen = new RoomGenStrategy();
+            var roomGen = new HorizontalRoomGenStrategy();
             var root = new MapRectangle(
 				(int)leftBottom.x,
 				(int)rightTop.x,
@@ -186,7 +186,8 @@ namespace ProcedualLevels.Models
 			while (true)
 			{
 				goalRoomIndex = GetRandomInRange(0, map.Divisions.Count - 1);
-				if (startRoomIndex != goalRoomIndex)
+				if (startRoomIndex != goalRoomIndex
+                   || map.Divisions.Count < 2)
 				{
 					break;
 				}

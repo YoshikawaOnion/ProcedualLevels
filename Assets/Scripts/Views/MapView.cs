@@ -27,6 +27,11 @@ namespace ProcedualLevels.Views
             var prefab = Resources.Load<GameObject>("Prefabs/Dungeon/Room_Control");
             foreach (var division in map.Divisions)
             {
+                var obj = InstantiateRect(null, prefab, division.Bound);
+                obj.transform.SetParent(null);
+                obj.name = "Division";
+                obj.GetComponent<BoxCollider2D>().enabled = false;
+
                 InstantiateRect(maze, prefab, division.Room);
                 foreach (var connection in division.ConnectedDivisions)
                 {

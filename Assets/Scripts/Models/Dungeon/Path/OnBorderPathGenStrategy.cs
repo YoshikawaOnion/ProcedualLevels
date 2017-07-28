@@ -6,7 +6,7 @@ using UnityEngine;
 
 namespace ProcedualLevels.Models
 {
-    public class PathGenStrategy
+    public class OnBorderPathGenStrategy
     {
         private DungeonGenAsset DungeonGenAsset { get; set; }
         private OnBorderPathGenAsset Asset { get; set; }
@@ -27,7 +27,7 @@ namespace ProcedualLevels.Models
             }
         }
 
-        public PathGenStrategy()
+        public OnBorderPathGenStrategy()
         {
             DungeonGenAsset = Resources.Load<DungeonGenAsset>("Assets/DungeonGenAsset");
             Asset = Resources.Load<OnBorderPathGenAsset>("Assets/OnBorderPathGenAsset");
