@@ -63,6 +63,7 @@ namespace ProcedualLevels.Views
             InitializeState();
             ActivateJump();
             ActivateWalk();
+            ActivateFallCheck();
         }
 
         /// <summary>
@@ -166,6 +167,22 @@ namespace ProcedualLevels.Views
 				.Where(x => x.gameObject.tag == Def.TerrainTag)
 				.Subscribe(x => CheckGrabingWall(x))
 				.AddTo(JumpStateDisposable);            
+        }
+
+        /// <summary>
+        /// 現在の状態で足場がないと落下状態にするようにします。
+        /// </summary>
+        private void ActivateFallCheck()
+        {
+            Hero.OnCollisionExit2DAsObservable()
+                .Where(x => x.gameObject.tag == Def.TerrainTag
+                       || x.gameObject.tag == Def.PlatformTag)
+                .Subscribe(x =>
+            {
+                CheckJump();
+                ++JumpCount;
+            })
+                .AddTo(JumpStateDisposable);
         }
 
         /// <summary>

@@ -13,8 +13,6 @@ namespace ProcedualLevels.Models
 			var divisions = GenerateDivisions(root, true)
 				.ToArray();
 
-            Debug.Log(divisions.Length);
-
             var list = new List<MapDivision>();
 			foreach (var div in divisions)
 			{
