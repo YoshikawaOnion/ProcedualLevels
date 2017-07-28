@@ -7,18 +7,6 @@ namespace ProcedualLevels.Models
 {
     public class RandomRoomGenStrategy : RoomGenStrategy
     {
-        private RandomRoomGenAsset Asset { get; set; }
-        private int ChildBoundMinSize { get { return Asset.ChildBoundMinSize; } }
-        private int ParentBoundMinSize { get { return Asset.ParentBoundMinSize; } }
-        private int MarginSize { get { return Asset.MarginSize; } }
-        private int RoomMinSize { get { return Asset.RoomMinSize; } }
-        private int RoomMaxSize { get { return Asset.RoomMaxSize; } }
-
-        public RandomRoomGenStrategy()
-        {
-            Asset = Resources.Load<RandomRoomGenAsset>("Assets/RandomRoomGenAsset");
-        }
-
         public override IEnumerable<MapDivision> GenerateRooms(MapRectangle root)
 		{
 			var divisions = GenerateDivisions(root, true)
@@ -77,28 +65,5 @@ namespace ProcedualLevels.Models
 				yield return item;
 			}
         }
-
-		/// <summary>
-		/// 区画の中に部屋を生成します。
-		/// </summary>
-		/// <returns>生成した部屋の範囲。</returns>
-		/// <param name="bound">部屋を生成できる区画の範囲。</param>
-		private MapRectangle CreateRoom(MapRectangle bound)
-		{
-			var room = bound.Clone();
-
-			var widthMinReduce = Mathf.Max(2 * MarginSize, bound.Width - RoomMaxSize);
-			var heightMinReduce = Mathf.Max(2 * MarginSize, bound.Height - RoomMaxSize);
-			var widthMaxReduce = Mathf.Max(2 * MarginSize, bound.Width - RoomMinSize);
-			var heightMaxReduce = Mathf.Max(2 * MarginSize, bound.Height - RoomMinSize);
-			var widthReduce = Helper.GetRandomInRange(widthMinReduce, widthMaxReduce);
-			var heightReduce = Helper.GetRandomInRange(heightMinReduce, heightMaxReduce);
-			room.Left += widthReduce / 2;
-			room.Right -= widthReduce / 2;
-			room.Bottom += heightReduce / 2;
-			room.Top -= heightReduce / 2;
-
-			return room;
-		}
     }
 }

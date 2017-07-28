@@ -46,12 +46,13 @@ namespace ProcedualLevels.Views
         private static void ShowPlatforms(MapData map)
         {
             var prefab = Resources.Load<GameObject>("Prefabs/Dungeon/Platform_Control");
+            var offset = new Vector3(0.5f, 0.5f, 0);
             foreach (var platform in map.Platforms)
             {
                 for (int i = platform.Left; i < platform.Right; i++)
                 {
                     var obj = Instantiate(prefab);
-                    obj.transform.position = new Vector3(i, platform.Bottom, -1);
+                    obj.transform.position = new Vector3(i, platform.Bottom, -1) + offset;
                 }
             }
         }
