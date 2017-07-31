@@ -57,6 +57,11 @@ public class MapRectangle
         };
     }
 
+    public override string ToString()
+    {
+        return string.Format("[MapRectangle: Left={0}, Right={1}, Top={2}, Bottom={3}]", Left, Right, Top, Bottom);
+    }
+
 	/// <summary>
 	/// 指定した軸に沿った正の方向の端の座標を取得します。
 	/// </summary>

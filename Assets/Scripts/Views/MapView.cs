@@ -58,7 +58,7 @@ namespace ProcedualLevels.Views
         {
             var obj = Instantiate(prefab);
             obj.transform.position = room.Position + room.Size / 2;
-            obj.transform.localScale = room.Size;
+            obj.transform.localScale = room.Size - Vector2.one * 0.001f;
             obj.name = string.IsNullOrEmpty(room.Name) ? prefab.name : room.Name;
             if (maze != null)
             {

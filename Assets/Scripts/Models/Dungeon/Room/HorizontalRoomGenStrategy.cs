@@ -35,7 +35,7 @@ namespace ProcedualLevels.Models
                 list.Add(element);
 			}
 
-            AlignBottom(list);
+            //AlignBottom(list);
 
             return list;
 		}
@@ -98,6 +98,29 @@ namespace ProcedualLevels.Models
             {
                 yield return item;
             }
+        }
+
+        protected override MapRectangle CreateRoom(MapRectangle bound)
+		{
+			var room = bound.Clone();
+
+            /*
+			var widthMinReduce = Mathf.Max(2 * MarginSize, bound.Width - RoomMaxWidth);
+			var heightMinReduce = Mathf.Max(2 * MarginSize, bound.Height - RoomMaxHeight);
+			var widthMaxReduce = Mathf.Max(2 * MarginSize, bound.Width - RoomMinWidth);
+			var heightMaxReduce = Mathf.Max(2 * MarginSize, bound.Height - RoomMinHeight);
+			var widthReduce = Helper.GetRandomInRange(widthMinReduce, widthMaxReduce);
+			var heightReduce = Helper.GetRandomInRange(heightMinReduce, heightMaxReduce);
+            //*/
+            var widthReduce = MarginSize;
+            var heightReduce = Mathf.Max(MarginSize, bound.Height - RoomMaxHeight);
+
+			room.Left += widthReduce / 2;
+			room.Right -= widthReduce / 2;
+			room.Bottom += heightReduce / 2;
+			room.Top -= heightReduce / 2;
+
+			return room;
         }
     }
 }

@@ -6,6 +6,7 @@ using ProcedualLevels.Common;
 using UniRx;
 using UniRx.Triggers;
 using System;
+using UnityEngine.UI;
 
 namespace ProcedualLevels.Views
 {
@@ -19,12 +20,17 @@ namespace ProcedualLevels.Views
         private HeroAnimationController Animation { get; set; }
         private HeroMoveController JumpController { get; set; }
 
+        private ControllerButton LeftButton { get; set; }
+        private ControllerButton RightButton { get; set; }
+        private ControllerButton JumpButton { get; set; }
+
         /// <summary>
         /// プレイヤーキャラクターの制御を開始します。
         /// </summary>
         /// <param name="hero">プレイヤーキャラクターのモデル クラス。</param>
         /// <param name="eventAccepter">このクラスからのイベントを受け付けるインスタンス。</param>
         public void Initialize(Hero hero,
+                               GameObject gameUi,
                                IPlayerEventAccepter eventAccepter)
 		{
 			base.Initialize(hero);
@@ -46,12 +52,27 @@ namespace ProcedualLevels.Views
 							 .OnNext(x.Enemy);
                 Animation.AnimateAttack();
             });
+
+            LeftButton = gameUi.transform.Find("Controller/LeftButton")
+                               .GetComponent<ControllerButton>();
+            RightButton = gameUi.transform.Find("Controller/RightButton")
+                                .GetComponent<ControllerButton>();
+            JumpButton = gameUi.transform.Find("Controller/JumpButton")
+                               .GetComponent<ControllerButton>();
         }
 		
 		public override void Control()
 		{
-            JumpController.Walk();
-		}
+            var horizontalInput = (int)Input.GetAxisRaw("Horizontal");
+            var move = horizontalInput
+                + (LeftButton.IsHold ? -1 : 0)
+                + (RightButton.IsHold ? 1 : 0);
+            JumpController.ControlWalk(move);
+
+            var jump = Input.GetKey(KeyCode.Space)
+                            || JumpButton.IsHold;
+			JumpController.ControlJump(jump);
+        }
 
         public override void Die()
         {

@@ -13,12 +13,9 @@ namespace ProcedualLevels.Models
 		public ReactiveProperty<int> MaxHp { get; private set; }
         public ReactiveProperty<bool> IsAlive { get; private set; }
 
-        private IAdventureView view;
-
 		public Battler(int index, IAdventureView view)
 		{
             this.Index = index;
-            this.view = view;
 
 			Attack = new ReactiveProperty<int>(1);
             Range = new ReactiveProperty<int>(1);

@@ -26,20 +26,25 @@ namespace ProcedualLevels.Views
         private CompositeDisposable JumpStateDisposable { get; set; }
         private HeroController Hero { get; set; }
         private Rigidbody2D Rigidbody { get; set; }
-        private int JumpCount { get; set; }
-        private float GravityScale { get; set; }
         private HeroAnimationController Animation { get; set; }
-        private Subject<Unit> WalkSubject { get; set; }
+
+        private float GravityScale { get; set; }
+        private int JumpCount { get; set; }
+        private int WalkDirection { get; set; }
+        private Subject<int> WalkSubject { get; set; }
+        private Subject<bool> JumpSubject { get; set; }
 
         private void Start()
         {
 			Hero = GetComponent<HeroController>();
 			Rigidbody = GetComponent<Rigidbody2D>();
             Animation = GetComponent<HeroAnimationController>();
-            WalkSubject = new Subject<Unit>();
+            WalkSubject = new Subject<int>();
+            JumpSubject = new Subject<bool>();
             JumpCount = 0;
             GravityScale = Rigidbody.gravityScale;
 			SetFullJumpState();
+            WalkDirection = 0;
         }
 
         /// <summary>
@@ -53,7 +58,6 @@ namespace ProcedualLevels.Views
 			}
 			JumpStateDisposable = new CompositeDisposable();
 		}
-
 
         /// <summary>
         /// プレイヤーが地面に接している状態に遷移します。
@@ -97,23 +101,23 @@ namespace ProcedualLevels.Views
         {
             InitializeState();
 
-            // ジャンプキーで壁蹴りジャンプ
-			Hero.UpdateAsObservable()
-				.Where(x => Input.GetKeyDown(KeyCode.Space))
-				.Subscribe(x => WallJump(direction))
-				.AddTo(JumpStateDisposable);
-
+            // 一度ジャンプキーを離してから再びジャンプすると壁ジャンプ
+            JumpSubject.SkipWhile(x => x)
+                       .Where(x => x)
+                       .FirstOrDefault()
+                       .Subscribe(x => WallJump(direction))
+                       .AddTo(JumpStateDisposable);
+            
             // 方向キーを離すとジャンプ状態に遷移
-            Hero.UpdateAsObservable()
-                .SkipWhile(x => Input.GetAxis("Horizontal") * direction < 0)
-                .FirstOrDefault()
-                .Subscribe(x => 
+            WalkSubject.SkipWhile(x => x * direction <= 0)
+                       .FirstOrDefault()
+                       .Subscribe(x => 
             {
                 Rigidbody.gravityScale = GravityScale;
                 Rigidbody.velocity = new Vector2(0, -1);
                 CheckJump();
             })
-                .AddTo(JumpStateDisposable);
+                       .AddTo(JumpStateDisposable);
 		}
 
         /// <summary>
@@ -137,11 +141,12 @@ namespace ProcedualLevels.Views
         /// </summary>
 		private void ActivateJump()
 		{
-			// スペースキーでジャンプ
-			Hero.UpdateAsObservable()
-				.Where(x => Input.GetKeyDown(KeyCode.Space))
-				.Subscribe(x => Jump())
-				.AddTo(JumpStateDisposable);
+            JumpSubject.SkipWhile(x => x)
+                       .Where(x => x)
+                       .FirstOrDefault()
+                       .Repeat()
+                       .Subscribe(x => Jump())
+                       .AddTo(JumpStateDisposable);
 		}
 
         /// <summary>
@@ -192,8 +197,8 @@ namespace ProcedualLevels.Views
         /// </summary>
         private void ActivateWalk()
 		{
-			WalkSubject.Subscribe(x => ActualyWalk())
-					   .AddTo(JumpStateDisposable);
+            WalkSubject.Subscribe(x => ActualyWalk())
+                       .AddTo(JumpStateDisposable);
         }
 
 
@@ -205,11 +210,10 @@ namespace ProcedualLevels.Views
         {
             var contact = collision.contacts[0];
             if (contact.normal.y <= groundNormalXRange
-               && contact.normal.y >= -groundNormalXRange
-               && Input.GetAxis("Horizontal") * contact.normal.x < 0)
+               && contact.normal.y >= -groundNormalXRange)
             {
                 SetGrabingWallState(contact.normal.x);
-				Rigidbody.gravityScale = 0;
+				Rigidbody.gravityScale = GravityScale / 2;
 				Rigidbody.velocity = Vector3.zero;
             }
         }
@@ -254,10 +258,10 @@ namespace ProcedualLevels.Views
             Rigidbody.velocity = Rigidbody.velocity.MergeY(jumpPower);
             Rigidbody.gravityScale = 0;
 
-            var jumpStopper1 = this.UpdateAsObservable()
-                                   .SkipWhile(x => !Input.GetKeyUp(KeyCode.Space));
-            var jumpStopper2 = this.UpdateAsObservable()
-                                   .SkipUntil(Observable.Timer(TimeSpan.FromSeconds(maxJumpTime)));
+            var jumpStopper1 = JumpSubject.SkipWhile(x => x)
+                                          .Select(x => Unit.Default);
+            var jumpStopper2 = Observable.Timer(TimeSpan.FromSeconds(maxJumpTime))
+                                         .Select(x => Unit.Default);
             jumpStopper1.Merge(jumpStopper2)
                         .FirstOrDefault()
                         .Subscribe(x => Rigidbody.gravityScale = GravityScale);
@@ -276,10 +280,10 @@ namespace ProcedualLevels.Views
 			Rigidbody.velocity = new Vector2(x, jumpPower);
             Rigidbody.gravityScale = 0;
 
-			var jumpStopper1 = this.UpdateAsObservable()
-								   .SkipWhile(t => !Input.GetKeyUp(KeyCode.Space));
-			var jumpStopper2 = this.UpdateAsObservable()
-								   .SkipUntil(Observable.Timer(TimeSpan.FromSeconds(maxJumpTime)));
+			var jumpStopper1 = JumpSubject.SkipWhile(t => t)
+										  .Select(t => Unit.Default);
+			var jumpStopper2 = Observable.Timer(TimeSpan.FromSeconds(maxJumpTime))
+										 .Select(t => Unit.Default);
 			jumpStopper1.Merge(jumpStopper2)
 						.FirstOrDefault()
 						.Subscribe(t => Rigidbody.gravityScale = GravityScale);
@@ -289,11 +293,20 @@ namespace ProcedualLevels.Views
         }
 
         /// <summary>
-        /// このプレイヤーが歩ける状況であれば歩かせます。
+        /// このプレイヤーの歩行状態を更新します。
         /// </summary>
-        public void Walk()
+        public void ControlWalk(int direction)
 		{
-            WalkSubject.OnNext(Unit.Default);
+            WalkSubject.OnNext(direction);
+            WalkDirection = direction;
+        }
+
+        /// <summary>
+        /// このプレイヤーのジャンプ状態を更新します。
+        /// </summary>
+        public void ControlJump(bool isJumping)
+        {
+            JumpSubject.OnNext(isJumping);
         }
 
         /// <summary>
@@ -301,17 +314,13 @@ namespace ProcedualLevels.Views
         /// </summary>
         private void ActualyWalk()
 		{
-			float velocity = 0;
-			if (Input.GetKey(KeyCode.RightArrow))
-			{
-				velocity += walkSpeed;
-			}
-			if (Input.GetKey(KeyCode.LeftArrow))
-			{
-				velocity -= walkSpeed;
-			}
-			Rigidbody.velocity = Rigidbody.velocity.MergeX(velocity);
+            float velocity = Mathf.Sign(WalkDirection) * walkSpeed;
+            if (WalkDirection == 0)
+            {
+                velocity = 0;
+            }
 
+			Rigidbody.velocity = Rigidbody.velocity.MergeX(velocity);
 			Animation.AnimateWalk(velocity);            
         }
     }

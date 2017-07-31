@@ -12,7 +12,7 @@ namespace ProcedualLevels.Views
     public class GameManager : MonoBehaviour, IAdventureView
     {
         [SerializeField]
-        private new Camera camera;
+        private Camera camera;
         [SerializeField]
         public Script_SpriteStudio_ManagerDraw managerDraw;
         [SerializeField]
@@ -87,7 +87,7 @@ namespace ProcedualLevels.Views
             HeroController = Instantiate(heroPrefab);
             HeroController.transform.position = context.Map.StartLocation;
             HeroController.transform.SetPositionZ(heroPrefab.transform.position.z);
-			HeroController.Initialize(context.Hero, EventFacade);
+			HeroController.Initialize(context.Hero, gameUi, EventFacade);
             HeroController.transform.SetParent(managerDraw.transform);
         }
 
@@ -96,7 +96,7 @@ namespace ProcedualLevels.Views
         {
             if (HeroController != null)
 			{
-				camera.transform.position = HeroController.transform.position.MergeZ(-10);
+				camera.transform.position = HeroController.transform.position.AddY(2).MergeZ(-10);
             }
         }
 

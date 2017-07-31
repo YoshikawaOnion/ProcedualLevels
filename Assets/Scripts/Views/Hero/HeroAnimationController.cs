@@ -105,7 +105,8 @@ namespace ProcedualLevels.Views
                 {
                     PlayAnimation(IdleLeftAnimation, LoopInfinite);
                 }                
-            });
+            })
+                                 .AddTo(Disposable);
         }
 
         /// <summary>

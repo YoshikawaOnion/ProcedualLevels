@@ -214,10 +214,10 @@ namespace ProcedualLevels.Models
                           .ToArray();
             foreach (var room in rooms)
             {
-                for (int i = room.Bottom + platformSpan; i < room.Top - MarginSize; i += platformSpan)
+                for (int i = room.Bottom + platformSpan; i < room.Top - ColliderMargin - 1; i += platformSpan)
                 {
-                    var left = GetRandomInRange(room.Left + ColliderMargin, room.Right - 2 - ColliderMargin);
-                    var right = GetRandomInRange(left + 1, room.Right - 1 - ColliderMargin);
+                    var left = GetRandomInRange(room.Left + ColliderMargin, room.Right - 1 - ColliderMargin);
+                    var right = GetRandomInRange(left + 1, room.Right - ColliderMargin);
                     var platform = new MapPlatform()
                     {
                         Left = left,

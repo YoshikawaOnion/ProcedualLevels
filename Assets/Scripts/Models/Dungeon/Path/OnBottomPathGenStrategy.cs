@@ -50,9 +50,7 @@ namespace ProcedualLevels.Models
                                            MapDivision topDiv,
                                            List<MapConnection> connections)
 		{
-			var list = new List<MapRectangle>();
-            var x = Helper.GetRandomInRange(bottomDiv.Room.Right + DungeonGenAsset.MarginSize + 1,
-                                            bottomDiv.Bound.Right + DungeonGenAsset.MarginSize - 1);
+            var x = ActualVerticalPathThickness + bottomDiv.Room.Right;
 
             var path1 = new MapRectangle();
             path1.Bottom = bottomDiv.Room.Bottom;
