@@ -6,6 +6,6 @@ namespace ProcedualLevels.Models
     {
         public Hero Hero { get; set; }
         public MapData Map { get; set; }
-        public Enemy[] Enemeis { get; set; }
+        public Enemy[] Enemies { get; set; }
     }
 }

@@ -26,12 +26,12 @@ namespace ProcedualLevels.Models
         /// <summary>
         /// この部屋から伸びている通路を取得または設定します。
         /// </summary>
-        public List<MapConnection> ConnectedDivisions { get; private set; }
+        public List<MapConnection> Connections { get; private set; }
         public int ReducingMarker { get; set; }
 
         public MapDivision()
         {
-            ConnectedDivisions = new List<MapConnection>();
+            Connections = new List<MapConnection>();
         }
     }
 }

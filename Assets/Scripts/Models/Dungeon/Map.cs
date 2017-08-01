@@ -9,13 +9,13 @@ namespace ProcedualLevels.Models
         public List<MapDivision> Divisions { get; private set; }
         public Vector2 StartLocation { get; set; }
         public Vector2 GoalLocation { get; set; }
-        public List<Vector2> EnemyLocations { get; private set; }
+        public List<Enemy> Enemies { get; private set; }
         public List<MapPlatform> Platforms { get; private set; }
 
         public MapData()
         {
             Divisions = new List<MapDivision>();
-            EnemyLocations = new List<Vector2>();
+            Enemies = new List<Enemy>();
             Platforms = new List<MapPlatform>();
         }
 
@@ -35,7 +35,7 @@ namespace ProcedualLevels.Models
         {
             foreach (var item in Divisions)
             {
-                foreach (var connection in item.ConnectedDivisions)
+                foreach (var connection in item.Connections)
                 {
                     foreach (var path in connection.Path.GetRooms())
                     {

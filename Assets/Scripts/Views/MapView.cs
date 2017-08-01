@@ -31,7 +31,7 @@ namespace ProcedualLevels.Views
                 obj.GetComponent<BoxCollider2D>().enabled = false;
 
                 InstantiateRect(maze, prefab, division.Room);
-                foreach (var connection in division.ConnectedDivisions)
+                foreach (var connection in division.Connections)
                 {
                     foreach (var segment in connection.Path.GetRooms())
                     {

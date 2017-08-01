@@ -32,10 +32,13 @@ namespace ProcedualLevels.Views
             }
         }
 
+        public IObservable<PowerUp> GetPowerUpObservable { get; private set; }
+
         private void Start()
 		{
 			EventFacade = new GameEventFacade();
 			BattleObservable = EventFacade.OnPlayerBattleWithEnemyReceiver;
+            GetPowerUpObservable = EventFacade.OnPlayerGetPowerUpReceiver;
 
             var asset = Resources.Load<DungeonGenAsset>("Assets/DungeonGenAsset");
             var battlerGen = Resources.Load<BattlerGenAsset>("Assets/BattlerGenAsset");
@@ -55,7 +58,7 @@ namespace ProcedualLevels.Views
         {
             var enemyPrefab = Resources.Load<EnemyController>("Prefabs/Character/Enemy_Control");
             var list = new List<EnemyController>();
-            foreach (var enemy in context.Enemeis)
+            foreach (var enemy in context.Enemies)
             {
                 var obj = Instantiate(enemyPrefab);
                 obj.transform.position = enemy.InitialPosition.ToVector3()
@@ -116,6 +119,15 @@ namespace ProcedualLevels.Views
         {
             var obj = Battlers.FirstOrDefault(x => x.Battler.Index == subject.Index);
             obj.Die();
+        }
+
+        public void PlacePowerUp(int battlerIndex, PowerUp powerUp)
+        {
+            var battler = Battlers.First(x => x.Battler.Index == battlerIndex);
+			var prefab = Resources.Load<PowerUpItemController>("Prefabs/Character/PowerUp");
+            var obj = Instantiate(prefab);
+            obj.Initialize(powerUp, EventFacade);
+            obj.transform.position = battler.transform.position.MergeZ(obj.transform.position.z);
         }
     }
 }

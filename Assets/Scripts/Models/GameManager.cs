@@ -8,6 +8,7 @@ namespace ProcedualLevels.Models
     {
         public void Initialize(DungeonGenAsset asset, BattlerGenAsset battlerGen, IAdventureView view)
         {
+            var map = GenerateMap(asset, battlerGen, view);
             var context = new AdventureContext()
             {
                 Hero = new Hero(0, view)
@@ -16,33 +17,18 @@ namespace ProcedualLevels.Models
                     Hp = { Value = battlerGen.PlayerHp },
                     Attack = { Value = battlerGen.PlayerAttack }
                 },
-                Map = GenerateMap(asset)
+                Enemies = map.Enemies.ToArray(),
+                Map = map,
             };
-            context.Enemeis = context.Map.EnemyLocations
-                .Select((x, i) => new Enemy(i + 1, x, view)
-            {
-                MaxHp = { Value = battlerGen.EnemyHp },
-                Hp = { Value = battlerGen.EnemyHp },
-                Attack = { Value = battlerGen.EnemyAttack }
-            })
-                .ToArray();
             view.Initialize(context);
         }
 
-        public MapData GenerateMap(DungeonGenAsset asset)
+        public MapData GenerateMap(DungeonGenAsset asset, BattlerGenAsset battlerAsset, IAdventureView view)
         {
-            var generator = new MapGenerator()
-            {
-                MarginSize = asset.MarginSize,
-                HorizontalPathThickness = asset.HorizontalPathThickness,
-                VerticalPathThickness = asset.VerticalPathThickness,
-                PathReducingChance = asset.PathReducingChance,
-                EnemyCountRatio = asset.EnemyCountRatio,
-                PlatformSpan = asset.PlatformSpan,
-            };
+            var generator = new MapGenerator(battlerAsset, asset);
             var leftBottom = new Vector2(-asset.WorldWidth / 2, -asset.WorldHeight / 2);
             var rightTop = new Vector2(asset.WorldWidth / 2, asset.WorldHeight / 2);
-            return generator.GenerateMap(leftBottom, rightTop);
+            return generator.GenerateMap(leftBottom, rightTop, view);
         }
     }
 }

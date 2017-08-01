@@ -12,15 +12,21 @@ namespace ProcedualLevels.Views
         IObserver<Models.Enemy> OnPlayerBattleWithEnemySender { get; }
     }
 
+    public interface IPowerUpItemEventAccepter
+	{
+		IObserver<Models.PowerUp> OnPlayerGetPowerUpSender { get; }
+    }
+
     public interface IGameEventReceiver
     {
         IObservable<Collision2D> OnPlayerCollideWithEggReceiver { get; }
         IObservable<Collision2D> OnPlayerCollideWithTerrainReceiver { get; }
         IObservable<Collision2D> OnPlayerCollideWithEnemyReceiver { get; }
         IObservable<Models.Enemy> OnPlayerBattleWithEnemyReceiver { get; }
+        IObservable<Models.PowerUp> OnPlayerGetPowerUpReceiver { get; }
     }
 
-    public class GameEventFacade : IPlayerEventAccepter,
+    public class GameEventFacade : IPlayerEventAccepter, IPowerUpItemEventAccepter,
         IGameEventReceiver
     {
         public IObservable<Collision2D> OnPlayerCollideWithEggReceiver { get { return onPlayerCollideWithEgg; } }
@@ -38,5 +44,9 @@ namespace ProcedualLevels.Views
         public IObservable<Models.Enemy> OnPlayerBattleWithEnemyReceiver { get { return onPlayerBattleWithEnemy; } }
         public IObserver<Models.Enemy> OnPlayerBattleWithEnemySender { get { return onPlayerBattleWithEnemy; } }
         private Subject<Models.Enemy> onPlayerBattleWithEnemy = new Subject<Models.Enemy>();
+
+        public IObservable<Models.PowerUp> OnPlayerGetPowerUpReceiver { get { return onPlayerGetPowerUp; } }
+        public IObserver<Models.PowerUp> OnPlayerGetPowerUpSender { get { return onPlayerGetPowerUp; } }
+        private Subject<Models.PowerUp> onPlayerGetPowerUp = new Subject<Models.PowerUp>();
     }
 }

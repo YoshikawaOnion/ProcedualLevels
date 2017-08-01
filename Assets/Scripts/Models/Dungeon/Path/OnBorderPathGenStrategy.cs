@@ -35,7 +35,7 @@ namespace ProcedualLevels.Models
                 {
                     var path = CreatePath(bottomDiv, topDiv, horizontal, list);
                     var connection = new MapConnection(bottomDiv, topDiv, path, horizontal);
-                    bottomDiv.ConnectedDivisions.Add(connection);
+                    bottomDiv.Connections.Add(connection);
                     list.Add(connection);
                 }
             }

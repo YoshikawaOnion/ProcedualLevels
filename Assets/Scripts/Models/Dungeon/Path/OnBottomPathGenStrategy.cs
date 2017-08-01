@@ -24,7 +24,7 @@ namespace ProcedualLevels.Models
 				{
 					var path = CreatePath(bottomDiv, topDiv, list);
 					var connection = new MapConnection(bottomDiv, topDiv, path, true);
-					bottomDiv.ConnectedDivisions.Add(connection);
+					bottomDiv.Connections.Add(connection);
 					list.Add(connection);
 				}
                 //*/
@@ -42,7 +42,7 @@ namespace ProcedualLevels.Models
                             continue;
                         }
                         var connection = new MapConnection(bottomDiv, topDiv, path, true);
-						bottomDiv.ConnectedDivisions.Add(connection);
+						bottomDiv.Connections.Add(connection);
 						list.Add(connection);
                     }
                 }

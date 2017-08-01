@@ -8,6 +8,7 @@ namespace ProcedualLevels.Models
     public class Enemy : Battler
     {
         public Vector2 InitialPosition { get; private set; }
+        public bool DropPowerUp { get; set; }
 
         public Enemy(int index, Vector2 initialPos, IAdventureView view)
             : base(index, view)
@@ -22,6 +23,10 @@ namespace ProcedualLevels.Models
 			{
 				Hp.Value += 1;
 			});
+
+            IsAlive.Where(x => !x && DropPowerUp)
+                   .FirstOrDefault()
+                   .Subscribe(x => view.PlacePowerUp(index, new PowerUp() { AttackRising = 1 } ));
         }
     }
 }

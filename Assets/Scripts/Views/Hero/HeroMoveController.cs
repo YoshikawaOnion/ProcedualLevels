@@ -136,16 +136,7 @@ namespace ProcedualLevels.Views
                        .AddTo(JumpStateDisposable);
             //*/
 
-            // 逆の方向キーを押すとジャンプ状態に遷移
-            /*
-            WalkSubject.SkipWhile(x => x * direction <= 0)
-                       .SkipUntil(Observable.Timer(TimeSpan.FromMilliseconds(500)))
-                       .FirstOrDefault()
-                       .Subscribe(x => CheckJump())
-                       .AddTo(JumpStateDisposable);
-            //*/
-
-            // ずり落ちたらジャンプ状態へ遷移
+            // ずり落ちたり壁を離れたらジャンプ状態へ遷移
             WallDetecter.OnTriggerExit2DAsObservable()
                         .Where(x => x.gameObject.tag == Def.TerrainTag
                                || x.gameObject.tag == Def.PlatformTag)

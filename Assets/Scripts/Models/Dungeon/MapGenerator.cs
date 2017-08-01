@@ -13,50 +13,23 @@ namespace ProcedualLevels.Models
     /// </summary>
     public class MapGenerator
     {
-        /// <summary>
-        /// 部屋の属する区画に対する余白サイズを取得または設定します。
-        /// </summary>
-        public int MarginSize { get; set; }
-        /// <summary>
-        /// 水平な通路の幅を取得または設定します。
-        /// </summary>
-        public int HorizontalPathThickness { get; set; }
-        /// <summary>
-        /// 鉛直な通路の幅を取得または設定します。
-        /// </summary>
-        public int VerticalPathThickness { get; set; }
-        /// <summary>
-        /// 一部屋あたりの、通路の削除を試みる回数を取得または設定します。
-        /// </summary>
-        public float PathReducingChance { get; set; }
-        /// <summary>
-        /// 一部屋あたりの敵がいるマスの割合を取得または設定します。
-        /// </summary>
-        public float EnemyCountRatio { get; set; }
-        /// <summary>
-        /// すり抜け防止用のColliderのための余白サイズを取得または設定します。
-        /// </summary>
-        public int ColliderMargin { get; set; }
-
         public int ActualHorizontalPathThickness
         {
-            get { return HorizontalPathThickness + ColliderMargin * 2; }
+            get { return DungeonAsset.HorizontalPathThickness + DungeonAsset.ColliderMargin * 2; }
         }
 
         public int ActualVerticalPathThickness
         {
-            get { return VerticalPathThickness + ColliderMargin * 2; }
+            get { return DungeonAsset.VerticalPathThickness + DungeonAsset.ColliderMargin * 2; }
         }
 
-        public int PlatformSpan { get; set; }
+        private BattlerGenAsset BattlerAsset { get; set; }
+        private DungeonGenAsset DungeonAsset { get; set; }
 
-        public MapGenerator()
+        public MapGenerator(BattlerGenAsset battlerAsset, DungeonGenAsset dungeonAsset)
         {
-            MarginSize = 2;
-            HorizontalPathThickness = 2;
-            PathReducingChance = 4;
-            EnemyCountRatio = 0.03f;
-            ColliderMargin = 1;
+            BattlerAsset = battlerAsset;
+            DungeonAsset = dungeonAsset;
         }
 
         /// <summary>
@@ -65,11 +38,10 @@ namespace ProcedualLevels.Models
         /// <returns>生成したマップ。</returns>
         /// <param name="leftBottom">生成範囲の左下の座標</param>
         /// <param name="rightTop">生成範囲の右上の座標</param>
-        public MapData GenerateMap(Vector2 leftBottom, Vector2 rightTop)
+        public MapData GenerateMap(Vector2 leftBottom, Vector2 rightTop, IAdventureView view)
         {
             var map = new MapData();
 
-            MarginSize = Mathf.Max(ActualVerticalPathThickness, ActualHorizontalPathThickness) + 1;
             GenerateRooms(leftBottom, rightTop, map);
 
             var pathGen = new OnBottomPathGenStrategy();
@@ -78,7 +50,7 @@ namespace ProcedualLevels.Models
             ReducePathesAtRandom(map);
 
             PlaceStartAndGoal(map);
-            PlaceEnemies(map);
+            PlaceEnemies(map, view);
             PlacePlatforms(map);
 
             return map;
@@ -109,24 +81,25 @@ namespace ProcedualLevels.Models
         private void ReducePathesAtRandom(MapData map)
         {
             var head = map.Divisions[0];
-            var loop = (int)(map.Divisions.Count * PathReducingChance);
+            var loop = (int)(map.Divisions.Count * DungeonAsset.PathReducingChance);
 
             MarkConnectedRooms(head, 0);
             for (int i = 0; i < loop; i++)
             {
                 var divIndex = GetRandomInRange(0, map.Divisions.Count - 1);
-                if (map.Divisions[divIndex].ConnectedDivisions.Count == 0)
+                var connections = map.Divisions[divIndex].Connections;
+                if (connections.Count == 0)
                 {
                     continue;
                 }
 
-                var pathIndex = GetRandomInRange(0, map.Divisions[divIndex].ConnectedDivisions.Count - 1);
-                if (pathIndex >= map.Divisions[divIndex].ConnectedDivisions.Count)
+                var pathIndex = GetRandomInRange(0, connections.Count - 1);
+                if (pathIndex >= connections.Count)
                 {
                     continue;
                 }
-                var path = map.Divisions[divIndex].ConnectedDivisions[pathIndex];
-                map.Divisions[divIndex].ConnectedDivisions.RemoveAt(pathIndex);
+                var path = connections[pathIndex];
+                connections.RemoveAt(pathIndex);
 
                 MarkConnectedRooms(head, i + 1);
 
@@ -134,7 +107,7 @@ namespace ProcedualLevels.Models
                 {
                     if (item.ReducingMarker != i + 1)
                     {
-                        map.Divisions[divIndex].ConnectedDivisions.Add(path);
+                        connections.Add(path);
                         break;
                     }
                 }
@@ -153,7 +126,7 @@ namespace ProcedualLevels.Models
                 return;
             }
             root.ReducingMarker = index;
-            foreach (var item in root.ConnectedDivisions)
+            foreach (var item in root.Connections)
             {
 				MarkConnectedRooms(item.BottomDivision, index);
 				MarkConnectedRooms(item.TopDivision, index);
@@ -164,18 +137,29 @@ namespace ProcedualLevels.Models
         /// 敵キャラクターの配置を設定します。
         /// </summary>
         /// <param name="map">設定を書き込むマップデータ。</param>
-		private void PlaceEnemies(MapData map)
+		private void PlaceEnemies(MapData map, IAdventureView view)
 		{
+            int index = 1;
 			foreach (var item in map.Divisions)
 			{
-				var count = (int)(item.Room.Width * item.Room.Height * EnemyCountRatio);
+                var count = (int)((item.Room.Width - 1)
+                                  * (item.Room.Height - 1)
+                                  * DungeonAsset.EnemyCountRatio);
 				for (int i = 0; i < count; i++)
 				{
-					var pos = GetRandomLocation(item.Room, ColliderMargin);
+					var pos = GetRandomLocation(item.Room, DungeonAsset.ColliderMargin);
 					if (pos != map.GoalLocation
-					   && pos.x != map.StartLocation.x)
+					   && (int)pos.x != (int)map.StartLocation.x)
 					{
-						map.EnemyLocations.Add(pos);
+                        var enemy = new Enemy(index, pos, view)
+						{
+							MaxHp = { Value = BattlerAsset.EnemyHp },
+                            Hp = { Value = BattlerAsset.EnemyHp },
+                            Attack = {Value = BattlerAsset.EnemyAttack},
+                            DropPowerUp = i == 0
+                        };
+						map.Enemies.Add(enemy);
+                        ++index;
 					}
 				}
 			}
@@ -189,20 +173,12 @@ namespace ProcedualLevels.Models
 		{
             var startDivision = map.Divisions.MinItem(x => x.Room.Left);
 
-            map.StartLocation = GetRandomLocation(startDivision.Room, ColliderMargin);
+            map.StartLocation = GetRandomLocation(startDivision.Room, DungeonAsset.ColliderMargin);
 
-            MapDivision goalDivision;
-			while (true)
-			{
-                goalDivision = map.Divisions.MaxItem(x => x.Room.Right);
-				if (startDivision.Index != goalDivision.Index
-                   || map.Divisions.Count < 2)
-				{
-					break;
-				}
-			}
+			MapDivision goalDivision;
+			goalDivision = map.Divisions.MaxItem(x => x.Room.Right);
 
-			map.GoalLocation = GetRandomLocation(goalDivision.Room, ColliderMargin);
+			map.GoalLocation = GetRandomLocation(goalDivision.Room, DungeonAsset.ColliderMargin);
 		}
 
         /// <summary>
@@ -213,12 +189,16 @@ namespace ProcedualLevels.Models
         {
             var rooms = map.Divisions.Select(x => x.Room)
                           .ToArray();
+            var colliderMargin = DungeonAsset.ColliderMargin;
+
             foreach (var room in rooms)
             {
-                for (int i = room.Bottom + PlatformSpan; i < room.Top - ColliderMargin - 1; i += PlatformSpan)
+                var bottom = room.Bottom + DungeonAsset.PlatformSpan;
+                var top = room.Top - colliderMargin - 1;
+                for (int i = bottom; i < top; i += DungeonAsset.PlatformSpan)
                 {
-                    var left = GetRandomInRange(room.Left + ColliderMargin, room.Right - 1 - ColliderMargin);
-                    var right = GetRandomInRange(left + 1, room.Right - ColliderMargin);
+                    var left = GetRandomInRange(room.Left + colliderMargin, room.Right - 1 - colliderMargin);
+                    var right = GetRandomInRange(left + 1, room.Right - colliderMargin);
                     var platform = new MapPlatform()
                     {
                         Left = left,
@@ -229,7 +209,6 @@ namespace ProcedualLevels.Models
                 }
             }
         }
-
 
         /// <summary>
         /// 指定した範囲内の乱数を返します。

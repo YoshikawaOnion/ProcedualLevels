@@ -17,6 +17,12 @@ namespace ProcedualLevels.Models
                 view.Knockback(this, x, x.Attack.Value);
                 view.Knockback(x, this, Attack.Value);
             });
+            view.GetPowerUpObservable.Subscribe(x =>
+            {
+                Attack.Value += x.AttackRising;
+                x.Gotten();
+            });
+
             Observable.Interval(TimeSpan.FromMilliseconds(500))
                       .Skip(2)
                       .TakeUntil(view.BattleObservable)
