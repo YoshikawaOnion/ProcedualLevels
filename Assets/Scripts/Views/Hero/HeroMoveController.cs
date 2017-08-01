@@ -44,6 +44,7 @@ namespace ProcedualLevels.Views
         private HeroController Hero { get; set; }
         private Rigidbody2D Rigidbody { get; set; }
         private HeroAnimationController Animation { get; set; }
+        private Collider2D WallDetecter { get; set; }
 
         private float GravityScale { get; set; }
         private int JumpCount { get; set; }
@@ -59,6 +60,7 @@ namespace ProcedualLevels.Views
             Animation = GetComponent<HeroAnimationController>();
             WalkSubject = new Subject<int>();
             JumpSubject = new Subject<bool>();
+            WallDetecter = transform.Find("WallDetecter").GetComponent<Collider2D>();
             JumpCount = 0;
             GravityScale = Rigidbody.gravityScale;
             SetFullJumpState();
@@ -135,22 +137,21 @@ namespace ProcedualLevels.Views
             //*/
 
             // 逆の方向キーを押すとジャンプ状態に遷移
-            //*
+            /*
             WalkSubject.SkipWhile(x => x * direction <= 0)
-                       .SkipUntil(Observable.Timer(TimeSpan.FromMilliseconds(320)))
+                       .SkipUntil(Observable.Timer(TimeSpan.FromMilliseconds(500)))
                        .FirstOrDefault()
                        .Subscribe(x => CheckJump())
                        .AddTo(JumpStateDisposable);
             //*/
 
             // ずり落ちたらジャンプ状態へ遷移
-            Hero.OnCollisionExit2DAsObservable()
-                .SkipUntil(Observable.Timer(TimeSpan.FromMilliseconds(500)))
-                .Where(x => x.gameObject.tag == Def.TerrainTag
-                      || x.gameObject.tag == Def.PlatformTag)
-                .FirstOrDefault()
-                .Subscribe(x => CheckJump())
-                .AddTo(JumpStateDisposable);
+            WallDetecter.OnTriggerExit2DAsObservable()
+                        .Where(x => x.gameObject.tag == Def.TerrainTag
+                               || x.gameObject.tag == Def.PlatformTag)
+                        .FirstOrDefault()
+                        .Subscribe(x => CheckJump())
+                        .AddTo(JumpStateDisposable);
 
             // 順方向のキーを押し込むと落下速度が減少
             WalkSubject.SkipWhile(x => Rigidbody.velocity.y > 0)

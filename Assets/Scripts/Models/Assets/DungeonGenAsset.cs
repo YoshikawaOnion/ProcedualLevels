@@ -24,5 +24,6 @@ namespace ProcedualLevels.Models
         [Tooltip("一部屋に対する敵のいるマスの割合")]
         public float EnemyCountRatio = 0.01f;
         public int ColliderMargin;
+        public int PlatformSpan = 2;
     }
 }

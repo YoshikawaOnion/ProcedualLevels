@@ -37,13 +37,25 @@ namespace ProcedualLevels.Models
                     if (topDiv.Room.Right <= bottomDiv.Room.Right)
 					{
 						var path = CreateVerticalPath(bottomDiv, topDiv, list);
-						var connection = new MapConnection(bottomDiv, topDiv, path, true);
+                        if (IsThereSlimWall(map, path))
+                        {
+                            continue;
+                        }
+                        var connection = new MapConnection(bottomDiv, topDiv, path, true);
 						bottomDiv.ConnectedDivisions.Add(connection);
 						list.Add(connection);
                     }
                 }
                 //*/
             }
+        }
+
+        private bool IsThereSlimWall(MapData map, IMapPath path)
+        {
+            return map.Divisions.Any(x =>
+            {
+                return path.GetRooms().Any(y => x.Room.Bottom - y.Top == 1);
+            });
         }
 
         private IMapPath CreateVerticalPath(MapDivision bottomDiv,

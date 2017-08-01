@@ -38,6 +38,7 @@ namespace ProcedualLevels.Models
                 VerticalPathThickness = asset.VerticalPathThickness,
                 PathReducingChance = asset.PathReducingChance,
                 EnemyCountRatio = asset.EnemyCountRatio,
+                PlatformSpan = asset.PlatformSpan,
             };
             var leftBottom = new Vector2(-asset.WorldWidth / 2, -asset.WorldHeight / 2);
             var rightTop = new Vector2(asset.WorldWidth / 2, asset.WorldHeight / 2);

@@ -48,6 +48,8 @@ namespace ProcedualLevels.Models
             get { return VerticalPathThickness + ColliderMargin * 2; }
         }
 
+        public int PlatformSpan { get; set; }
+
         public MapGenerator()
         {
             MarginSize = 2;
@@ -209,12 +211,11 @@ namespace ProcedualLevels.Models
         /// <param name="map">設定を書き込むマップデータ。</param>
         private void PlacePlatforms(MapData map)
         {
-            int platformSpan = 3;
             var rooms = map.Divisions.Select(x => x.Room)
                           .ToArray();
             foreach (var room in rooms)
             {
-                for (int i = room.Bottom + platformSpan; i < room.Top - ColliderMargin - 1; i += platformSpan)
+                for (int i = room.Bottom + PlatformSpan; i < room.Top - ColliderMargin - 1; i += PlatformSpan)
                 {
                     var left = GetRandomInRange(room.Left + ColliderMargin, room.Right - 1 - ColliderMargin);
                     var right = GetRandomInRange(left + 1, room.Right - ColliderMargin);
