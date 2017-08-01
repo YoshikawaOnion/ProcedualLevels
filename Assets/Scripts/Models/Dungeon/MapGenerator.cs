@@ -49,9 +49,14 @@ namespace ProcedualLevels.Models
 
             ReducePathesAtRandom(map);
 
-            PlaceStartAndGoal(map);
-            PlaceEnemies(map, view);
-            PlacePlatforms(map);
+			PlaceStartAndGoal(map);
+			PlacePlatforms(map);
+
+            var enemyDatabase = new EnemyDatabase();
+            foreach (var ability in enemyDatabase.Enemies)
+            {
+                ability.GenerationStrategy.PlaceEnemies(map, ability, view);
+            }
 
             return map;
         }
@@ -132,38 +137,6 @@ namespace ProcedualLevels.Models
 				MarkConnectedRooms(item.TopDivision, index);
             }
         }
-
-        /// <summary>
-        /// 敵キャラクターの配置を設定します。
-        /// </summary>
-        /// <param name="map">設定を書き込むマップデータ。</param>
-		private void PlaceEnemies(MapData map, IAdventureView view)
-		{
-            int index = 1;
-			foreach (var item in map.Divisions)
-			{
-                var count = (int)((item.Room.Width - 1)
-                                  * (item.Room.Height - 1)
-                                  * DungeonAsset.EnemyCountRatio);
-				for (int i = 0; i < count; i++)
-				{
-					var pos = GetRandomLocation(item.Room, DungeonAsset.ColliderMargin);
-					if (pos != map.GoalLocation
-					   && (int)pos.x != (int)map.StartLocation.x)
-					{
-                        var enemy = new Enemy(index, pos, view)
-						{
-							MaxHp = { Value = BattlerAsset.EnemyHp },
-                            Hp = { Value = BattlerAsset.EnemyHp },
-                            Attack = {Value = BattlerAsset.EnemyAttack},
-                            DropPowerUp = i == 0
-                        };
-						map.Enemies.Add(enemy);
-                        ++index;
-					}
-				}
-			}
-		}
 
         /// <summary>
         /// スタート地点とゴール地点を設定します。

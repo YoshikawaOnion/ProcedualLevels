@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using ProcedualLevels.Common;
 using ProcedualLevels.Models;
@@ -24,29 +25,29 @@ namespace ProcedualLevels.Views
         public IObservable<Models.Enemy> BattleObservable { get; private set; }
         public BattlerController[] Battlers
         {
-			get
-			{
-				return EnemyControllers.Cast<BattlerController>()
-									   .Append(HeroController)
-									   .ToArray();
+            get
+            {
+                return EnemyControllers.Cast<BattlerController>()
+                                       .Append(HeroController)
+                                       .ToArray();
             }
         }
 
         public IObservable<PowerUp> GetPowerUpObservable { get; private set; }
 
         private void Start()
-		{
-			EventFacade = new GameEventFacade();
-			BattleObservable = EventFacade.OnPlayerBattleWithEnemyReceiver;
+        {
+            EventFacade = new GameEventFacade();
+            BattleObservable = EventFacade.OnPlayerBattleWithEnemyReceiver;
             GetPowerUpObservable = EventFacade.OnPlayerGetPowerUpReceiver;
 
             var asset = Resources.Load<DungeonGenAsset>("Assets/DungeonGenAsset");
             var battlerGen = Resources.Load<BattlerGenAsset>("Assets/BattlerGenAsset");
             var model = new Models.GameManager();
-			model.Initialize(asset, battlerGen, this);
+            model.Initialize(asset, battlerGen, this);
         }
 
-		public void Initialize(AdventureContext context)
+        public void Initialize(AdventureContext context)
         {
             SetMapUp(context);
             SetHeroUp(context);
@@ -56,17 +57,28 @@ namespace ProcedualLevels.Views
 
         private void SetEnemiesUp(AdventureContext context)
         {
-            var enemyPrefab = Resources.Load<EnemyController>("Prefabs/Character/Enemy_Control");
+            var prefabs = new Dictionary<string, EnemyController>();
             var list = new List<EnemyController>();
+
             foreach (var enemy in context.Enemies)
             {
-                var obj = Instantiate(enemyPrefab);
-                obj.transform.position = enemy.InitialPosition.ToVector3()
-                    .MergeZ(enemyPrefab.transform.position.z);
+                EnemyController prefab;
+                if (!prefabs.TryGetValue(enemy.Ability.PrefabName, out prefab))
+                {
+                    prefab = Resources.Load<EnemyController>
+                                      ("Prefabs/Character/" + enemy.Ability.PrefabName);
+                    prefabs[enemy.Ability.PrefabName] = prefab;
+                }
+
+                var obj = Instantiate(prefab);
+                obj.transform.position = enemy.InitialPosition
+                    .ToVector3()
+                    .MergeZ(prefab.transform.position.z);
                 obj.Initialize(enemy, EventFacade);
                 obj.transform.SetParent(managerDraw.transform);
                 list.Add(obj);
             }
+
             EnemyControllers = list.ToArray();
         }
 
@@ -86,11 +98,11 @@ namespace ProcedualLevels.Views
 
         private void SetHeroUp(AdventureContext context)
         {
-			var heroPrefab = Resources.Load<HeroController>("Prefabs/Character/Hero");
+            var heroPrefab = Resources.Load<HeroController>("Prefabs/Character/Hero");
             HeroController = Instantiate(heroPrefab);
             HeroController.transform.position = context.Map.StartLocation;
             HeroController.transform.SetPositionZ(heroPrefab.transform.position.z);
-			HeroController.Initialize(context.Hero, gameUi, EventFacade);
+            HeroController.Initialize(context.Hero, gameUi, EventFacade);
             HeroController.transform.SetParent(managerDraw.transform);
         }
 
@@ -98,8 +110,8 @@ namespace ProcedualLevels.Views
         void Update()
         {
             if (HeroController != null)
-			{
-				camera.transform.position = HeroController.transform.position.AddY(2).MergeZ(-10);
+            {
+                camera.transform.position = HeroController.transform.position.AddY(2).MergeZ(-10);
             }
         }
 
@@ -124,7 +136,7 @@ namespace ProcedualLevels.Views
         public void PlacePowerUp(int battlerIndex, PowerUp powerUp)
         {
             var battler = Battlers.First(x => x.Battler.Index == battlerIndex);
-			var prefab = Resources.Load<PowerUpItemController>("Prefabs/Character/PowerUp");
+            var prefab = Resources.Load<PowerUpItemController>("Prefabs/Character/PowerUp");
             var obj = Instantiate(prefab);
             obj.Initialize(powerUp, EventFacade);
             obj.transform.position = battler.transform.position.MergeZ(obj.transform.position.z);

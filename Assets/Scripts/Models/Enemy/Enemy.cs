@@ -9,11 +9,16 @@ namespace ProcedualLevels.Models
     {
         public Vector2 InitialPosition { get; private set; }
         public bool DropPowerUp { get; set; }
+        public EnemiesAbility Ability { get; set; }
 
-        public Enemy(int index, Vector2 initialPos, IAdventureView view)
+        public Enemy(int index, Vector2 initialPos, EnemiesAbility ability, IAdventureView view)
             : base(index, view)
         {
             InitialPosition = initialPos;
+            MaxHp.Value = ability.Hp;
+            Hp.Value = ability.Hp;
+            Attack.Value = ability.Attack;
+            Ability = ability;
 
 			Observable.Interval(TimeSpan.FromMilliseconds(500))
 					  .Skip(2)
