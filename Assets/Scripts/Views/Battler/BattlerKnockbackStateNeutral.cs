@@ -10,8 +10,8 @@ namespace ProcedualLevels.Views
 	/// </summary>
 	public class BattlerKnockbackStateNeutral : BattlerKnockbackState
 	{
-		private static readonly float KnockbackFactor = 150;
-		private static readonly float KnockbackJumpPower = 100;
+		private static readonly float KnockbackFactor = 100;
+		private static readonly float KnockbackJumpPower = 50;
 
         public BattlerKnockbackStateNeutral(BattlerController context) : base(context)
         {
@@ -27,7 +27,8 @@ namespace ProcedualLevels.Views
             var direction = -(against.transform.position - Context.transform.position)
                 .MergeY(0)
                 .normalized;
-            var force = direction * power * KnockbackFactor;
+            var finalPower = Mathf.Clamp(power, 1, 4);
+            var force = direction * finalPower * KnockbackFactor;
             var jump = new Vector3(0, KnockbackJumpPower, 0);
 
             Context.Rigidbody.velocity = Vector3.zero;

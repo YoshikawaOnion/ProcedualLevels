@@ -6,6 +6,9 @@ namespace ProcedualLevels.Models
 {
     public abstract class EnemyGenStrategy
     {
-        public abstract void PlaceEnemies(MapData map, EnemiesAbility ability, IAdventureView view);
+        public abstract void PlaceEnemies(MapData map,
+                                          EnemiesAbility ability,
+                                          IAdventureView view,
+                                          ref int index);
     }
 }

@@ -62,6 +62,11 @@ public class MapRectangle
         return string.Format("[MapRectangle: Left={0}, Right={1}, Top={2}, Bottom={3}]", Left, Right, Top, Bottom);
     }
 
+    public bool IsInside(float x, float y)
+    {
+        return x >= Left && x < Right && y >= Bottom && y < Top;
+    }
+
 	/// <summary>
 	/// 指定した軸に沿った正の方向の端の座標を取得します。
 	/// </summary>

@@ -53,9 +53,10 @@ namespace ProcedualLevels.Models
 			PlacePlatforms(map);
 
             var enemyDatabase = new EnemyDatabase();
+            int index = 1;
             foreach (var ability in enemyDatabase.Enemies)
             {
-                ability.GenerationStrategy.PlaceEnemies(map, ability, view);
+                ability.GenerationStrategy.PlaceEnemies(map, ability, view, ref index);
             }
 
             return map;

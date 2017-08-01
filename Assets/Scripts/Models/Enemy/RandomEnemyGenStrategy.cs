@@ -10,16 +10,20 @@ namespace ProcedualLevels.Models
         private BattlerGenAsset BattlerAsset { get; set; }
         private DungeonGenAsset DungeonAsset { get; set; }
 
-        public RandomEnemyGenStrategy(float ratio, BattlerGenAsset battlerAsset, DungeonGenAsset dungeonAsset)
+        public RandomEnemyGenStrategy(float ratio,
+                                      BattlerGenAsset battlerAsset,
+                                      DungeonGenAsset dungeonAsset)
         {
             Ratio = ratio;
             BattlerAsset = battlerAsset;
             DungeonAsset = dungeonAsset;
         }
 
-        public override void PlaceEnemies(MapData map, EnemiesAbility ability, IAdventureView view)
+        public override void PlaceEnemies(MapData map,
+                                          EnemiesAbility ability,
+                                          IAdventureView view,
+                                          ref int index)
 		{
-			int index = 1;
 			foreach (var item in map.Divisions)
 			{
 				var count = (int)((item.Room.Width - 1)
@@ -39,7 +43,7 @@ namespace ProcedualLevels.Models
 						++index;
 					}
 				}
-			}            
+			}
         }
     }
 }
