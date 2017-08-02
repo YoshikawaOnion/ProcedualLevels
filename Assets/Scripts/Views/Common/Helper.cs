@@ -14,5 +14,10 @@ namespace ProcedualLevels.Common
             }
             return (UnityEngine.Random.value * (max - min)) + min;
         }
+
+        public static int Sign(float value)
+        {
+            return Mathf.Abs(value) <= float.Epsilon ? 0 : (int)Mathf.Sign(value);
+        }
     }
 }

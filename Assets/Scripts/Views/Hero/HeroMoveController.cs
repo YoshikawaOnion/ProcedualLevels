@@ -20,16 +20,6 @@ namespace ProcedualLevels.Views
         private float groundNormalXRange = 0;
         [SerializeField]
         private int maxJumpCount = 0;
-        [SerializeField]
-        private float walkSpeed = 0;
-        [SerializeField]
-        private float minSpeed = 0;
-        [SerializeField]
-        private float maxSpeed = 0;
-        [SerializeField]
-        private float movingAccel = 0;
-        [SerializeField]
-        private float stoppingAccel = 0;
         [Tooltip("ジャンプ中の加速度倍率")]
         [SerializeField]
         private float jumpingAccelScale = 0;
@@ -45,6 +35,7 @@ namespace ProcedualLevels.Views
         private Rigidbody2D Rigidbody { get; set; }
         private HeroAnimationController Animation { get; set; }
         private Collider2D WallDetecter { get; set; }
+        private WalkController WalkController { get; set; }
 
         private float GravityScale { get; set; }
         private int JumpCount { get; set; }
@@ -58,6 +49,7 @@ namespace ProcedualLevels.Views
             Hero = GetComponent<HeroController>();
             Rigidbody = GetComponent<Rigidbody2D>();
             Animation = GetComponent<HeroAnimationController>();
+            WalkController = GetComponent<WalkController>();
             WalkSubject = new Subject<int>();
             JumpSubject = new Subject<bool>();
             WallDetecter = transform.Find("WallDetecter").GetComponent<Collider2D>();
@@ -84,7 +76,7 @@ namespace ProcedualLevels.Views
         /// </summary>
         public void SetGroundState()
         {
-            Debug.Log("State: Ground");
+            //Debug.Log("State: Ground");
             InitializeState();
             ActivateJump();
             ActivateWalk(1);
@@ -96,7 +88,7 @@ namespace ProcedualLevels.Views
         /// </summary>
         public void SetJumpState()
         {
-            Debug.Log("State: Jump");
+            //Debug.Log("State: Jump");
             InitializeState();
             ActivateJump();
             ActivateGroundCheck();
@@ -109,7 +101,7 @@ namespace ProcedualLevels.Views
         /// </summary>
         public void SetFullJumpState()
         {
-            Debug.Log("State: FullJump");
+            //Debug.Log("State: FullJump");
             InitializeState();
             ActivateGroundCheck();
             ActivateGrab();
@@ -122,7 +114,7 @@ namespace ProcedualLevels.Views
         /// <param name="direction">壁との接点の法線X方向。</param>
         public void SetGrabingWallState(float direction)
         {
-            Debug.Log("State: GrabingWall");
+            //Debug.Log("State: GrabingWall");
             InitializeState();
             ActivateGroundCheck();
             ActivateWalk(jumpingAccelScale);
@@ -157,7 +149,7 @@ namespace ProcedualLevels.Views
         /// </summary>
         public void SetWallJumpState()
         {
-            Debug.Log("State: WallJump");
+            //Debug.Log("State: WallJump");
             InitializeState();
             ActivateGroundCheck();
             ActivateGrab();
@@ -352,47 +344,10 @@ namespace ProcedualLevels.Views
         /// </summary>
         private void ActualyWalk(float powerScale)
         {
-            var velocity = Rigidbody.velocity.x;
+            WalkController.Walk(WalkDirection, powerScale);
 
-            if (Mathf.Abs(velocity) <= float.Epsilon)
-            {
-                // 静止中は初速で歩き始める
-                if (WalkDirection != 0)
-                {
-                    var v = Mathf.Sign(WalkDirection) * minSpeed;
-                    velocity = v;
-                }
-            }
-            else
-            {
-                // 静止操作をしている
-                if (WalkDirection * velocity < 0)
-                {
-                    var a = Mathf.Sign(WalkDirection) * stoppingAccel * powerScale;
-                    velocity = velocity + a;
-                    if (Mathf.Abs(velocity) <= stoppingAccel)
-                    {
-                        velocity = 0;
-                    }
-                }
-                else if (WalkDirection == 0)
-                {
-                    var a = -Mathf.Sign(velocity) * stoppingAccel * powerScale;
-                    velocity = velocity + a;
-                    if (Mathf.Abs(velocity) <= stoppingAccel)
-                    {
-                        velocity = 0;
-                    }
-                }
-                // 加速操作をしている
-                else if (Mathf.Abs(velocity) < maxSpeed)
-                {
-                    var a = Mathf.Sign(WalkDirection) * movingAccel * powerScale;
-                    velocity = velocity + a;
-                }
-            }
-            Rigidbody.velocity = Rigidbody.velocity.MergeX(velocity);
-            Animation.AnimateWalk(Mathf.Abs(velocity) <= float.Epsilon ? 0 : Mathf.Sign(velocity));
+            var velocity = Rigidbody.velocity.x;
+            Animation.AnimateWalk(Mathf.Abs(velocity) < 1 ? 0 : Mathf.Sign(velocity));
         }
     }
 }

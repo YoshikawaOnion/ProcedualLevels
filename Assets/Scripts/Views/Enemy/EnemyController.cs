@@ -11,30 +11,23 @@ namespace ProcedualLevels.Views
     /// <summary>
     /// 敵キャラクターの振る舞いを提供するクラス。
     /// </summary>
-    public class EnemyController : BattlerController
+    public abstract class EnemyController : BattlerController
     {
-        [SerializeField]
-        public float WalkSpeed;
-
         public Models.Enemy Enemy { get; private set; }
-        public EnemyFindState FindState { get; set; }
-        private EnemyAnimationController Animation { get; set; }
+        protected EnemyAnimationController Animation { get; set; }
+        protected AdventureViewContext Context { get; set; }
 
-        public void Initialize(Models.Enemy enemy, IGameEventReceiver eventReceiver)
+        public virtual void Initialize(Models.Enemy enemy, AdventureViewContext context)
         {
             base.Initialize(enemy);
             Enemy = enemy;
-            FindState = new EnemyFindStateLookingFor(this);
-            FindState.Subscribe();
+            Context = context;
 
             Animation = GetComponent<EnemyAnimationController>();
-            Animation.Initialize(eventReceiver);
+            Animation.Initialize(context.EventReceiver);
         }
-		
-		public override void Control()
-		{
-			FindState.Control();
-		}
+
+        public override abstract void Control();
 
         public override void Die()
         {

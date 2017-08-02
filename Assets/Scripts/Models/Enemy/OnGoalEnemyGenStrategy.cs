@@ -21,7 +21,7 @@ namespace ProcedualLevels.Models
                     {
                         var path = connection.Path.GetRooms()
                                              .MinItem(x => x.Bottom);
-                        var pos = new Vector2(path.Left, path.Bottom + 1);
+                        var pos = new Vector2(path.Left + 3, path.Bottom + 1);
                         var enemy = new Enemy(index, pos, ability, view);
                         map.Enemies.Add(enemy);
                         ++index;

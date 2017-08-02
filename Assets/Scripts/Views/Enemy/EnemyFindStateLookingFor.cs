@@ -16,7 +16,7 @@ namespace ProcedualLevels.Views
         /// EnemyFindStateLookingFor の新しいインスタンスを初期化します。
         /// </summary>
         /// <param name="context">この状態を持つ敵キャラクターのビュー。</param>
-        public EnemyFindStateLookingFor(EnemyController context) : base(context)
+        public EnemyFindStateLookingFor(FindingEnemyController context) : base(context)
         {
         }
 
@@ -34,12 +34,13 @@ namespace ProcedualLevels.Views
 			var hero = collider.GetComponent<HeroController>();
             if (hero != null)
             {
-				ChangeState(new EnemyFindStateFound(Context, hero));
+				ChangeState(new EnemyFindStateFound(Context));
             }
         }
 
         public override void Control()
         {
+            Context.ControlAtIdle();
         }
     }
 }

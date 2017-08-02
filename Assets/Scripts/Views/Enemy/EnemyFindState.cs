@@ -7,9 +7,9 @@ namespace ProcedualLevels.Views
     /// <summary>
     /// 敵キャラクターがプレイヤーを見つけたかどうかに関する状態の基底クラス。
     /// </summary>
-    public abstract class EnemyFindState : ReactiveState<EnemyController>
+    public abstract class EnemyFindState : ReactiveState<FindingEnemyController>
     {
-        public EnemyFindState(EnemyController context) : base(context)
+        public EnemyFindState(FindingEnemyController context) : base(context)
         {
         }
 

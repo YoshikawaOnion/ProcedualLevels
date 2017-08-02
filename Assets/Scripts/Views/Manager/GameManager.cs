@@ -57,6 +57,11 @@ namespace ProcedualLevels.Views
 
         private void SetEnemiesUp(AdventureContext context)
         {
+            var viewContext = new AdventureViewContext
+            {
+                Hero = HeroController,
+                EventReceiver = EventFacade,
+            };
             var prefabs = new Dictionary<string, EnemyController>();
             var list = new List<EnemyController>();
 
@@ -74,7 +79,7 @@ namespace ProcedualLevels.Views
                 obj.transform.position = enemy.InitialPosition
                     .ToVector3()
                     .MergeZ(prefab.transform.position.z);
-                obj.Initialize(enemy, EventFacade);
+                obj.Initialize(enemy, viewContext);
                 obj.transform.SetParent(managerDraw.transform);
                 list.Add(obj);
             }
