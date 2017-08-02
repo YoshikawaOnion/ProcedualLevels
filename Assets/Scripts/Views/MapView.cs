@@ -19,7 +19,7 @@ namespace ProcedualLevels.Views
             var goalPrefab = Resources.Load<GameObject>("Prefabs/Dungeon/Goal_Control");
             var goal = Instantiate(goalPrefab);
             goal.transform.position = map.GoalLocation;
-            goal.transform.SetParent(manager.managerDraw.transform);
+            goal.transform.SetParent(RootObjectRepository.I.ManagerDraw.transform);
         }
 
         private static void ShowRooms(MapData map, GameObject maze)

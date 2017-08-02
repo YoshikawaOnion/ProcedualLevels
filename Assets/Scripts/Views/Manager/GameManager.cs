@@ -12,13 +12,6 @@ namespace ProcedualLevels.Views
 {
     public class GameManager : MonoBehaviour, IAdventureView
     {
-        [SerializeField]
-        private Camera camera;
-        [SerializeField]
-        public Script_SpriteStudio_ManagerDraw managerDraw;
-        [SerializeField]
-        private GameObject gameUi;
-
         private GameEventFacade EventFacade { get; set; }
         private HeroController HeroController { get; set; }
         private EnemyController[] EnemyControllers { get; set; }
@@ -40,11 +33,6 @@ namespace ProcedualLevels.Views
             EventFacade = new GameEventFacade();
             BattleObservable = EventFacade.OnPlayerBattleWithEnemyReceiver;
             GetPowerUpObservable = EventFacade.OnPlayerGetPowerUpReceiver;
-
-            var asset = Resources.Load<DungeonGenAsset>("Assets/DungeonGenAsset");
-            var battlerGen = Resources.Load<BattlerGenAsset>("Assets/BattlerGenAsset");
-            var model = new Models.GameManager();
-            model.Initialize(asset, battlerGen, this);
         }
 
         public void Initialize(AdventureContext context)
@@ -80,7 +68,7 @@ namespace ProcedualLevels.Views
                     .ToVector3()
                     .MergeZ(prefab.transform.position.z);
                 obj.Initialize(enemy, viewContext);
-                obj.transform.SetParent(managerDraw.transform);
+                obj.transform.SetParent(RootObjectRepository.I.ManagerDraw.transform);
                 list.Add(obj);
             }
 
@@ -107,8 +95,8 @@ namespace ProcedualLevels.Views
             HeroController = Instantiate(heroPrefab);
             HeroController.transform.position = context.Map.StartLocation;
             HeroController.transform.SetPositionZ(heroPrefab.transform.position.z);
-            HeroController.Initialize(context.Hero, gameUi, EventFacade);
-            HeroController.transform.SetParent(managerDraw.transform);
+            HeroController.Initialize(context.Hero, RootObjectRepository.I.GameUi, EventFacade);
+            HeroController.transform.SetParent(RootObjectRepository.I.ManagerDraw.transform);
         }
 
         // Update is called once per frame
@@ -116,7 +104,7 @@ namespace ProcedualLevels.Views
         {
             if (HeroController != null)
             {
-                camera.transform.position = HeroController.transform.position.AddY(2).MergeZ(-10);
+                RootObjectRepository.I.Camera.transform.position = HeroController.transform.position.AddY(2).MergeZ(-10);
             }
         }
 
