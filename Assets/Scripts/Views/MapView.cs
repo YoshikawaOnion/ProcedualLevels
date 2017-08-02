@@ -28,10 +28,10 @@ namespace ProcedualLevels.Views
         }
 
         private void OnDestroy()
-        {
+		{
+			Destroy(Goal.gameObject);
             Destroy(Maze.gameObject);
             Destroy(DebugRoot.gameObject);
-            Destroy(Goal.gameObject);
         }
 
         private void ShowRooms(MapData map, GameObject maze)

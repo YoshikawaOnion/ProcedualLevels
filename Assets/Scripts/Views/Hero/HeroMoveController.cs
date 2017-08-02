@@ -347,7 +347,7 @@ namespace ProcedualLevels.Views
             WalkController.Walk(WalkDirection, powerScale);
 
             var velocity = Rigidbody.velocity.x;
-            Animation.AnimateWalk(Mathf.Abs(velocity) < 1 ? 0 : Mathf.Sign(velocity));
+            Animation.AnimateWalk(WalkDirection);
         }
     }
 }

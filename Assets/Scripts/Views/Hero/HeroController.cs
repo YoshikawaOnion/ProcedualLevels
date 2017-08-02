@@ -50,7 +50,7 @@ namespace ProcedualLevels.Views
 			{
 				EventAccepter.OnPlayerBattleWithEnemySender
 							 .OnNext(x.Enemy);
-                Animation.AnimateAttack();
+                Animation.AnimateAttack(x.gameObject);
             });
 
             LeftButton = gameUi.transform.Find("Controller/LeftButton")

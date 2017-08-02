@@ -79,14 +79,15 @@ namespace ProcedualLevels.Views
         /// <summary>
         /// 敵に攻撃する際のアニメーションを再生します。
         /// </summary>
-        public void AnimateAttack()
+        public void AnimateAttack(GameObject target)
         {
             if (IsDead)
             {
                 return;
             }
 
-            if (Direction > 0)
+            var direction = target.transform.position - transform.position;
+            if (direction.x > 0)
             {
                 PlayAnimation(AttackRightAnimation, 1);
             }
@@ -97,7 +98,7 @@ namespace ProcedualLevels.Views
 
             WaitAnimationFinish().Subscribe(x =>
             {
-                if (Direction > 0)
+                if (direction.x > 0)
                 {
                     PlayAnimation(IdleRightAnimation, LoopInfinite);
                 }
