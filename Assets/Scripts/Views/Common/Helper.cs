@@ -15,9 +15,9 @@ namespace ProcedualLevels.Common
             return (UnityEngine.Random.value * (max - min)) + min;
         }
 
-        public static int Sign(float value)
+        public static int Sign(float value, float threshould = float.Epsilon)
         {
-            return Mathf.Abs(value) <= float.Epsilon ? 0 : (int)Mathf.Sign(value);
+            return Mathf.Abs(value) <= threshould ? 0 : (int)Mathf.Sign(value);
         }
     }
 }

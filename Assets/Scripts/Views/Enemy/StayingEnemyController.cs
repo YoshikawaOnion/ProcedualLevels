@@ -31,7 +31,7 @@ namespace ProcedualLevels.Views
         private void Move()
         {
             var direction = InitialPosition.ToVector3() - transform.position;
-            var walkDirection = Helper.Sign(direction.x);
+            var walkDirection = Helper.Sign(direction.x, 0.2f);
             WalkController.Walk(walkDirection, 1);
         }
     }

@@ -17,7 +17,7 @@ namespace ProcedualLevels.Models
                 new EnemiesAbility()
                 {
                     Id = 0,
-                    Hp = 3,
+                    Hp = 5,
                     Attack = 1,
                     PrefabName = "Enemy_Control",
                     GenerationStrategy = new RandomEnemyGenStrategy(0.05f, battlerGen, dungeonGen),

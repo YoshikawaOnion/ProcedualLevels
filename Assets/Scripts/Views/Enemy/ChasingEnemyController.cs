@@ -28,7 +28,7 @@ namespace ProcedualLevels.Views
 			}
 
 			var direction = (Context.Hero.transform.position - transform.position).normalized;
-            var walkDirection = Helper.Sign(direction.x);
+            var walkDirection = Helper.Sign(direction.x, 0.2f);
             WalkController.Walk(walkDirection, 1);
         }
     }
