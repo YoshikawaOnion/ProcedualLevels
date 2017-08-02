@@ -21,6 +21,13 @@ namespace ProcedualLevels.Views
             FindState.Control();
         }
 
+        private void OnDestroy()
+        {
+            base.OnDestroy();
+            FindState.Dispose();
+            FindState = null;
+        }
+
         public abstract void ControlAtPlayerFound();
         public abstract void ControlAtIdle();
     }

@@ -44,9 +44,12 @@ namespace ProcedualLevels.Views
         public abstract void Control();
         public abstract void Die();
 
-        private void OnDestroy()
+        protected void OnDestroy()
         {
+            Debug.Log("BattlerController.Destroy: " + gameObject.name);
             Disposable.Dispose();
+            KnockbackState.Dispose();
+            KnockbackState = null;
         }
     }
 }

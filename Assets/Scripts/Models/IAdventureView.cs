@@ -11,6 +11,8 @@ namespace ProcedualLevels.Models
         void Knockback(Battler battlerSubject, Battler battlerAgainst, int power);
         void ShowDeath(Battler subject);
         IObservable<PowerUp> GetPowerUpObservable { get; }
+        IObservable<Unit> GoalObservable { get; }
         void PlacePowerUp(int index, PowerUp powerUp);
+        IObservable<IAdventureView> ResetAsync();
     }
 }

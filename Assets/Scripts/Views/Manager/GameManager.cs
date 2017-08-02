@@ -11,11 +11,13 @@ using UnityEngine;
 namespace ProcedualLevels.Views
 {
     public class GameManager : MonoBehaviour, IAdventureView
-    {
-        private GameEventFacade EventFacade { get; set; }
-        private HeroController HeroController { get; set; }
-        private EnemyController[] EnemyControllers { get; set; }
-        public IObservable<Models.Enemy> BattleObservable { get; private set; }
+	{
+		private HeroController HeroController { get; set; }
+		private EnemyController[] EnemyControllers { get; set; }
+        private MapView MapView { get; set; }
+        private MapTipRenderer MapTipRenderer { get; set; }
+
+        public GameEventFacade EventFacade { get; set; }
         public BattlerController[] Battlers
         {
             get
@@ -26,13 +28,16 @@ namespace ProcedualLevels.Views
             }
         }
 
+		public IObservable<Enemy> BattleObservable { get; private set; }
         public IObservable<PowerUp> GetPowerUpObservable { get; private set; }
+        public IObservable<Unit> GoalObservable { get; private set; }
 
         private void Start()
         {
             EventFacade = new GameEventFacade();
             BattleObservable = EventFacade.OnPlayerBattleWithEnemyReceiver;
             GetPowerUpObservable = EventFacade.OnPlayerGetPowerUpReceiver;
+            GoalObservable = EventFacade.OnPlayerGoalReceiver;
         }
 
         public void Initialize(AdventureContext context)
@@ -41,6 +46,7 @@ namespace ProcedualLevels.Views
             SetHeroUp(context);
             SetMaptipUp(context);
             SetEnemiesUp(context);
+            RootObjectRepository.I.GameUi.SetActive(true);
         }
 
         private void SetEnemiesUp(AdventureContext context)
@@ -75,18 +81,18 @@ namespace ProcedualLevels.Views
             EnemyControllers = list.ToArray();
         }
 
-        private static void SetMaptipUp(AdventureContext context)
+        private void SetMaptipUp(AdventureContext context)
         {
             var maptipManagerPrefab = Resources.Load<MapTipRenderer>("Prefabs/Manager/MaptipRenderer");
-            var maptipManager = Instantiate(maptipManagerPrefab);
-            maptipManager.Initialize(context.Map);
+            MapTipRenderer = Instantiate(maptipManagerPrefab);
+            MapTipRenderer.Initialize(context.Map);
         }
 
         private void SetMapUp(AdventureContext context)
         {
             var mapPrefab = Resources.Load<MapView>("Prefabs/Dungeon/Map");
-            var mapObj = Instantiate(mapPrefab);
-            mapObj.Initialize(context.Map, this);
+            MapView = Instantiate(mapPrefab);
+            MapView.Initialize(context.Map, this);
         }
 
         private void SetHeroUp(AdventureContext context)
@@ -99,7 +105,7 @@ namespace ProcedualLevels.Views
             HeroController.transform.SetParent(RootObjectRepository.I.ManagerDraw.transform);
         }
 
-        // Update is called once per frame
+
         void Update()
         {
             if (HeroController != null)
@@ -107,6 +113,21 @@ namespace ProcedualLevels.Views
                 RootObjectRepository.I.Camera.transform.position = HeroController.transform.position.AddY(2).MergeZ(-10);
             }
         }
+
+        private void OnDestroy()
+		{
+			foreach (var battler in Battlers)
+			{
+				if (battler != null)
+				{
+					Destroy(battler.gameObject);
+				}
+			}
+            Destroy(MapView.gameObject);
+            Destroy(MapTipRenderer.gameObject);
+			EventFacade = null;
+        }
+
 
         public void Knockback(Battler battlerSubject, Battler battlerAgainst, int power)
         {
@@ -134,5 +155,20 @@ namespace ProcedualLevels.Views
             obj.Initialize(powerUp, EventFacade);
             obj.transform.position = battler.transform.position.MergeZ(obj.transform.position.z);
         }
+
+        public IObservable<IAdventureView> ResetAsync()
+		{
+			var viewPrefab = Resources.Load<Views.GameManager>("Prefabs/Manager/GameManager");
+			var view = Instantiate(viewPrefab);
+			Destroy(gameObject);
+            RootObjectRepository.I.GameUi.transform.Find("ClearText").gameObject.SetActive(false);
+            return Observable.EveryUpdate()
+                             .Skip(1)
+                             .First()
+                             .Select(x =>
+            {
+                return (IAdventureView)view;
+            });
+		}
     }
 }

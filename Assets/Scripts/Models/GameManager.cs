@@ -1,14 +1,16 @@
 using UnityEngine;
 using System.Collections;
 using System.Linq;
+using UniRx;
+using System;
 
 namespace ProcedualLevels.Models
 {
     public class GameManager
     {
-        public void Initialize(DungeonGenAsset asset, BattlerGenAsset battlerGen, IAdventureView view)
+        public void Initialize(DungeonGenAsset dungeonGen, BattlerGenAsset battlerGen, IAdventureView view)
         {
-            var map = GenerateMap(asset, battlerGen, view);
+            var map = GenerateMap(dungeonGen, battlerGen, view);
             var context = new AdventureContext()
             {
                 Hero = new Hero(0, view)
@@ -21,6 +23,16 @@ namespace ProcedualLevels.Models
                 Map = map,
             };
             view.Initialize(context);
+
+            view.GoalObservable.SelectMany(x => Observable.Timer(TimeSpan.FromSeconds(2)))
+                .First()
+                .Subscribe(x =>
+            {
+                context.Dispose();
+                var next = new GameManager();
+                var nextViewStream = view.ResetAsync();
+                nextViewStream.Subscribe(nextView => next.Initialize(dungeonGen, battlerGen, nextView));
+            });
         }
 
         public MapData GenerateMap(DungeonGenAsset asset, BattlerGenAsset battlerAsset, IAdventureView view)

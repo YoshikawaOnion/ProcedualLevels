@@ -36,8 +36,9 @@ namespace ProcedualLevels.Views
         {
             WallLocations = null;
             RoomLocations = null;
-            WallRenderer = null;
-            RoomRenderer = null;
+            Destroy(WallRenderer);
+            Destroy(RoomRenderer);
+            Destroy(PlatformRenderer);
         }
 
         public void Initialize(MapData map)

@@ -8,26 +8,41 @@ namespace ProcedualLevels.Views
 {
     public class MapView : MonoBehaviour
     {
+        private GameObject Maze { get; set; }
+        private GameObject DebugRoot { get; set; }
+        private Goal Goal { get; set; }
+
         public void Initialize(MapData map, GameManager manager)
         {
             var mazePrefab = Resources.Load<GameObject>("Prefabs/Dungeon/Maze_Control");
-            var maze = Instantiate(mazePrefab);
+            Maze = Instantiate(mazePrefab);
 
-            ShowRooms(map, maze);
-            ShowPlatforms(map);
+            ShowRooms(map, Maze);
+            ShowPlatforms(map, Maze);
 
-            var goalPrefab = Resources.Load<GameObject>("Prefabs/Dungeon/Goal_Control");
-            var goal = Instantiate(goalPrefab);
-            goal.transform.position = map.GoalLocation;
-            goal.transform.SetParent(RootObjectRepository.I.ManagerDraw.transform);
+            var goalPrefab = Resources.Load<Goal>("Prefabs/Dungeon/Goal_Control");
+            Goal = Instantiate(goalPrefab);
+            Goal.transform.position = map.GoalLocation;
+            Goal.transform.SetParent(RootObjectRepository.I.ManagerDraw.transform);
+            Goal.Initialize(manager.EventFacade);
         }
 
-        private static void ShowRooms(MapData map, GameObject maze)
+        private void OnDestroy()
+        {
+            Destroy(Maze.gameObject);
+            Destroy(DebugRoot.gameObject);
+            Destroy(Goal.gameObject);
+        }
+
+        private void ShowRooms(MapData map, GameObject maze)
         {
             var prefab = Resources.Load<GameObject>("Prefabs/Dungeon/Room_Control");
+            DebugRoot = new GameObject();
+            DebugRoot.name = "Debug_MazeViewer";
+
             foreach (var division in map.Divisions)
             {
-                var obj = InstantiateRect(null, prefab, division.Bound);
+                var obj = InstantiateRect(DebugRoot, prefab, division.Bound);
                 obj.GetComponent<BoxCollider2D>().enabled = false;
 
                 InstantiateRect(maze, prefab, division.Room);
@@ -41,7 +56,7 @@ namespace ProcedualLevels.Views
             }
         }
 
-        private static void ShowPlatforms(MapData map)
+        private static void ShowPlatforms(MapData map, GameObject parent)
         {
             var prefab = Resources.Load<GameObject>("Prefabs/Dungeon/Platform_Control");
             foreach (var platform in map.Platforms)
@@ -49,6 +64,7 @@ namespace ProcedualLevels.Views
 				var obj = Instantiate(prefab);
                 var x = platform.Left;
                 var width = platform.Right - platform.Left;
+                obj.transform.SetParent(parent.transform);
                 obj.transform.position = new Vector3(x, platform.Bottom, -1) + new Vector3(width, 1, 0) / 2;
                 obj.transform.localScale = new Vector3(width, 1, 1);
             }
