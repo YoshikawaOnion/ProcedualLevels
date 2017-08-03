@@ -131,15 +131,15 @@ namespace ProcedualLevels.Views
         }
 
 
-        public void Knockback(Battler battlerSubject, Battler battlerAgainst, int power)
+        public void Knockback(KnockbackInfo info)
         {
             var battlers = Battlers;
-            var subject = battlers.FirstOrDefault(x => x.Battler.Index == battlerSubject.Index);
-            var against = battlers.FirstOrDefault(x => x.Battler.Index == battlerAgainst.Index);
+            var subject = battlers.FirstOrDefault(x => x.Battler.Index == info.BattlerSubject.Index);
+            var against = battlers.FirstOrDefault(x => x.Battler.Index == info.BattlerAgainst.Index);
 
             if (subject != null && against != null)
             {
-                subject.Knockback(against, power);
+                subject.Knockback(info, against);
             }
         }
 

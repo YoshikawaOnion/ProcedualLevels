@@ -4,6 +4,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using UniRx;
 using System;
+using ProcedualLevels.Models;
 
 namespace ProcedualLevels.Views
 {
@@ -36,15 +37,15 @@ namespace ProcedualLevels.Views
             KnockbackState.Subscribe();
         }
 
-        public void Knockback(BattlerController against, int power)
+        public void Knockback(KnockbackInfo info, BattlerController against)
         {
-            KnockbackState.Knockback(against, power);
+            KnockbackState.Knockback(info, against);
         }
 
         public abstract void Control();
         public abstract void Die();
 
-        protected void OnDestroy()
+        protected virtual void OnDestroy()
         {
             Debug.Log("BattlerController.Destroy: " + gameObject.name);
             Disposable.Dispose();

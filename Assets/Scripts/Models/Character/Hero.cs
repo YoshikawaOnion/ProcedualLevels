@@ -8,18 +8,23 @@ namespace ProcedualLevels.Models
     public class Hero : Battler
     {
         private CompositeDisposable Disposable { get; set; }
+        private BattlerGenAsset BattlerAsset { get; set; }
 
         public Hero(int index, IAdventureView view)
             : base(index, view)
         {
+            BattlerAsset = Resources.Load<BattlerGenAsset>(Def.BattlerGenAssetPath);
             Disposable = new CompositeDisposable();
 
             view.OnBattle.Subscribe(x =>
             {
                 Hp.Value -= x.Attack.Value;
                 x.Hp.Value -= Attack.Value;
-                view.Knockback(this, x, x.Attack.Value);
-                view.Knockback(x, this, Attack.Value);
+                var knockbackForThis = new KnockbackInfo(this, x, BattlerAsset);
+                var knockbackForEnemy = new KnockbackInfo(x, this, BattlerAsset);
+                view.Knockback(knockbackForThis);
+                view.Knockback(knockbackForEnemy);
+                Debug.Log(string.Format("{0} vs {1}", Attack.Value, x.Attack.Value));
             })
                 .AddTo(Disposable);
             

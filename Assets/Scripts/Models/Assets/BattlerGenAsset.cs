@@ -7,7 +7,8 @@ namespace ProcedualLevels.Models
     {
         public int PlayerHp;
         public int PlayerAttack;
-        public int EnemyHp;
-        public int EnemyAttack;
+        public float KnockbackPowerFactor;
+        public float KnockbackJumpPower;
+        public float KnockbackStanTimeFactor;
     }
 }

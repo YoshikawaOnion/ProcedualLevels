@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using UniRx;
 using UnityEngine;
 using UniRx.Triggers;
+using ProcedualLevels.Models;
 
 namespace ProcedualLevels.Views
 {
@@ -12,11 +13,12 @@ namespace ProcedualLevels.Views
     /// </summary>
     public class BattlerKnockbackStateKnockback : BattlerKnockbackState
     {
-        private int Power { get; set; }
+        private KnockbackInfo Info { get; set; }
 
-        public BattlerKnockbackStateKnockback(BattlerController context, int power) : base(context)
+        public BattlerKnockbackStateKnockback(BattlerController context, KnockbackInfo info)
+            : base(context)
         {
-            Power = power;
+            Info = info;
         }
 
         public override void Subscribe()
@@ -24,7 +26,7 @@ namespace ProcedualLevels.Views
             base.Subscribe();
 
             // 一定時間で通常の状態に戻る
-            Observable.Timer(TimeSpan.FromMilliseconds(500))
+            Observable.Timer(TimeSpan.FromSeconds(Info.StanTime))
                       .Subscribe(x =>
             {
                 ChangeState(new BattlerKnockbackStateNeutral(Context));
@@ -33,16 +35,16 @@ namespace ProcedualLevels.Views
 
             // 他のキャラクターにぶつかったらそれも押し飛ばす
             Context.OnCollisionStay2DAsObservable()
-                   .Select(x => x.gameObject.GetComponent<BattlerController>())
+                   .Select(x => x.gameObject.GetComponent<EnemyController>())
                    .Where(x => x != null)
                    .Subscribe(x =>
             {
-                x.Knockback(Context, Power);
+                x.Knockback(Info, Context);
             })
                    .AddTo(Disposable);
         }
 
-        public override void Knockback(BattlerController against, int power)
+        public override void Knockback(KnockbackInfo info, BattlerController against)
         {
         }
 

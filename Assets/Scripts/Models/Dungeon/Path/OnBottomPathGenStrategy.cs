@@ -54,7 +54,7 @@ namespace ProcedualLevels.Models
         {
             return map.Divisions.Any(x =>
             {
-                return path.GetRooms().Any(y => x.Room.Bottom - y.Top == 1);
+                return path.GetRooms().Any(y => x.Room.Bottom - y.Top < 0);
             });
         }
 

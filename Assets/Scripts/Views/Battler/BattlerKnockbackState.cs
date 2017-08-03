@@ -11,7 +11,6 @@ namespace ProcedualLevels.Views
     /// </summary>
     public abstract class BattlerKnockbackState : ReactiveState<BattlerController>
 	{
-
         public BattlerKnockbackState(BattlerController context) : base(context)
         {
         }
@@ -51,6 +50,6 @@ namespace ProcedualLevels.Views
         /// </summary>
         /// <param name="against">ノックバックを起こした相手のビュー。</param>
         /// <param name="power">ノックバックの強さ。</param>
-        public abstract void Knockback(BattlerController against, int power);
+        public abstract void Knockback(Models.KnockbackInfo info, BattlerController against);
     }
 }

@@ -21,7 +21,7 @@ namespace ProcedualLevels.Views
             FindState.Control();
         }
 
-        private void OnDestroy()
+        protected override void OnDestroy()
         {
             base.OnDestroy();
             FindState.Dispose();

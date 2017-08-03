@@ -7,7 +7,7 @@ namespace ProcedualLevels.Models
     public interface IAdventureView
     {
         void Initialize(AdventureContext context);
-        void Knockback(Battler battlerSubject, Battler battlerAgainst, int power);
+        void Knockback(KnockbackInfo info);
         void ShowDeath(Battler subject);
         void PlacePowerUp(int index, PowerUp powerUp);
 
