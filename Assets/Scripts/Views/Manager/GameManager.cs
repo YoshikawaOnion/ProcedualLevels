@@ -71,7 +71,7 @@ namespace ProcedualLevels.Views
                 if (!prefabs.TryGetValue(enemy.Ability.PrefabName, out prefab))
                 {
                     prefab = Resources.Load<EnemyController>
-                                      ("Prefabs/Character/" + enemy.Ability.PrefabName);
+                                      ("Prefabs/Enemy/" + enemy.Ability.PrefabName);
                     prefabs[enemy.Ability.PrefabName] = prefab;
                 }
 
