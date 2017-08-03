@@ -26,6 +26,8 @@ namespace ProcedualLevels.Models
                 Enemies = map.Enemies.ToArray(),
                 Map = map,
                 TimeLimit = new ReactiveProperty<int>(gameAsset.TimeLimitSeconds),
+                NextBattlerIndex = map.Enemies.Max(x => x.Index) + 1,
+                View = view
             };
             view.Initialize(context);
 

@@ -9,6 +9,8 @@ namespace ProcedualLevels.Models
         public MapData Map { get; set; }
 		public Enemy[] Enemies { get; set; }
 		public ReactiveProperty<int> TimeLimit { get; set; }
+        public int NextBattlerIndex { get; set; }
+        public IAdventureView View { get; set; }
 
         public AdventureContext()
         {

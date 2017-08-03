@@ -11,12 +11,14 @@ namespace ProcedualLevels.Models
         public Vector2 GoalLocation { get; set; }
         public List<Enemy> Enemies { get; private set; }
         public List<MapPlatform> Platforms { get; private set; }
+        public List<Spawner> Spawners { get; private set; }
 
         public MapData()
         {
             Divisions = new List<MapDivision>();
             Enemies = new List<Enemy>();
             Platforms = new List<MapPlatform>();
+            Spawners = new List<Spawner>();
         }
 
         public bool IsRoom(int left, int bottom)

@@ -61,6 +61,7 @@ namespace ProcedualLevels.Views
             {
                 Hero = HeroController,
                 EventReceiver = EventFacade,
+                Model = context,
             };
             var prefabs = new Dictionary<string, EnemyController>();
             var list = new List<EnemyController>();

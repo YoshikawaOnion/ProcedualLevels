@@ -49,17 +49,32 @@ namespace ProcedualLevels.Models
 
             ReducePathesAtRandom(map);
 
-			PlaceStartAndGoal(map);
-			PlacePlatforms(map);
+            PlaceStartAndGoal(map);
+            PlacePlatforms(map);
+            PlaceEnemies(view, map);
+            PlaceSpawners(map);
 
+            return map;
+        }
+
+        private static void PlaceSpawners(MapData map)
+        {
+            var spawnerDatabase = new SpawnerDatabase();
+            foreach (var spawner in spawnerDatabase.Spawners)
+            {
+                var spawners = spawner.Generate(map);
+                map.Spawners.AddRange(spawners);
+            }
+        }
+
+        private static void PlaceEnemies(IAdventureView view, MapData map)
+        {
             var enemyDatabase = new EnemyDatabase();
             int index = 1;
             foreach (var ability in enemyDatabase.Enemies)
             {
                 ability.GenerationStrategy.PlaceEnemies(map, ability, view, ref index);
             }
-
-            return map;
         }
 
         /// <summary>
@@ -68,7 +83,7 @@ namespace ProcedualLevels.Models
         /// <param name="leftBottom">部屋を生成できる範囲の左下座標。</param>
         /// <param name="rightTop">部屋を生成できる範囲の右上座標。</param>
         /// <param name="map">結果を書き込むマップデータ。</param>
-		private void GenerateRooms(Vector2 leftBottom, Vector2 rightTop, MapData map)
+        private void GenerateRooms(Vector2 leftBottom, Vector2 rightTop, MapData map)
 		{
             var roomGen = new HorizontalRoomGenStrategy();
             var root = new MapRectangle(
