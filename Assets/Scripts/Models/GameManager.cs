@@ -8,19 +8,24 @@ namespace ProcedualLevels.Models
 {
     public class GameManager
     {
-        public void Initialize(DungeonGenAsset dungeonGen, BattlerGenAsset battlerGen, IAdventureView view)
+        private CompositeDisposable Disposable { get; set; }
+
+        public void Initialize(DungeonGenAsset dungeonAsset, GameParameterAsset gameAsset, IAdventureView view)
         {
-            var map = GenerateMap(dungeonGen, battlerGen, view);
+            Disposable = new CompositeDisposable();
+
+            var map = GenerateMap(dungeonAsset, gameAsset, view);
             var context = new AdventureContext()
             {
                 Hero = new Hero(0, view)
                 {
-                    MaxHp = { Value = battlerGen.PlayerHp },
-                    Hp = { Value = battlerGen.PlayerHp },
-                    Attack = { Value = battlerGen.PlayerAttack }
+                    MaxHp = { Value = gameAsset.PlayerHp },
+                    Hp = { Value = gameAsset.PlayerHp },
+                    Attack = { Value = gameAsset.PlayerAttack }
                 },
                 Enemies = map.Enemies.ToArray(),
                 Map = map,
+                TimeLimit = new ReactiveProperty<int>(gameAsset.TimeLimitSeconds),
             };
             view.Initialize(context);
 
@@ -32,11 +37,17 @@ namespace ProcedualLevels.Models
                 context.Dispose();
                 var next = new GameManager();
                 var nextViewStream = view.ResetAsync();
-                nextViewStream.Subscribe(nextView => next.Initialize(dungeonGen, battlerGen, nextView));
-            });
+                nextViewStream.Subscribe(nextView => next.Initialize(dungeonAsset, gameAsset, nextView));
+            })
+                .AddTo(Disposable);
+            
+            Observable.Interval(TimeSpan.FromSeconds(1))
+                      .Where(x => context.TimeLimit.Value > 0)
+                      .Subscribe(x => context.TimeLimit.Value -= 1)
+                      .AddTo(Disposable);
         }
 
-        public MapData GenerateMap(DungeonGenAsset asset, BattlerGenAsset battlerAsset, IAdventureView view)
+        public MapData GenerateMap(DungeonGenAsset asset, GameParameterAsset battlerAsset, IAdventureView view)
         {
             var generator = new MapGenerator(battlerAsset, asset);
             var leftBottom = new Vector2(-asset.WorldWidth / 2, -asset.WorldHeight / 2);

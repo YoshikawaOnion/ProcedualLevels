@@ -8,12 +8,12 @@ namespace ProcedualLevels.Models
     public class Hero : Battler
     {
         private CompositeDisposable Disposable { get; set; }
-        private BattlerGenAsset BattlerAsset { get; set; }
+        private GameParameterAsset BattlerAsset { get; set; }
 
         public Hero(int index, IAdventureView view)
             : base(index, view)
         {
-            BattlerAsset = Resources.Load<BattlerGenAsset>(Def.BattlerGenAssetPath);
+            BattlerAsset = Resources.Load<GameParameterAsset>(Def.GameParameterAssetPath);
             Disposable = new CompositeDisposable();
 
             view.OnBattle.Subscribe(x =>

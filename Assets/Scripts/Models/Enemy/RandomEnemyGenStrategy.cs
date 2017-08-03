@@ -7,11 +7,11 @@ namespace ProcedualLevels.Models
     public class RandomEnemyGenStrategy : EnemyGenStrategy
     {
         private float Ratio { get; set; }
-        private BattlerGenAsset BattlerAsset { get; set; }
+        private GameParameterAsset BattlerAsset { get; set; }
         private DungeonGenAsset DungeonAsset { get; set; }
 
         public RandomEnemyGenStrategy(float ratio,
-                                      BattlerGenAsset battlerAsset,
+                                      GameParameterAsset battlerAsset,
                                       DungeonGenAsset dungeonAsset)
         {
             Ratio = ratio;

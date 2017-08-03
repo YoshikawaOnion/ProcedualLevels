@@ -13,7 +13,7 @@ namespace ProcedualLevels.Models
         public float KnockbackJumpPower { get; private set; }
         public float StanTime { get; private set; }
 
-        public KnockbackInfo(Battler subject, Battler against, BattlerGenAsset asset)
+        public KnockbackInfo(Battler subject, Battler against, GameParameterAsset asset)
         {
             var knockbackPower = Mathf.Max(0, against.Attack.Value - subject.Attack.Value);
             BattlerSubject = subject;

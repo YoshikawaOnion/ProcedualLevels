@@ -3,12 +3,13 @@ using System.Collections;
 
 namespace ProcedualLevels.Models
 {
-    public class BattlerGenAsset : ScriptableObject
+    public class GameParameterAsset : ScriptableObject
     {
         public int PlayerHp;
         public int PlayerAttack;
         public float KnockbackPowerFactor;
         public float KnockbackJumpPower;
         public float KnockbackStanTimeFactor;
+        public int TimeLimitSeconds;
     }
 }

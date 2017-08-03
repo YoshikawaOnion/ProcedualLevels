@@ -10,7 +10,7 @@ namespace ProcedualLevels.Models
 
         public EnemyDatabase()
         {
-            var battlerGen = Resources.Load<BattlerGenAsset>(Def.BattlerGenAssetPath);
+            var battlerGen = Resources.Load<GameParameterAsset>(Def.GameParameterAssetPath);
             var dungeonGen = Resources.Load<DungeonGenAsset>(Def.DungeonGenAssetPath);
             Enemies = new EnemiesAbility[]
             {

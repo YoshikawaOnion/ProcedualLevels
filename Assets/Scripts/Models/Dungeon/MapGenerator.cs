@@ -23,10 +23,10 @@ namespace ProcedualLevels.Models
             get { return DungeonAsset.VerticalPathThickness + DungeonAsset.ColliderMargin * 2; }
         }
 
-        private BattlerGenAsset BattlerAsset { get; set; }
+        private GameParameterAsset BattlerAsset { get; set; }
         private DungeonGenAsset DungeonAsset { get; set; }
 
-        public MapGenerator(BattlerGenAsset battlerAsset, DungeonGenAsset dungeonAsset)
+        public MapGenerator(GameParameterAsset battlerAsset, DungeonGenAsset dungeonAsset)
         {
             BattlerAsset = battlerAsset;
             DungeonAsset = dungeonAsset;

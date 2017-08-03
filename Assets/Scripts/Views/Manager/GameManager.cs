@@ -49,6 +49,10 @@ namespace ProcedualLevels.Views
             SetMaptipUp(context);
             SetEnemiesUp(context);
             RootObjectRepository.I.GameUi.SetActive(true);
+
+            var timeLimit = RootObjectRepository.I.GameUi.transform.Find("TimeLimit")
+                                                .GetComponent<TimeLimit>();
+            timeLimit.Initialize(context);
         }
 
         private void SetEnemiesUp(AdventureContext context)
