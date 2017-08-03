@@ -10,10 +10,14 @@ namespace ProcedualLevels.Views
     /// 敵キャラクターのアニメーションを管理するクラス。
     /// </summary>
     public class EnemyAnimationController : MonoBehaviour
-    {
-		public static readonly string IdleKey = "Idle_1";
-		public static readonly string AttackKey = "Attack_1";
-		public static readonly string DamageKey = "Damage_1";
+	{
+		[SerializeField]
+		private string IdleKey = "Idle_1";
+		[SerializeField]
+		private string AttackKey = "Attack_1";
+		[SerializeField]
+        private string DamageKey = "Damage_1";
+
         public static readonly int LoopInfinite = 0;
 
         private Script_SpriteStudio_Root Sprite { get; set; }
@@ -23,7 +27,8 @@ namespace ProcedualLevels.Views
         public void Initialize(IGameEventReceiver eventReceiver)
         {
             IsDead = false;
-            Sprite = transform.Find("Enemy2").GetComponent<Script_SpriteStudio_Root>();
+
+            Sprite = GetComponentInChildren<Script_SpriteStudio_Root>();
             PlayAnimation(IdleKey, LoopInfinite);
 
             // 戦闘の参加者が自分だったら攻撃モーションを再生

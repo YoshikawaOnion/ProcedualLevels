@@ -43,11 +43,19 @@ namespace ProcedualLevels.Views
         }
 
         public void Initialize(AdventureContext context)
-        {
-            SetMapUp(context);
-            SetHeroUp(context);
+		{
+			SetHeroUp(context);
+
+			var viewContext = new AdventureViewContext
+			{
+				Hero = HeroController,
+				EventReceiver = EventFacade,
+				Model = context,
+			};
+
             SetMaptipUp(context);
-            SetEnemiesUp(context);
+			SetEnemiesUp(context, viewContext);
+			SetMapUp(context, viewContext);
             RootObjectRepository.I.GameUi.SetActive(true);
 
             var timeLimit = RootObjectRepository.I.GameUi.transform.Find("TimeLimit")
@@ -55,33 +63,13 @@ namespace ProcedualLevels.Views
             timeLimit.Initialize(context);
         }
 
-        private void SetEnemiesUp(AdventureContext context)
+        private void SetEnemiesUp(AdventureContext context, AdventureViewContext viewContext)
         {
-            var viewContext = new AdventureViewContext
-            {
-                Hero = HeroController,
-                EventReceiver = EventFacade,
-                Model = context,
-            };
-            var prefabs = new Dictionary<string, EnemyController>();
             var list = new List<EnemyController>();
 
             foreach (var enemy in context.Enemies)
             {
-                EnemyController prefab;
-                if (!prefabs.TryGetValue(enemy.Ability.PrefabName, out prefab))
-                {
-                    prefab = Resources.Load<EnemyController>
-                                      ("Prefabs/Enemy/" + enemy.Ability.PrefabName);
-                    prefabs[enemy.Ability.PrefabName] = prefab;
-                }
-
-                var obj = Instantiate(prefab);
-                obj.transform.position = enemy.InitialPosition
-                    .ToVector3()
-                    .MergeZ(prefab.transform.position.z);
-                obj.Initialize(enemy, viewContext);
-                obj.transform.SetParent(RootObjectRepository.I.ManagerDraw.transform);
+                var obj = viewContext.SpawnEnemy(enemy);
                 list.Add(obj);
             }
 
@@ -95,11 +83,11 @@ namespace ProcedualLevels.Views
             MapTipRenderer.Initialize(context.Map);
         }
 
-        private void SetMapUp(AdventureContext context)
+        private void SetMapUp(AdventureContext context, AdventureViewContext viewContext)
         {
             var mapPrefab = Resources.Load<MapView>("Prefabs/Dungeon/Map");
             MapView = Instantiate(mapPrefab);
-            MapView.Initialize(context.Map, this);
+            MapView.Initialize(context.Map, this, viewContext);
         }
 
         private void SetHeroUp(AdventureContext context)

@@ -6,6 +6,6 @@ namespace ProcedualLevels.Models
 {
     public interface ISpawnerGenStrategy
     {
-        IEnumerable<Spawner> Generate(MapData map, ISpawnerBehavior behavior);
+        IEnumerable<Spawner> Generate(MapData map, ISpawnerBehavior behavior, EnemiesAbility ability);
     }
 }

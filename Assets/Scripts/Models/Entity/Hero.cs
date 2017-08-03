@@ -24,7 +24,6 @@ namespace ProcedualLevels.Models
                 var knockbackForEnemy = new KnockbackInfo(x, this, BattlerAsset);
                 view.Knockback(knockbackForThis);
                 view.Knockback(knockbackForEnemy);
-                Debug.Log(string.Format("{0} vs {1}", Attack.Value, x.Attack.Value));
             })
                 .AddTo(Disposable);
             

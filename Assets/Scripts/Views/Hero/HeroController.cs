@@ -76,9 +76,11 @@ namespace ProcedualLevels.Views
 
         public override void Die()
         {
-            this.enabled = false;
             Animation.AnimateDie()
-                     .Subscribe(x => Destroy(gameObject));
+                     .Subscribe(x =>
+            {
+                Destroy(gameObject);
+            });
             EventAccepter.OnPlayerDieSender
                          .OnNext(Unit.Default);
         }

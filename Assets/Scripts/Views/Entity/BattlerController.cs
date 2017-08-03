@@ -47,7 +47,6 @@ namespace ProcedualLevels.Views
 
         protected virtual void OnDestroy()
         {
-            Debug.Log("BattlerController.Destroy: " + gameObject.name);
             Disposable.Dispose();
             KnockbackState.Dispose();
             KnockbackState = null;

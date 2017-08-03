@@ -29,6 +29,7 @@ namespace ProcedualLevels.Models
                 NextBattlerIndex = map.Enemies.Max(x => x.Index) + 1,
                 View = view
             };
+            map.Spawners.ForEach(x => x.Initialize(context));
             view.Initialize(context);
 
             view.OnGoal.Merge(view.OnPlayerDie)

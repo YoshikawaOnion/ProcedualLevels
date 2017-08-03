@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UniRx;
 using UnityEngine;
 using UniRx.Triggers;
+using System;
 
 namespace ProcedualLevels.Views
 {
@@ -127,7 +128,8 @@ namespace ProcedualLevels.Views
                 PlayAnimation(DamageLeftAnimation, 1);
             }
 
-            return WaitAnimationFinish();
+            return WaitAnimationFinish()
+                .Merge(Observable.Timer(TimeSpan.FromMilliseconds(100)).Select(x => Unit.Default));
         }
 
         /// <summary>

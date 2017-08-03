@@ -30,6 +30,14 @@ namespace ProcedualLevels.Models
                     PrefabName = "Boss_Control",
                     GenerationStrategy = new OnGoalEnemyGenStrategy(),
                 },
+                new EnemiesAbility()
+                {
+                    Id = 2,
+                    Hp = 100,
+                    Attack = 10,
+                    PrefabName = "Ghost_Control",
+                    GenerationStrategy = new NullEnemyGenStrategy(),
+                },
             };
         }
     }

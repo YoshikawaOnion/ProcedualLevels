@@ -12,14 +12,30 @@ namespace ProcedualLevels.Views
         private GameObject DebugRoot { get; set; }
         private Goal Goal { get; set; }
 
-        public void Initialize(MapData map, GameManager manager)
+        public void Initialize(MapData map, GameManager manager, AdventureViewContext viewContext)
         {
             var mazePrefab = Resources.Load<GameObject>("Prefabs/Dungeon/Maze_Control");
             Maze = Instantiate(mazePrefab);
 
             ShowRooms(map, Maze);
             ShowPlatforms(map, Maze);
+            ShowGoal(map, manager);
+            ShowSpawners(map, manager, viewContext);
+        }
 
+        private void ShowSpawners(MapData map, GameManager manager, AdventureViewContext viewContext)
+        {
+            var prefab = Resources.Load<SpawnerController>("Prefabs/Character/Spawner");
+            foreach (var spawner in map.Spawners)
+            {
+                var obj = Instantiate(prefab);
+                obj.Initialize(spawner, viewContext);
+                obj.transform.SetParent(manager.transform);
+            }
+        }
+
+        private void ShowGoal(MapData map, GameManager manager)
+        {
             var goalPrefab = Resources.Load<Goal>("Prefabs/Dungeon/Goal_Control");
             Goal = Instantiate(goalPrefab);
             Goal.transform.position = map.GoalLocation;

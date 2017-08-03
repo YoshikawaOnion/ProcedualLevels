@@ -9,10 +9,11 @@ namespace ProcedualLevels.Models
         public string Name { get; set; }
         public ISpawnerGenStrategy Generator { get; set; }
         public ISpawnerBehavior Behavior { get; set; }
+        public EnemiesAbility EnemiesAbility { get; set; }
 
         public IEnumerable<Spawner> Generate(MapData map)
         {
-            return Generator.Generate(map, Behavior);
+            return Generator.Generate(map, Behavior, EnemiesAbility);
         }
     }
 }

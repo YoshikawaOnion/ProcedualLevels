@@ -12,19 +12,21 @@ namespace ProcedualLevels.Models
         public Vector2 InitialPosition { get; set; }
 
         private ISpawnerBehavior Behavior { get; set; }
+        private EnemiesAbility Ability { get; set; }
         private IDisposable Disposable { get; set; }
 
-        public Spawner(ISpawnerBehavior behavior)
+        public Spawner(ISpawnerBehavior behavior, EnemiesAbility ability)
         {
             Behavior = behavior;
+            Ability = ability;
         }
 
-        public void Initialize(AdventureContext context, EnemiesAbility ability)
+        public void Initialize(AdventureContext context)
         {
             SpawnObservable = Behavior.GetSpawnStream(context)
                                       .Select(x => new Enemy(context.NextBattlerIndex,
                                                              InitialPosition,
-                                                             ability,
+                                                             Ability,
                                                              context.View));
             Disposable = SpawnObservable.Subscribe(x => ++context.NextBattlerIndex);
         }

@@ -10,13 +10,16 @@ namespace ProcedualLevels.Models
 
         public SpawnerDatabase()
         {
+            var database = new EnemyDatabase();
+
             Spawners = new SpawnerParameter[]
             {
                 new SpawnerParameter()
                 {
                     Name = "GhostSpawner",
                     Generator = new AtCenterSpawnerGenStrategy(),
-                    Behavior = new TimeLimitSpawnerBehavior()
+                    Behavior = new TimeLimitSpawnerBehavior(),
+                    EnemiesAbility = database.Enemies[2],
                 },
             };
         }
