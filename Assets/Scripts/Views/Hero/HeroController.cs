@@ -1,4 +1,4 @@
-﻿using System.Collections;
+﻿﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using ProcedualLevels.Models;
@@ -23,6 +23,7 @@ namespace ProcedualLevels.Views
         private ControllerButton LeftButton { get; set; }
         private ControllerButton RightButton { get; set; }
         private ControllerButton JumpButton { get; set; }
+        private CompositeDisposable HeroDisposable { get; set; }
 
         /// <summary>
         /// プレイヤーキャラクターの制御を開始します。
@@ -37,6 +38,7 @@ namespace ProcedualLevels.Views
             Hero = hero;
             EventAccepter = eventAccepter;
             JumpController = GetComponent<HeroMoveController>();
+            HeroDisposable = new CompositeDisposable();
 
             Animation = GetComponent<HeroAnimationController>();
             Animation.Initialize();
@@ -51,7 +53,8 @@ namespace ProcedualLevels.Views
 				EventAccepter.OnPlayerBattleWithEnemySender
 							 .OnNext(x.Enemy);
                 Animation.AnimateAttack(x.gameObject);
-            });
+            })
+                .AddTo(HeroDisposable);
 
             LeftButton = gameUi.transform.Find("Controller/LeftButton")
                                .GetComponent<ControllerButton>();
@@ -76,13 +79,16 @@ namespace ProcedualLevels.Views
 
         public override void Die()
         {
+            HeroDisposable.Dispose();
             Animation.AnimateDie()
                      .Subscribe(x =>
             {
                 Destroy(gameObject);
             });
+            //*
             EventAccepter.OnPlayerDieSender
                          .OnNext(Unit.Default);
+            //*/
         }
     }
 }

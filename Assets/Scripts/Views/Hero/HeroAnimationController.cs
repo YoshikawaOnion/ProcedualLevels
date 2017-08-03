@@ -1,4 +1,4 @@
-﻿using System.Collections;
+﻿﻿using System.Collections;
 using System.Collections.Generic;
 using UniRx;
 using UnityEngine;
@@ -74,6 +74,10 @@ namespace ProcedualLevels.Views
         /// <param name="direction">現在の歩行方向。</param>
         public void AnimateWalk(float direction)
         {
+            if (IsDead)
+            {
+                return;
+            }
             DirectionSubject.OnNext(direction);
         }
 
@@ -128,15 +132,14 @@ namespace ProcedualLevels.Views
                 PlayAnimation(DamageLeftAnimation, 1);
             }
 
-            return WaitAnimationFinish()
-                .Merge(Observable.Timer(TimeSpan.FromMilliseconds(100)).Select(x => Unit.Default));
+            return WaitAnimationFinish();
         }
 
         /// <summary>
         /// 現在再生しているアニメーションが終了するのを待機します。
         /// </summary>
         /// <returns>現在再生しているアニメーションが終了すると値が発行されるストリーム。</returns>
-        private IObservable<Unit> WaitAnimationFinish()
+        private IObservable<Unit> WaitAnimationFinish(string debug = "")
         {
             return this.UpdateAsObservable()
                        .SkipWhile(x => Sprite.AnimationCheckPlay())

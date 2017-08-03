@@ -48,8 +48,11 @@ namespace ProcedualLevels.Views
         protected virtual void OnDestroy()
         {
             Disposable.Dispose();
-            KnockbackState.Dispose();
-            KnockbackState = null;
+            if (KnockbackState != null)
+			{
+				KnockbackState.Dispose();
+				KnockbackState = null;
+            }
         }
     }
 }
