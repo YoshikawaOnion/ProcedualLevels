@@ -7,12 +7,15 @@ namespace ProcedualLevels.Models
     public interface IAdventureView
     {
         void Initialize(AdventureContext context);
-        IObservable<Enemy> BattleObservable { get; }
         void Knockback(Battler battlerSubject, Battler battlerAgainst, int power);
         void ShowDeath(Battler subject);
-        IObservable<PowerUp> GetPowerUpObservable { get; }
-        IObservable<Unit> GoalObservable { get; }
         void PlacePowerUp(int index, PowerUp powerUp);
-        IObservable<IAdventureView> ResetAsync();
+
+		IObservable<IAdventureView> ResetAsync();
+
+		IObservable<Enemy> OnBattle { get; }
+		IObservable<PowerUp> OnGetPowerUp { get; }
+		IObservable<Unit> OnGoal { get; }
+        IObservable<Unit> OnPlayerDie { get; }
     }
 }

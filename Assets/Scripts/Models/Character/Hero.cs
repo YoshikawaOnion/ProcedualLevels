@@ -14,7 +14,7 @@ namespace ProcedualLevels.Models
         {
             Disposable = new CompositeDisposable();
 
-            view.BattleObservable.Subscribe(x =>
+            view.OnBattle.Subscribe(x =>
             {
                 Hp.Value -= x.Attack.Value;
                 x.Hp.Value -= Attack.Value;
@@ -23,7 +23,7 @@ namespace ProcedualLevels.Models
             })
                 .AddTo(Disposable);
             
-            view.GetPowerUpObservable.Subscribe(x =>
+            view.OnGetPowerUp.Subscribe(x =>
             {
                 Attack.Value += x.AttackRising;
                 x.Gotten();
@@ -32,7 +32,7 @@ namespace ProcedualLevels.Models
 
             Observable.Interval(TimeSpan.FromMilliseconds(500))
                       .Skip(2)
-                      .TakeUntil(view.BattleObservable)
+                      .TakeUntil(view.OnBattle)
                       .Repeat()
                       .Subscribe(x =>
             {

@@ -24,7 +24,8 @@ namespace ProcedualLevels.Models
             };
             view.Initialize(context);
 
-            view.GoalObservable.SelectMany(x => Observable.Timer(TimeSpan.FromSeconds(2)))
+            view.OnGoal.Merge(view.OnPlayerDie)
+                .SelectMany(x => Observable.Timer(TimeSpan.FromSeconds(2)))
                 .First()
                 .Subscribe(x =>
             {

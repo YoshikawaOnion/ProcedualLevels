@@ -12,5 +12,6 @@ namespace ProcedualLevels.Views
         IObserver<Collision2D> OnPlayerCollideWithEnemySender { get; }
         IObserver<Models.Enemy> OnPlayerBattleWithEnemySender { get; }
         IObserver<Unit> OnPlayerGoalSender { get; }
+        IObserver<Unit> OnPlayerDieSender { get; }
     }
 }

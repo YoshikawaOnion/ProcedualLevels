@@ -25,7 +25,7 @@ namespace ProcedualLevels.Models
 
 			Observable.Interval(TimeSpan.FromMilliseconds(500))
 					  .Skip(2)
-					  .TakeUntil(view.BattleObservable)
+					  .TakeUntil(view.OnBattle)
 					  .Repeat()
 					  .Subscribe(x =>
 			{

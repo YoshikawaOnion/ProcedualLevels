@@ -29,7 +29,10 @@ namespace ProcedualLevels.Views
 
         private void OnDestroy()
 		{
-			Destroy(Goal.gameObject);
+            if (Goal != null)
+			{
+				Destroy(Goal.gameObject);
+            }
             Destroy(Maze.gameObject);
             Destroy(DebugRoot.gameObject);
         }

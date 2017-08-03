@@ -28,16 +28,18 @@ namespace ProcedualLevels.Views
             }
         }
 
-		public IObservable<Enemy> BattleObservable { get; private set; }
-        public IObservable<PowerUp> GetPowerUpObservable { get; private set; }
-        public IObservable<Unit> GoalObservable { get; private set; }
+		public IObservable<Enemy> OnBattle { get; private set; }
+        public IObservable<PowerUp> OnGetPowerUp { get; private set; }
+        public IObservable<Unit> OnGoal { get; private set; }
+        public IObservable<Unit> OnPlayerDie { get; private set; }
 
         private void Start()
         {
             EventFacade = new GameEventFacade();
-            BattleObservable = EventFacade.OnPlayerBattleWithEnemyReceiver;
-            GetPowerUpObservable = EventFacade.OnPlayerGetPowerUpReceiver;
-            GoalObservable = EventFacade.OnPlayerGoalReceiver;
+            OnBattle = EventFacade.OnPlayerBattleWithEnemyReceiver;
+            OnGetPowerUp = EventFacade.OnPlayerGetPowerUpReceiver;
+            OnGoal = EventFacade.OnPlayerGoalReceiver;
+            OnPlayerDie = EventFacade.OnPlayerDieReceiver;
         }
 
         public void Initialize(AdventureContext context)

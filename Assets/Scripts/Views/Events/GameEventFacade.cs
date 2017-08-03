@@ -30,5 +30,9 @@ namespace ProcedualLevels.Views
         public IObservable<Unit> OnPlayerGoalReceiver { get { return onPlayerGoal; } }
         public IObserver<Unit> OnPlayerGoalSender { get { return onPlayerGoal; } }
         private Subject<Unit> onPlayerGoal = new Subject<Unit>();
+
+        public IObservable<Unit> OnPlayerDieReceiver { get { return onPlayerDie; } }
+        public IObserver<Unit> OnPlayerDieSender { get { return onPlayerDie; } }
+        private Subject<Unit> onPlayerDie = new Subject<Unit>();
     }
 }

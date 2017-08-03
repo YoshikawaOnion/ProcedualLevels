@@ -13,5 +13,6 @@ namespace ProcedualLevels.Views
 		IObservable<Models.Enemy> OnPlayerBattleWithEnemyReceiver { get; }
 		IObservable<Models.PowerUp> OnPlayerGetPowerUpReceiver { get; }
 		IObservable<Unit> OnPlayerGoalReceiver { get; }
+        IObservable<Unit> OnPlayerDieReceiver { get; }
 	}
 }
