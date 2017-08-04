@@ -38,7 +38,7 @@ namespace ProcedualLevels.Views
         {
             var goalPrefab = Resources.Load<Goal>("Prefabs/Dungeon/Goal_Control");
             Goal = Instantiate(goalPrefab);
-            Goal.transform.position = map.GoalLocation;
+            Goal.transform.position = map.GoalLocation + new Vector2(0.5f, 0.5f);
             Goal.transform.SetParent(RootObjectRepository.I.ManagerDraw.transform);
             Goal.Initialize(manager.EventFacade);
         }

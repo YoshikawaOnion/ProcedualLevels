@@ -11,10 +11,12 @@ namespace ProcedualLevels.Views
     public class PowerUpItemController : MonoBehaviour
     {
         public PowerUp Model { get; private set; }
+        private CompositeDisposable Disposable { get; set; }
 
         public void Initialize(PowerUp model, IPowerUpItemEventAccepter eventAccepter)
         {
             Model = model;
+            Disposable = new CompositeDisposable();
 
             var rigidbody = GetComponent<Rigidbody2D>();
             rigidbody.AddForce(new Vector2(0, 3));
@@ -29,11 +31,14 @@ namespace ProcedualLevels.Views
                 this.UpdateAsObservable()
                     .Take(5)
                     .Select(y => (x.transform.position + transform.position * 2) / 3)
-                    .Subscribe(y => transform.position = y, () => Destroy(gameObject));
-            });
+                    .Subscribe(y => transform.position = y, () => Destroy(gameObject))
+                    .AddTo(Disposable);
+            })
+                    .AddTo(Disposable);
 
             Observable.Timer(TimeSpan.FromMilliseconds(500))
-                      .Subscribe(x => collider.enabled = true);
+                      .Subscribe(x => collider.enabled = true)
+                      .AddTo(Disposable);
         }
     }
 }

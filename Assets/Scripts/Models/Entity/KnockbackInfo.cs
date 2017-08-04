@@ -21,7 +21,7 @@ namespace ProcedualLevels.Models
             Power = knockbackPower;
             KnockbackPower = Power * asset.KnockbackPowerFactor;
             KnockbackJumpPower = asset.KnockbackJumpPower;
-            StanTime = Power * asset.KnockbackStanTimeFactor;
+            StanTime = 1 * asset.KnockbackStanTimeFactor;
         }
     }
 }

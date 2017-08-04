@@ -118,8 +118,14 @@ namespace ProcedualLevels.Views
 					Destroy(battler.gameObject);
 				}
 			}
-            Destroy(MapView.gameObject);
-            Destroy(MapTipRenderer.gameObject);
+            if (MapView != null)
+			{
+				Destroy(MapView.gameObject);
+            }
+            if (MapTipRenderer != null)
+			{
+				Destroy(MapTipRenderer.gameObject);
+            }
 			EventFacade = null;
         }
 

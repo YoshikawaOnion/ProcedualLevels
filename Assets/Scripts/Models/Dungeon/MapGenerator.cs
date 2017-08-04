@@ -167,7 +167,8 @@ namespace ProcedualLevels.Models
 			MapDivision goalDivision;
 			goalDivision = map.Divisions.MaxItem(x => x.Room.Right);
 
-			map.GoalLocation = GetRandomLocation(goalDivision.Room, DungeonAsset.ColliderMargin);
+            var goalX = Helper.GetRandomInRange(goalDivision.Room.Left, goalDivision.Room.Right - 1);
+			map.GoalLocation = new Vector2(goalX, goalDivision.Room.Bottom + 1);
 		}
 
         /// <summary>
