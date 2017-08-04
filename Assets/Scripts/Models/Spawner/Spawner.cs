@@ -30,7 +30,7 @@ namespace ProcedualLevels.Models
                                       InitialPosition,
                                       Ability,
                                       context.View);
-                context.View.SpawnEnemy(enemy);
+                context.SpawnEnemy(enemy);
                 ++context.NextBattlerIndex;
             });
         }

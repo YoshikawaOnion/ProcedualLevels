@@ -162,12 +162,13 @@ namespace ProcedualLevels.Models
 		{
             var startDivision = map.Divisions.MinItem(x => x.Room.Left);
 
-            map.StartLocation = GetRandomLocation(startDivision.Room, DungeonAsset.ColliderMargin);
+            var startX = Helper.GetRandomInRange(startDivision.Room.Left + 1, startDivision.Room.Right - 2);
+            map.StartLocation = new Vector2(startX, startDivision.Room.Bottom + 1);
 
 			MapDivision goalDivision;
 			goalDivision = map.Divisions.MaxItem(x => x.Room.Right);
 
-            var goalX = Helper.GetRandomInRange(goalDivision.Room.Left, goalDivision.Room.Right - 1);
+            var goalX = Helper.GetRandomInRange(goalDivision.Room.Left + 1, goalDivision.Room.Right - 2);
 			map.GoalLocation = new Vector2(goalX, goalDivision.Room.Bottom + 1);
 		}
 

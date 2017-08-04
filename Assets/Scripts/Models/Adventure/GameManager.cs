@@ -23,11 +23,12 @@ namespace ProcedualLevels.Models
                     Hp = { Value = gameAsset.PlayerHp },
                     Attack = { Value = gameAsset.PlayerAttack }
                 },
-                Enemies = map.Enemies.ToArray(),
+                Enemies = map.Enemies,
                 Map = map,
                 TimeLimit = new ReactiveProperty<int>(gameAsset.TimeLimitSeconds),
                 NextBattlerIndex = map.Enemies.Max(x => x.Index) + 1,
-                View = view
+                View = view,
+                Spawners = map.Spawners.ToArray()
             };
             map.Spawners.ForEach(x => x.Initialize(context));
             view.Initialize(context);

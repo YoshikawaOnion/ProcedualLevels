@@ -3,22 +3,39 @@ using System.Collections;
 using System.Collections.Generic;
 using ProcedualLevels.Common;
 using UnityEngine;
+using UniRx;
+using UniRx.Triggers;
 
 namespace ProcedualLevels.Views
 {
     public class UnlimitedChasingEnemyController : EnemyController
     {
         private MoveController MoveController { get; set; }
+        private bool IsStaying { get; set; }
+        private CompositeDisposable Disposable { get; set; }
 
         public override void Initialize(Models.Enemy enemy, AdventureViewContext context)
         {
 			base.Initialize(enemy, context);
 			MoveController = GetComponent<MoveController>();
+            Disposable = new CompositeDisposable();
+
+            var stayTriggerTimes = (int)Helper.RandomInRange(20, 40);
+            Observable.Interval(TimeSpan.FromSeconds(stayTriggerTimes))
+                .FirstOrDefault()
+                .Subscribe(x =>
+            {
+                IsStaying = true;
+                Rigidbody.velocity = Vector2.zero;
+                Observable.Timer(TimeSpan.FromSeconds(2))
+                          .Subscribe(y => IsStaying = false);
+            })
+                      .AddTo(Disposable);
         }
 
         public override void Control()
 		{
-			if (Context.Hero == null)
+			if (Context.Hero == null || IsStaying)
 			{
                 Rigidbody.velocity = Vector2.zero;
 				return;
@@ -30,6 +47,12 @@ namespace ProcedualLevels.Views
 			var x = MoveController.GetMoveSpeed(Rigidbody.velocity.x, walkDirectionX, 1);
 			var y = MoveController.GetMoveSpeed(Rigidbody.velocity.y, walkDirectionY, 1);
 			Rigidbody.velocity = new Vector2(x, y);
+        }
+
+        protected override void OnDestroy()
+        {
+            base.OnDestroy();
+            Disposable.Dispose();
         }
     }
 }

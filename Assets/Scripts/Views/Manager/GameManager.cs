@@ -94,7 +94,7 @@ namespace ProcedualLevels.Views
         {
             var heroPrefab = Resources.Load<HeroController>("Prefabs/Character/Hero");
             HeroController = Instantiate(heroPrefab);
-            HeroController.transform.position = context.Map.StartLocation;
+            HeroController.transform.position = context.Map.StartLocation + Vector2.one * 0.5f;
             HeroController.transform.SetPositionZ(heroPrefab.transform.position.z);
             HeroController.Initialize(context.Hero, RootObjectRepository.I.GameUi, EventFacade);
             HeroController.transform.SetParent(RootObjectRepository.I.ManagerDraw.transform);
@@ -105,7 +105,8 @@ namespace ProcedualLevels.Views
         {
             if (HeroController != null)
             {
-                RootObjectRepository.I.Camera.transform.position = HeroController.transform.position.AddY(2).MergeZ(-10);
+                RootObjectRepository.I.Camera.transform.position =
+                                        HeroController.transform.position.MergeZ(-10);
             }
         }
 
