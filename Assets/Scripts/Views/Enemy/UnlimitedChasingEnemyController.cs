@@ -25,9 +25,10 @@ namespace ProcedualLevels.Views
 			}
 
 			var direction = (Context.Hero.transform.position - transform.position).normalized;
-			var walkDirection = Helper.Sign(direction.x, 0.2f);
-			var x = MoveController.GetMoveSpeed(Rigidbody.velocity.x, walkDirection, 1);
-			var y = MoveController.GetMoveSpeed(Rigidbody.velocity.y, walkDirection, 1);
+			var walkDirectionX = Helper.Sign(direction.x, 0.2f);
+            var walkDirectionY = Helper.Sign(direction.y, 0.2f);
+			var x = MoveController.GetMoveSpeed(Rigidbody.velocity.x, walkDirectionX, 1);
+			var y = MoveController.GetMoveSpeed(Rigidbody.velocity.y, walkDirectionY, 1);
 			Rigidbody.velocity = new Vector2(x, y);
         }
     }
