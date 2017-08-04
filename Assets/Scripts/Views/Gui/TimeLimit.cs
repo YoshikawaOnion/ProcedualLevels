@@ -10,19 +10,32 @@ namespace ProcedualLevels.Views
 {
     public class TimeLimit : MonoBehaviour
     {
+        [SerializeField]
+        private Color dangerColor;
+        [SerializeField]
+        private Color warningColor;
+
         private Text Text { get; set; }
-        private IDisposable Disposable { get; set; }
-     
+        private CompositeDisposable Disposable { get; set; }
+        private Color InitialColor { get; set; }
+
+        private void Start()
+		{
+			Text = GetComponent<Text>();
+			InitialColor = Text.color;
+		}
+
         public void Initialize(Models.AdventureContext context)
         {
-            Text = GetComponent<Text>();
+            Text.color = InitialColor;
 
             if (Disposable != null)
             {
                 Disposable.Dispose();
             }
+            Disposable = new CompositeDisposable();
 
-            Disposable = context.TimeLimit.Subscribe(x =>
+            context.TimeLimit.Subscribe(x =>
             {
                 var stringBuilder = new StringBuilder();
                 var minutes = x / 60;
@@ -31,7 +44,14 @@ namespace ProcedualLevels.Views
                 stringBuilder.Append(":");
                 stringBuilder.Append(seconds.ToString("00"));
                 Text.text = stringBuilder.ToString();
-            });
+            }).AddTo(Disposable);
+
+            context.TimeLimit.FirstOrDefault(x => x == 0)
+                   .Subscribe(x => Text.color = dangerColor)
+                   .AddTo(Disposable);
+            context.TimeLimit.FirstOrDefault(x => x <= 30)
+                   .Subscribe(x => Text.color = warningColor)
+                   .AddTo(Disposable);
         }
 
         private void OnDestroy()

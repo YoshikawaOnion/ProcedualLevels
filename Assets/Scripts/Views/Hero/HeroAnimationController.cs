@@ -96,20 +96,22 @@ namespace ProcedualLevels.Views
             if (direction.x > 0)
             {
                 PlayAnimation(AttackRightAnimation, 1);
+                Direction = 1;
             }
             else
             {
                 PlayAnimation(AttackLeftAnimation, 1);
+                Direction = -1;
             }
 
             WaitAnimationFinish().Subscribe(x =>
             {
-                if (direction.x > 0)
+                if (Direction > 0)
                 {
                     PlayAnimation(IdleRightAnimation, LoopInfinite);
                 }
                 else
-                {
+				{
                     PlayAnimation(IdleLeftAnimation, LoopInfinite);
                 }                
             })
