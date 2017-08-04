@@ -62,7 +62,7 @@ namespace ProcedualLevels.Views
         /// <summary>
         /// 現在の状態に紐づけられた振る舞いを停止します。
         /// </summary>
-        private void InitializeState()
+        public void InitializeState()
         {
             if (JumpStateDisposable != null)
             {

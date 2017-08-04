@@ -12,10 +12,13 @@ namespace ProcedualLevels.Views
 {
     public class GameManager : MonoBehaviour, IAdventureView
 	{
+		private Dictionary<string, EnemyController> EnemyPrefabs { get; set; }
+
 		private HeroController HeroController { get; set; }
-		private EnemyController[] EnemyControllers { get; set; }
+		private List<EnemyController> EnemyControllers { get; set; }
         private MapView MapView { get; set; }
-        private MapTipRenderer MapTipRenderer { get; set; }
+		private MapTipRenderer MapTipRenderer { get; set; }
+        private AdventureViewContext Context { get; set; }
 
         public GameEventFacade EventFacade { get; set; }
         public BattlerController[] Battlers
@@ -36,6 +39,8 @@ namespace ProcedualLevels.Views
         private void Start()
         {
             EventFacade = new GameEventFacade();
+            EnemyControllers = new List<EnemyController>();
+            EnemyPrefabs = new Dictionary<string, EnemyController>();
             OnBattle = EventFacade.OnPlayerBattleWithEnemyReceiver;
             OnGetPowerUp = EventFacade.OnPlayerGetPowerUpReceiver;
             OnGoal = EventFacade.OnPlayerGoalReceiver;
@@ -46,7 +51,7 @@ namespace ProcedualLevels.Views
 		{
 			SetHeroUp(context);
 
-			var viewContext = new AdventureViewContext
+			Context = new AdventureViewContext
 			{
 				Hero = HeroController,
 				EventReceiver = EventFacade,
@@ -54,8 +59,8 @@ namespace ProcedualLevels.Views
 			};
 
             SetMaptipUp(context);
-			SetEnemiesUp(context, viewContext);
-			SetMapUp(context, viewContext);
+			SetEnemiesUp(context, Context);
+			SetMapUp(context, Context);
             RootObjectRepository.I.GameUi.SetActive(true);
 
             var timeLimit = RootObjectRepository.I.GameUi.transform.Find("TimeLimit")
@@ -65,15 +70,10 @@ namespace ProcedualLevels.Views
 
         private void SetEnemiesUp(AdventureContext context, AdventureViewContext viewContext)
         {
-            var list = new List<EnemyController>();
-
             foreach (var enemy in context.Enemies)
             {
-                var obj = viewContext.SpawnEnemy(enemy);
-                list.Add(obj);
+                SpawnEnemy(enemy);
             }
-
-            EnemyControllers = list.ToArray();
         }
 
         private void SetMaptipUp(AdventureContext context)
@@ -149,6 +149,7 @@ namespace ProcedualLevels.Views
             var obj = Instantiate(prefab);
             obj.Initialize(powerUp, EventFacade);
             obj.transform.position = battler.transform.position.MergeZ(obj.transform.position.z);
+            obj.transform.SetParent(transform);
         }
 
         public IObservable<IAdventureView> ResetAsync()
@@ -165,5 +166,25 @@ namespace ProcedualLevels.Views
                 return (IAdventureView)view;
             });
 		}
+
+        public void SpawnEnemy(Enemy enemy)
+		{
+			EnemyController prefab;
+			if (!EnemyPrefabs.TryGetValue(enemy.Ability.PrefabName, out prefab))
+			{
+				prefab = Resources.Load<EnemyController>
+								  ("Prefabs/Enemy/" + enemy.Ability.PrefabName);
+				EnemyPrefabs[enemy.Ability.PrefabName] = prefab;
+			}
+
+			var obj = Instantiate(prefab);
+			obj.transform.position = enemy.InitialPosition
+				.ToVector3()
+				.MergeZ(prefab.transform.position.z);
+			obj.Initialize(enemy, Context);
+			obj.transform.SetParent(RootObjectRepository.I.ManagerDraw.transform);
+
+            EnemyControllers.Add(obj);
+        }
     }
 }

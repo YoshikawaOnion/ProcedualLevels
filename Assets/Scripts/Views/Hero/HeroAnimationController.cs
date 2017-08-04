@@ -29,6 +29,7 @@ namespace ProcedualLevels.Views
         private CompositeDisposable Disposable { get; set; }
         private Subject<float> DirectionSubject { get; set; }
         private bool IsDead { get; set; }
+        private string AnimationKeyPlaying { get; set; }
 
         /// <summary>
         /// アニメーションの管理を開始します。
@@ -122,6 +123,8 @@ namespace ProcedualLevels.Views
         public IObservable<Unit> AnimateDie()
         {
             IsDead = true;
+            Disposable.Dispose();
+            Disposable = null;
 
             if (Direction > 0)
             {
@@ -139,24 +142,28 @@ namespace ProcedualLevels.Views
         /// 現在再生しているアニメーションが終了するのを待機します。
         /// </summary>
         /// <returns>現在再生しているアニメーションが終了すると値が発行されるストリーム。</returns>
-        private IObservable<Unit> WaitAnimationFinish(string debug = "")
+        private IObservable<Unit> WaitAnimationFinish()
         {
             return this.UpdateAsObservable()
-                       .SkipWhile(x => Sprite.AnimationCheckPlay())
+					   .SkipWhile(x => Sprite.AnimationCheckPlay())
                        .Select(x => Unit.Default)
-                       .FirstOrDefault();
+					   .FirstOrDefault();
         }
 		
 		private void PlayAnimation(string animationKey, int playTimes)
 		{
 			var index = Sprite.IndexGetAnimation(animationKey);
 			Sprite.AnimationPlay(index, playTimes);
+            AnimationKeyPlaying = animationKey;
 		}
 
         private void OnDestroy()
         {
             Sprite = null;
-            Disposable.Dispose();
+            if (Disposable != null)
+			{
+				Disposable.Dispose();
+            }
         }
     }
 }

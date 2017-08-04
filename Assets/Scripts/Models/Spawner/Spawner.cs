@@ -23,12 +23,16 @@ namespace ProcedualLevels.Models
 
         public void Initialize(AdventureContext context)
         {
-            SpawnObservable = Behavior.GetSpawnStream(context)
-                                      .Select(x => new Enemy(context.NextBattlerIndex,
-                                                             InitialPosition,
-                                                             Ability,
-                                                             context.View));
-            Disposable = SpawnObservable.Subscribe(x => ++context.NextBattlerIndex);
+            Disposable = Behavior.GetSpawnStream(context)
+                                 .Subscribe(x =>
+            {
+                var enemy = new Enemy(context.NextBattlerIndex,
+                                      InitialPosition,
+                                      Ability,
+                                      context.View);
+                context.View.SpawnEnemy(enemy);
+                ++context.NextBattlerIndex;
+            });
         }
 
         public void Dispose()

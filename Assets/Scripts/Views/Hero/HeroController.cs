@@ -80,6 +80,7 @@ namespace ProcedualLevels.Views
         public override void Die()
         {
             HeroDisposable.Dispose();
+            JumpController.InitializeState();
             Animation.AnimateDie()
                      .Subscribe(x =>
             {
