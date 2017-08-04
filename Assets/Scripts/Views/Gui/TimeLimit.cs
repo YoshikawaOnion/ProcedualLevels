@@ -17,6 +17,11 @@ namespace ProcedualLevels.Views
         {
             Text = GetComponent<Text>();
 
+            if (Disposable != null)
+            {
+                Disposable.Dispose();
+            }
+
             Disposable = context.TimeLimit.Subscribe(x =>
             {
                 var stringBuilder = new StringBuilder();

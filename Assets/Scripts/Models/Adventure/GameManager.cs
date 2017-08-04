@@ -38,6 +38,7 @@ namespace ProcedualLevels.Models
                 .Subscribe(x =>
             {
                 context.Dispose();
+                Disposable.Dispose();
                 var next = new GameManager();
                 var nextViewStream = view.ResetAsync();
                 nextViewStream.Subscribe(nextView => next.Initialize(dungeonAsset, gameAsset, nextView));
