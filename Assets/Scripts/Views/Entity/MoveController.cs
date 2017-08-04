@@ -1,31 +1,30 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
-using ProcedualLevels.Common;
 using UnityEngine;
 
 namespace ProcedualLevels.Views
 {
-    public class WalkController : MonoBehaviour
-    {
-        [SerializeField]
+    public class MoveController : MonoBehaviour
+	{
+		[SerializeField]
 		private float minSpeed = 3;
-        [SerializeField]
+		[SerializeField]
 		private float maxSpeed = 5;
         [SerializeField]
         private float stoppingAccel = 0.5f;
         [SerializeField]
         private float movingAccel = 0.1f;
 
-        private Rigidbody2D Rigidbody { get; set; }
+		private Rigidbody2D Rigidbody { get; set; }
 
-        private void Start()
-        {
-            Rigidbody = GetComponent<Rigidbody2D>();
-        }
+		private void Start()
+		{
+			Rigidbody = GetComponent<Rigidbody2D>();
+		}
 
-        private float DiminishSpeed(float powerScale)
-        {
-            var velocity = Rigidbody.velocity.x;
+		private float DiminishSpeed(float currentVelocity, float powerScale)
+		{
+			var velocity = currentVelocity;
 			var a = -Mathf.Sign(velocity) * stoppingAccel * powerScale;
 			velocity = velocity + a;
 			if (Mathf.Abs(velocity) <= stoppingAccel)
@@ -33,12 +32,12 @@ namespace ProcedualLevels.Views
 				velocity = 0;
 			}
 
-            return velocity;
-        }
+			return velocity;
+		}
 
-        public void Walk(int direction, float powerScale)
-        {
-			var velocity = Rigidbody.velocity.x;
+        public float GetMoveSpeed(float currentVelocity, int direction, float powerScale)
+		{
+			var velocity = currentVelocity;
 
 			if (Mathf.Abs(velocity) < minSpeed)
 			{
@@ -48,11 +47,11 @@ namespace ProcedualLevels.Views
 					var v = Mathf.Sign(direction) * minSpeed;
 					velocity = v;
 				}
-                else
+				else
 				{
-                    velocity = DiminishSpeed(powerScale);
-                }
-            }
+					velocity = DiminishSpeed(velocity, powerScale);
+				}
+			}
 			else
 			{
 				// 静止操作をしている
@@ -67,7 +66,7 @@ namespace ProcedualLevels.Views
 				}
 				else if (direction == 0)
 				{
-                    velocity = DiminishSpeed(powerScale);
+					velocity = DiminishSpeed(velocity, powerScale);
 				}
 				// 加速操作をしている
 				else if (Mathf.Abs(velocity) < maxSpeed)
@@ -76,7 +75,8 @@ namespace ProcedualLevels.Views
 					velocity = velocity + a;
 				}
 			}
-			Rigidbody.velocity = Rigidbody.velocity.MergeX(velocity);
-        }
+
+            return velocity;
+		}
     }
 }

@@ -9,11 +9,11 @@ namespace ProcedualLevels.Views
     public class MapTipRenderer : MonoBehaviour
     {
         [SerializeField]
-        private BatchRenderer wallRendererPrefab;
+        private BatchRenderer wallRendererPrefab = null;
         [SerializeField]
-        private BatchRenderer roomRendererPrefab;
+        private BatchRenderer roomRendererPrefab = null;
         [SerializeField]
-        private BatchRenderer platformRendererPrefab;
+        private BatchRenderer platformRendererPrefab = null;
 
 		private List<Vector3> WallLocations { get; set; }
 		private List<Vector3> RoomLocations { get; set; }
