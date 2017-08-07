@@ -1,4 +1,4 @@
-﻿﻿using System.Collections;
+﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using ProcedualLevels.Models;
@@ -33,8 +33,8 @@ namespace ProcedualLevels.Views
         public void Initialize(Hero hero,
                                GameObject gameUi,
                                IPlayerEventAccepter eventAccepter)
-		{
-			base.Initialize(hero);
+        {
+            base.Initialize(hero);
             Hero = hero;
             EventAccepter = eventAccepter;
             JumpController = GetComponent<HeroMoveController>();
@@ -43,29 +43,19 @@ namespace ProcedualLevels.Views
             Animation = GetComponent<HeroAnimationController>();
             Animation.Initialize();
 
-            // 敵とぶつかるとバトルのメッセージを流す。ただし一度バトルしたら一定時間はぶつかってもバトルしない
-            this.OnCollisionStay2DAsObservable()
-                .Select(x => x.gameObject.GetComponent<EnemyController>())
-                .Where(x => x != null)
-                .ThrottleFirst(TimeSpan.FromMilliseconds(750))
-                .Subscribe(x =>
-			{
-				EventAccepter.OnPlayerBattleWithEnemySender
-							 .OnNext(x.Enemy);
-                Animation.AnimateAttack(x.gameObject);
-            })
-                .AddTo(HeroDisposable);
-
             LeftButton = gameUi.transform.Find("Controller/LeftButton")
                                .GetComponent<ControllerButton>();
             RightButton = gameUi.transform.Find("Controller/RightButton")
                                 .GetComponent<ControllerButton>();
             JumpButton = gameUi.transform.Find("Controller/JumpButton")
                                .GetComponent<ControllerButton>();
+
+            var battle = GetComponent<HeroBattleController>();
+            battle.Initialize(eventAccepter);
         }
-		
-		public override void Control()
-		{
+
+        public override void Control()
+        {
             var horizontalInput = (int)Input.GetAxisRaw("Horizontal");
             var move = horizontalInput
                 + (LeftButton.IsHold ? -1 : 0)
@@ -74,7 +64,7 @@ namespace ProcedualLevels.Views
 
             var jump = Input.GetKey(KeyCode.Space)
                             || JumpButton.IsHold;
-			JumpController.ControlJump(jump);
+            JumpController.ControlJump(jump);
         }
 
         public override void Die()

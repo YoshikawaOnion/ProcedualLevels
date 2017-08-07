@@ -13,5 +13,6 @@ namespace ProcedualLevels.Views
         IObserver<Models.Enemy> OnPlayerBattleWithEnemySender { get; }
         IObserver<Unit> OnPlayerGoalSender { get; }
         IObserver<Unit> OnPlayerDieSender { get; }
+        IObserver<Models.Enemy> OnPlayerAttackedByEnemySender { get; }
     }
 }

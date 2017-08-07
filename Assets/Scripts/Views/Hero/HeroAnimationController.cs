@@ -119,6 +119,43 @@ namespace ProcedualLevels.Views
         }
 
         /// <summary>
+        /// 敵から攻撃を受けた際のアニメーションを再生します。
+        /// </summary>
+        /// <param name="target">Target.</param>
+		public void AnimateDamage(GameObject target)
+		{
+			if (IsDead)
+			{
+				return;
+			}
+
+			var direction = target.transform.position - transform.position;
+			if (direction.x > 0)
+			{
+				PlayAnimation(DamageRightAnimation, 1);
+				Direction = 1;
+			}
+			else
+			{
+				PlayAnimation(DamageLeftAnimation, 1);
+				Direction = -1;
+			}
+
+			WaitAnimationFinish().Subscribe(x =>
+			{
+				if (Direction > 0)
+				{
+					PlayAnimation(IdleRightAnimation, LoopInfinite);
+				}
+				else
+				{
+					PlayAnimation(IdleLeftAnimation, LoopInfinite);
+				}
+			})
+								 .AddTo(Disposable);
+		}
+
+        /// <summary>
         /// 死亡時のアニメーションを再生します。
         /// </summary>
         /// <returns>アニメーション終了時に値を発行するストリーム。</returns>

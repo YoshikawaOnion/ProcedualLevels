@@ -34,5 +34,9 @@ namespace ProcedualLevels.Views
         public IObservable<Unit> OnPlayerDieReceiver { get { return onPlayerDie; } }
         public IObserver<Unit> OnPlayerDieSender { get { return onPlayerDie; } }
         private Subject<Unit> onPlayerDie = new Subject<Unit>();
+
+        public IObservable<Models.Enemy> OnPlayerAttackedByEnemyReceiver { get { return onPlayerAttackedByEnemy; } }
+        public IObserver<Models.Enemy> OnPlayerAttackedByEnemySender { get { return onPlayerAttackedByEnemy; } }
+        private Subject<Models.Enemy> onPlayerAttackedByEnemy = new Subject<Models.Enemy>();
     }
 }

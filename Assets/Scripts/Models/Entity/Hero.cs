@@ -20,10 +20,18 @@ namespace ProcedualLevels.Models
             {
                 Hp.Value -= x.Attack.Value;
                 x.Hp.Value -= Attack.Value;
-                var knockbackForThis = new KnockbackInfo(this, x, BattlerAsset);
-                var knockbackForEnemy = new KnockbackInfo(x, this, BattlerAsset);
+                var knockbackForThis = new KnockbackInfo(this, x, BattlerAsset, false);
+                var knockbackForEnemy = new KnockbackInfo(x, this, BattlerAsset, false);
                 view.Knockback(knockbackForThis);
                 view.Knockback(knockbackForEnemy);
+            })
+                .AddTo(Disposable);
+
+            view.OnAttacked.Subscribe(x =>
+            {
+                Hp.Value -= x.Attack.Value;
+                var knockbackForThis = new KnockbackInfo(this, x, BattlerAsset, true);
+                view.Knockback(knockbackForThis);
             })
                 .AddTo(Disposable);
             
@@ -34,9 +42,10 @@ namespace ProcedualLevels.Models
             })
                 .AddTo(Disposable);
 
-            Observable.Interval(TimeSpan.FromMilliseconds(500))
+            Observable.Interval(TimeSpan.FromMilliseconds(250))
                       .Skip(2)
                       .TakeUntil(view.OnBattle)
+                      .TakeUntil(view.OnAttacked)
                       .Repeat()
                       .Subscribe(x =>
             {

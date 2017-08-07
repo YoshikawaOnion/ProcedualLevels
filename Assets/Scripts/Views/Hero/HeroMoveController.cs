@@ -39,7 +39,7 @@ namespace ProcedualLevels.Views
 
         private float GravityScale { get; set; }
         private int JumpCount { get; set; }
-        private int WalkDirection { get; set; }
+        public int WalkDirection { get; set; }
         private bool IsOnGround { get; set; }
         private Subject<int> WalkSubject { get; set; }
         private Subject<bool> JumpSubject { get; set; }

@@ -18,7 +18,7 @@ namespace ProcedualLevels.Models
                 {
                     Id = 0,
                     Hp = 5,
-                    Attack = 1,
+                    Attack = 3,
                     PrefabName = "Enemy_Control",
                     GenerationStrategy = new RandomEnemyGenStrategy(0.05f, battlerGen, dungeonGen),
                 },
@@ -26,7 +26,7 @@ namespace ProcedualLevels.Models
                 {
                     Id = 1,
                     Hp = 40,
-                    Attack = 3,
+                    Attack = 5,
                     PrefabName = "Boss_Control",
                     GenerationStrategy = new OnGoalEnemyGenStrategy(),
                 },
@@ -34,7 +34,7 @@ namespace ProcedualLevels.Models
                 {
                     Id = 2,
                     Hp = 100,
-                    Attack = 10,
+                    Attack = 20,
                     PrefabName = "Ghost_Control",
                     GenerationStrategy = new NullEnemyGenStrategy(),
                 },

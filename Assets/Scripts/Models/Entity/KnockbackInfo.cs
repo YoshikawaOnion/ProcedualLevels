@@ -13,15 +13,22 @@ namespace ProcedualLevels.Models
         public float KnockbackJumpPower { get; private set; }
         public float StanTime { get; private set; }
 
-        public KnockbackInfo(Battler subject, Battler against, GameParameterAsset asset)
+        public KnockbackInfo(Battler subject, Battler against, GameParameterAsset asset, bool noResist)
         {
-            var knockbackPower = Mathf.Max(0, against.Attack.Value - subject.Attack.Value);
-            BattlerSubject = subject;
-            BattlerAgainst = against;
-            Power = knockbackPower;
-            KnockbackPower = Power * asset.KnockbackPowerFactor;
-            KnockbackJumpPower = asset.KnockbackJumpPower;
-            StanTime = 1 * asset.KnockbackStanTimeFactor;
-        }
+            if (noResist)
+            {
+                Power = Mathf.Max(0, against.Attack.Value);
+            }
+            else
+			{
+				var knockbackPower = Mathf.Max(0, against.Attack.Value - subject.Attack.Value);
+				Power = knockbackPower;
+            }
+			BattlerSubject = subject;
+			BattlerAgainst = against;
+			KnockbackPower = Power * asset.KnockbackPowerFactor;
+			KnockbackJumpPower = asset.KnockbackJumpPower;
+			StanTime = 1 * asset.KnockbackStanTimeFactor;
+		}
     }
 }

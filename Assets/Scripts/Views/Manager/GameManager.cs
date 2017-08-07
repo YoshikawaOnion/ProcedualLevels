@@ -35,6 +35,7 @@ namespace ProcedualLevels.Views
         public IObservable<PowerUp> OnGetPowerUp { get; private set; }
         public IObservable<Unit> OnGoal { get; private set; }
         public IObservable<Unit> OnPlayerDie { get; private set; }
+        public IObservable<Enemy> OnAttacked { get; private set; }
 
         private void Start()
         {
@@ -45,6 +46,7 @@ namespace ProcedualLevels.Views
             OnGetPowerUp = EventFacade.OnPlayerGetPowerUpReceiver;
             OnGoal = EventFacade.OnPlayerGoalReceiver;
             OnPlayerDie = EventFacade.OnPlayerDieReceiver;
+            OnAttacked = EventFacade.OnPlayerAttackedByEnemyReceiver;
         }
 
         public void Initialize(AdventureContext context)

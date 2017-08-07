@@ -17,6 +17,7 @@ namespace ProcedualLevels.Models
 		IObservable<PowerUp> OnGetPowerUp { get; }
 		IObservable<Unit> OnGoal { get; }
         IObservable<Unit> OnPlayerDie { get; }
+        IObservable<Enemy> OnAttacked { get; }
 
         void SpawnEnemy(Enemy enemy);
     }
