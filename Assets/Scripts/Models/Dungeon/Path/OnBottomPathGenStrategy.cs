@@ -10,39 +10,38 @@ namespace ProcedualLevels.Models
     {
         public override void ConnectRooms(MapData map)
         {
-			var list = new List<MapConnection>();
-			Func<MapRectangle, MapRectangle, bool> isAdjacentOnRight = (b, t) => b.Right == t.Left;
+            var list = new List<MapConnection>();
+            Func<MapRectangle, MapRectangle, bool> isAdjacentOnRight = (b, t) => b.Right == t.Left;
             Func<MapRectangle, MapRectangle, bool> isAdjacentOnTop = (b, t) => b.Top == t.Bottom
                                                                                 && b.Left == t.Left;
 
-			foreach (var bottomDiv in map.Divisions)
-			{
+            foreach (var bottomDiv in map.Divisions)
+            {
                 //*
-				var horizontalAdjacents = map.Divisions
+                var horizontalAdjacents = map.Divisions
                                              .Where(x => isAdjacentOnRight(bottomDiv.Bound, x.Bound));
-				foreach (var topDiv in horizontalAdjacents)
-				{
-					var path = CreatePath(bottomDiv, topDiv, list);
-					var connection = new MapConnection(bottomDiv, topDiv, path, true);
-					bottomDiv.Connections.Add(connection);
-					list.Add(connection);
-				}
+                foreach (var topDiv in horizontalAdjacents)
+                {
+                    var path = CreatePath(bottomDiv, topDiv, map);
+                    var connection = new MapConnection(bottomDiv, topDiv, path, true);
+                    bottomDiv.Connections.Add(connection);
+                    list.Add(connection);
+                }
                 //*/
-
                 //*
-				var verticalAdjacents = map.Divisions
+                var verticalAdjacents = map.Divisions
                                            .Where(x => isAdjacentOnTop(bottomDiv.Bound, x.Bound));
                 foreach (var topDiv in verticalAdjacents)
                 {
                     if (topDiv.Room.Right <= bottomDiv.Room.Right)
-					{
-						var path = CreateVerticalPath(bottomDiv, topDiv, list);
+                    {
+                        var path = CreateVerticalPath(bottomDiv, topDiv, map);
                         if (IsThereSlimWall(map, path))
                         {
                             continue;
                         }
                         var connection = new MapConnection(bottomDiv, topDiv, path, true);
-						bottomDiv.Connections.Add(connection);
+                        bottomDiv.Connections.Add(connection);
 						list.Add(connection);
                     }
                 }
@@ -59,9 +58,9 @@ namespace ProcedualLevels.Models
         }
 
         private IMapPath CreateVerticalPath(MapDivision bottomDiv,
-                                           MapDivision topDiv,
-                                           List<MapConnection> connections)
-		{
+                                            MapDivision topDiv,
+                                            MapData map)
+        {
             var x = ActualVerticalPathThickness + bottomDiv.Room.Right;
 
             var path1 = new MapRectangle();
@@ -89,8 +88,8 @@ namespace ProcedualLevels.Models
         }
 
         private IMapPath CreatePath(MapDivision bottomDiv,
-                                   MapDivision topDiv,
-                                   List<MapConnection> connections)
+                                    MapDivision topDiv,
+                                    MapData map)
         {
             var list = new List<MapRectangle>();
             var path1 = new MapRectangle();
@@ -110,14 +109,14 @@ namespace ProcedualLevels.Models
                 path2.Right = path1.Right;
                 list.Add(path2);
             }
-            else if(path1.Bottom >= topDiv.Room.Top - DungeonGenAsset.ColliderMargin)
-			{
-				var path2 = new MapRectangle();
+            else if (path1.Bottom >= topDiv.Room.Top - DungeonGenAsset.ColliderMargin)
+            {
+                var path2 = new MapRectangle();
                 path2.Bottom = topDiv.Room.Top - ActualHorizontalPathThickness;
-				path2.Top = path1.Top;
-				path2.Left = path1.Right - ActualVerticalPathThickness;
-				path2.Right = path1.Right;
-				list.Add(path2);
+                path2.Top = path1.Top;
+                path2.Left = path1.Right - ActualVerticalPathThickness;
+                path2.Right = path1.Right;
+                list.Add(path2);
             }
 
             return new GenericMapPath(list);

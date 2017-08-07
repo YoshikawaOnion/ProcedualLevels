@@ -54,7 +54,60 @@ namespace ProcedualLevels.Models
             PlaceEnemies(view, map);
             PlaceSpawners(map);
 
+            var pathes = map.Divisions.SelectMany(x => x.Connections)
+                            .Select(x => x.Path);
+            foreach (var path in pathes)
+            {
+                PlaceCollisionBlock(map, path);
+            }
+
             return map;
+        }
+
+        private void PlaceCollisionBlock(MapData map, IMapPath path)
+        {
+            var pathRooms = path.GetRooms();
+            foreach (var pathRoom in pathRooms)
+            {
+                var rooms = map.Divisions.Select(x => x.Room)
+                               .Concat(pathRooms.Except(new[] { pathRoom }));
+                foreach (var room in rooms)
+                {
+                    // 垂直通路と部屋の交点の右上
+                    if (pathRoom.Bottom <= room.Top && room.Top <= pathRoom.Top
+                       && room.Left <= pathRoom.Right && pathRoom.Right < room.Right)
+                    {
+                        var pos = new Vector2(pathRoom.Right - 1, room.Top - 1);
+                        AddCollisionBlock(map, pos);
+                    }
+
+                    // 垂直通路と部屋の交点の右下
+                    if (pathRoom.Bottom <= room.Bottom && room.Bottom <= pathRoom.Top
+                       && room.Left <= pathRoom.Right && pathRoom.Right < room.Right)
+                    {
+						var pos = new Vector2(pathRoom.Right - 1, room.Bottom);
+						AddCollisionBlock(map, pos);
+                    }
+
+                    if (pathRoom.Left <= room.Left && room.Left <= pathRoom.Right
+                       && room.Bottom <= pathRoom.Bottom && pathRoom.Bottom <= room.Top)
+                    {
+                        var pos1 = new Vector2(room.Left, pathRoom.Top - 1);
+                        var pos2 = new Vector2(room.Left, pathRoom.Bottom);
+						AddCollisionBlock(map, pos1);
+						AddCollisionBlock(map, pos2);
+                    }
+                }
+            }
+        }
+
+        private void AddCollisionBlock(MapData map, Vector2 pos)
+        {
+            if (!map.IsRoom((int)pos.x, (int)pos.y)
+                && !map.IsPath((int)pos.x, (int)pos.y))
+            {
+                map.CollisionBlocks.Add(pos);
+            }
         }
 
         private static void PlaceSpawners(MapData map)
@@ -84,16 +137,16 @@ namespace ProcedualLevels.Models
         /// <param name="rightTop">部屋を生成できる範囲の右上座標。</param>
         /// <param name="map">結果を書き込むマップデータ。</param>
         private void GenerateRooms(Vector2 leftBottom, Vector2 rightTop, MapData map)
-		{
+        {
             var roomGen = new HorizontalRoomGenStrategy();
             var root = new MapRectangle(
-				(int)leftBottom.x,
-				(int)rightTop.x,
-				(int)leftBottom.y,
-				(int)rightTop.y);
-			var divisions = roomGen.GenerateRooms(root);
+                (int)leftBottom.x,
+                (int)rightTop.x,
+                (int)leftBottom.y,
+                (int)rightTop.y);
+            var divisions = roomGen.GenerateRooms(root);
             map.Divisions.AddRange(divisions);
-		}
+        }
 
         /// <summary>
         /// マップに配置されている通路を、部屋が孤立しないようにランダムに削減します。
@@ -149,8 +202,8 @@ namespace ProcedualLevels.Models
             root.ReducingMarker = index;
             foreach (var item in root.Connections)
             {
-				MarkConnectedRooms(item.BottomDivision, index);
-				MarkConnectedRooms(item.TopDivision, index);
+                MarkConnectedRooms(item.BottomDivision, index);
+                MarkConnectedRooms(item.TopDivision, index);
             }
         }
 
@@ -159,18 +212,18 @@ namespace ProcedualLevels.Models
         /// </summary>
         /// <param name="map">設定を書き込むマップデータ。</param>
 		private void PlaceStartAndGoal(MapData map)
-		{
+        {
             var startDivision = map.Divisions.MinItem(x => x.Room.Left);
 
             var startX = Helper.GetRandomInRange(startDivision.Room.Left + 1, startDivision.Room.Right - 2);
             map.StartLocation = new Vector2(startX, startDivision.Room.Bottom + 1);
 
-			MapDivision goalDivision;
-			goalDivision = map.Divisions.MaxItem(x => x.Room.Right);
+            MapDivision goalDivision;
+            goalDivision = map.Divisions.MaxItem(x => x.Room.Right);
 
             var goalX = Helper.GetRandomInRange(goalDivision.Room.Left + 1, goalDivision.Room.Right - 2);
-			map.GoalLocation = new Vector2(goalX, goalDivision.Room.Bottom + 1);
-		}
+            map.GoalLocation = new Vector2(goalX, goalDivision.Room.Bottom + 1);
+        }
 
         /// <summary>
         /// 空中の足場を生成します。
@@ -223,10 +276,10 @@ namespace ProcedualLevels.Models
         /// <param name="room">点が含まれる部屋。</param>
         /// <param name="margin">部屋の外周からの最小距離。</param>
 		private Vector2 GetRandomLocation(MapRectangle room, int margin)
-		{
-			var x = GetRandomInRange(room.Left + margin, room.Right - margin);
-			var y = GetRandomInRange(room.Bottom + margin, room.Top - margin);
-			return new Vector2(x + 0.5f, y + 0.5f);
-		}
-	}
+        {
+            var x = GetRandomInRange(room.Left + margin, room.Right - margin);
+            var y = GetRandomInRange(room.Bottom + margin, room.Top - margin);
+            return new Vector2(x + 0.5f, y + 0.5f);
+        }
+    }
 }

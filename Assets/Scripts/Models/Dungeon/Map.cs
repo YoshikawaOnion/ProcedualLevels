@@ -12,6 +12,7 @@ namespace ProcedualLevels.Models
         public List<Enemy> Enemies { get; private set; }
         public List<MapPlatform> Platforms { get; private set; }
         public List<Spawner> Spawners { get; private set; }
+        public List<Vector2> CollisionBlocks { get; private set; }
 
         public MapData()
         {
@@ -19,6 +20,7 @@ namespace ProcedualLevels.Models
             Enemies = new List<Enemy>();
             Platforms = new List<MapPlatform>();
             Spawners = new List<Spawner>();
+            CollisionBlocks = new List<Vector2>();
         }
 
         public bool IsRoom(int left, int bottom)

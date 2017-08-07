@@ -21,6 +21,19 @@ namespace ProcedualLevels.Views
             ShowPlatforms(map, Maze);
             ShowGoal(map, manager);
             ShowSpawners(map, manager, viewContext);
+            ShowCollisionBlock(map, manager);
+        }
+
+        private void ShowCollisionBlock(MapData map, GameManager manager)
+        {
+            var prefab = Resources.Load<GameObject>("Prefabs/Dungeon/CollisionBlock");
+            var offset = Vector2.one * 0.5f;
+            foreach (var item in map.CollisionBlocks)
+            {
+                var obj = Instantiate(prefab);
+                obj.transform.position = item + offset;
+                obj.transform.SetParent(manager.transform);
+            }
         }
 
         private void ShowSpawners(MapData map, GameManager manager, AdventureViewContext viewContext)
