@@ -40,5 +40,10 @@ namespace ProcedualLevels.Views
                       .Subscribe(x => collider.enabled = true)
                       .AddTo(Disposable);
         }
+
+        private void OnDestroy()
+        {
+            Disposable.Dispose();
+        }
     }
 }
