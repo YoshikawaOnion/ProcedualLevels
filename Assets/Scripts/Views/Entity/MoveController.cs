@@ -4,6 +4,9 @@ using UnityEngine;
 
 namespace ProcedualLevels.Views
 {
+    /// <summary>
+    /// キャラクターの歩行を制御するコンポーネント。
+    /// </summary>
     public class MoveController : MonoBehaviour
 	{
 		[SerializeField]
@@ -35,6 +38,13 @@ namespace ProcedualLevels.Views
 			return velocity;
 		}
 
+        /// <summary>
+        /// 現在の状態を加味した新しい移動速度を取得します。
+        /// </summary>
+        /// <returns>新しい移動速度。</returns>
+        /// <param name="currentVelocity">現在の移動速度。</param>
+        /// <param name="direction">新しい移動の向き。</param>
+        /// <param name="powerScale">移動量にかける倍率。</param>
         public float GetMoveSpeed(float currentVelocity, int direction, float powerScale)
 		{
 			var velocity = currentVelocity;

@@ -4,7 +4,10 @@ using UniRx;
 
 namespace ProcedualLevels.Models
 {
-    public class Battler
+    /// <summary>
+    /// 戦闘に参加できるキャラクターを表す基底クラス。
+    /// </summary>
+    public abstract class Battler
 	{
         public int Index { get; set; }
 		public ReactiveProperty<int> Attack { get; private set; }

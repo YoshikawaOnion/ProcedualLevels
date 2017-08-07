@@ -6,7 +6,5 @@ namespace ProcedualLevels.Models
 {
     public static class Def
     {
-        public static readonly string DungeonGenAssetPath = "Assets/DungeonGenAsset";
-        public static readonly string GameParameterAssetPath = "Assets/GameParameterAsset";
     }
 }

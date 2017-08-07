@@ -4,6 +4,9 @@ using UnityEngine;
 
 namespace ProcedualLevels.Models
 {
+    /// <summary>
+    /// ノックバックの情報を集約するクラス。
+    /// </summary>
     public class KnockbackInfo
     {
         public Battler BattlerSubject { get; private set; }
@@ -13,8 +16,16 @@ namespace ProcedualLevels.Models
         public float KnockbackJumpPower { get; private set; }
         public float StanTime { get; private set; }
 
-        public KnockbackInfo(Battler subject, Battler against, GameParameterAsset asset, bool noResist)
+        /// <summary>
+        /// パラメーターを指定して、KnockbackInfoの新しいインスタンスを生成します。
+        /// </summary>
+        /// <param name="subject">ノックバックを受けるバトラー。</param>
+        /// <param name="against">ノックバックを発生させるバトラー。</param>
+        /// <param name="noResist">ノックバックを受ける側が無抵抗に最大のノックバックを受けるかどうかを表す真偽値。</param>
+        public KnockbackInfo(Battler subject, Battler against, bool noResist)
         {
+            var asset = AssetRepository.I.GameParameterAsset;
+
             if (noResist)
             {
                 Power = Mathf.Max(0, against.Attack.Value);

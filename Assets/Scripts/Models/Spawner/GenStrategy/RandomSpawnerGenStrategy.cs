@@ -5,6 +5,9 @@ using UnityEngine;
 
 namespace ProcedualLevels.Models
 {
+    /// <summary>
+    /// ランダムな位置にスポナーを生成するアルゴリズムを提供します。
+    /// </summary>
     public class RandomSpawnerGenStrategy : ISpawnerGenStrategy
     {
         public IEnumerable<Spawner> Generate(MapData map,

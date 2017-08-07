@@ -4,14 +4,18 @@ using UnityEngine;
 
 namespace ProcedualLevels.Models
 {
+    /// <summary>
+    /// 登場する敵キャラクターのデータを管理するクラス。
+    /// </summary>
     public class EnemyDatabase
     {
+        /// <summary>
+        /// 登場する敵キャラクターのデータを並べた配列。
+        /// </summary>
         public EnemiesAbility[] Enemies;
 
         public EnemyDatabase()
         {
-            var battlerGen = Resources.Load<GameParameterAsset>(Def.GameParameterAssetPath);
-            var dungeonGen = Resources.Load<DungeonGenAsset>(Def.DungeonGenAssetPath);
             Enemies = new EnemiesAbility[]
             {
                 new EnemiesAbility()
@@ -20,7 +24,7 @@ namespace ProcedualLevels.Models
                     Hp = 5,
                     Attack = 3,
                     PrefabName = "Enemy_Control",
-                    GenerationStrategy = new RandomEnemyGenStrategy(0.05f, battlerGen, dungeonGen),
+                    GenerationStrategy = new RandomEnemyGenStrategy(0.05f),
                 },
                 new EnemiesAbility()
                 {

@@ -6,12 +6,22 @@ using ProcedualLevels.Models;
 
 namespace ProcedualLevels.Views
 {
+    /// <summary>
+    /// マップに属する要素を管理するクラス。
+    /// </summary>
     public class MapView : MonoBehaviour
     {
         private GameObject Maze { get; set; }
         private GameObject DebugRoot { get; set; }
         private Goal Goal { get; set; }
 
+        // TODO: map, managerの良い説明が思い浮かばない。設計が悪そう。
+        /// <summary>
+        /// マップに属する要素を表示します。
+        /// </summary>
+        /// <param name="map">この引数に渡したマップに属する要素を表示します。</param>
+        /// <param name="manager">このインスタンスが属するゲーム マネージャー。</param>
+        /// <param name="viewContext">探索画面の情報を保持するコンテキスト クラス。</param>
         public void Initialize(MapData map, GameManager manager, AdventureViewContext viewContext)
         {
             var mazePrefab = Resources.Load<GameObject>("Prefabs/Dungeon/Maze_Control");

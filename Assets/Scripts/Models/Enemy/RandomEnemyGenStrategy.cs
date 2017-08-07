@@ -4,19 +4,18 @@ using UnityEngine;
 
 namespace ProcedualLevels.Models
 {
+    /// <summary>
+    /// ランダムに敵キャラクターを配置するアルゴリズムを提供するクラス。
+    /// </summary>
     public class RandomEnemyGenStrategy : EnemyGenStrategy
     {
         private float Ratio { get; set; }
-        private GameParameterAsset BattlerAsset { get; set; }
         private DungeonGenAsset DungeonAsset { get; set; }
 
-        public RandomEnemyGenStrategy(float ratio,
-                                      GameParameterAsset battlerAsset,
-                                      DungeonGenAsset dungeonAsset)
+        public RandomEnemyGenStrategy(float ratio)
         {
             Ratio = ratio;
-            BattlerAsset = battlerAsset;
-            DungeonAsset = dungeonAsset;
+            DungeonAsset = AssetRepository.I.DungeonGenAsset;
         }
 
         public override void PlaceEnemies(MapData map,

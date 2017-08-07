@@ -8,29 +8,27 @@ namespace ProcedualLevels.Models
     public class Hero : Battler
     {
         private CompositeDisposable Disposable { get; set; }
-        private GameParameterAsset BattlerAsset { get; set; }
 
         public Hero(int index, IAdventureView view)
             : base(index, view)
         {
-            BattlerAsset = Resources.Load<GameParameterAsset>(Def.GameParameterAssetPath);
             Disposable = new CompositeDisposable();
 
             view.OnBattle.Subscribe(x =>
             {
                 Hp.Value -= x.Attack.Value;
                 x.Hp.Value -= Attack.Value;
-                var knockbackForThis = new KnockbackInfo(this, x, BattlerAsset, false);
-                var knockbackForEnemy = new KnockbackInfo(x, this, BattlerAsset, false);
+                var knockbackForThis = new KnockbackInfo(this, x, false);
+                var knockbackForEnemy = new KnockbackInfo(x, this, false);
                 view.Knockback(knockbackForThis);
                 view.Knockback(knockbackForEnemy);
             })
                 .AddTo(Disposable);
-
+            
             view.OnAttacked.Subscribe(x =>
             {
                 Hp.Value -= x.Attack.Value;
-                var knockbackForThis = new KnockbackInfo(this, x, BattlerAsset, true);
+                var knockbackForThis = new KnockbackInfo(this, x, true);
                 view.Knockback(knockbackForThis);
             })
                 .AddTo(Disposable);
@@ -42,6 +40,7 @@ namespace ProcedualLevels.Models
             })
                 .AddTo(Disposable);
 
+            // 一定時間攻撃を受けないでいるとHPが回復していく
             Observable.Interval(TimeSpan.FromMilliseconds(250))
                       .Skip(2)
                       .TakeUntil(view.OnBattle)

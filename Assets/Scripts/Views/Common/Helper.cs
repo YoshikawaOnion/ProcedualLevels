@@ -18,11 +18,22 @@ namespace ProcedualLevels.Common
             return (UnityEngine.Random.value * (max - min)) + min;
         }
 
+        /// <summary>
+        /// 指定された数値の符号を取得します。指定された数値が0に限りなく近ければ0を返します。
+        /// </summary>
+        /// <returns>指定した数値の符号。</returns>
+        /// <param name="value">符号を判定する数値。</param>
+        /// <param name="threshould">数値を0に限りなく近いと判定するために用いる誤差の大きさ。</param>
         public static int Sign(float value, float threshould = float.Epsilon)
         {
             return Mathf.Abs(value) <= threshould ? 0 : (int)Mathf.Sign(value);
         }
 
+        /// <summary>
+        /// コレクションからランダムに一つの要素を返します。
+        /// </summary>
+        /// <returns>ランダムに選ばれた要素。</returns>
+        /// <param name="source">選ぶ元となるコレクション。</param>
         public static T GetRandom<T>(this IEnumerable<T> source)
         {
             if (source.Any())

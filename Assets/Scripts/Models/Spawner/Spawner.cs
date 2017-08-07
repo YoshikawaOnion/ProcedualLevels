@@ -6,6 +6,9 @@ using UnityEngine;
 
 namespace ProcedualLevels.Models
 {
+    /// <summary>
+    /// スポナーを表すクラス。
+    /// </summary>
     public class Spawner : IDisposable
     {
         public IObservable<Enemy> SpawnObservable { get; private set; }

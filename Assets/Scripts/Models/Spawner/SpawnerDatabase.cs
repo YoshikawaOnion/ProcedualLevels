@@ -5,8 +5,15 @@ using UnityEngine;
 
 namespace ProcedualLevels.Models
 {
+    /// <summary>
+    /// ゲームに登場するスポナーのデータを管理するクラス。
+    /// </summary>
     public class SpawnerDatabase
     {
+        /// <summary>
+        /// ゲームに登場するスポナーの設定が入った配列を取得します。
+        /// </summary>
+        /// <value>The spawners.</value>
         public SpawnerParameter[] Spawners { get; private set; }
 
         public SpawnerDatabase()

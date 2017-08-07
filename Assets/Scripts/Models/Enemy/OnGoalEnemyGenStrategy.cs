@@ -6,6 +6,9 @@ using UnityEngine;
 
 namespace ProcedualLevels.Models
 {
+    /// <summary>
+    /// ゴールを塞ぐように敵キャラクターを配置するアルゴリズム。
+    /// </summary>
     public class OnGoalEnemyGenStrategy : EnemyGenStrategy
     {
         public override void PlaceEnemies(MapData map,

@@ -8,11 +8,23 @@ using UniRx.Triggers;
 
 namespace ProcedualLevels.Views
 {
+    /// <summary>
+    /// パワーアップアイテムの挙動を管理するクラス。
+    /// </summary>
     public class PowerUpItemController : MonoBehaviour
     {
+        /// <summary>
+        /// モデル側のオブジェクトを取得します。
+        /// </summary>
+        /// <value>The model.</value>
         public PowerUp Model { get; private set; }
         private CompositeDisposable Disposable { get; set; }
 
+        /// <summary>
+        /// パワーアップアイテムの挙動を初期化します。
+        /// </summary>
+        /// <param name="model">モデル側のインスタンス。</param>
+        /// <param name="eventAccepter">このインスタンスからのイベントの送信口。</param>
         public void Initialize(PowerUp model, IPowerUpItemEventAccepter eventAccepter)
         {
             Model = model;

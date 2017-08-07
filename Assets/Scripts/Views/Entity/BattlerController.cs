@@ -37,12 +37,23 @@ namespace ProcedualLevels.Views
             KnockbackState.Subscribe();
         }
 
+        /// <summary>
+        /// このキャラクターをノックバックさせます。
+        /// </summary>
+        /// <param name="info">ノックバック情報。</param>
+        /// <param name="against">ノックバックの相手を表すコンポーネント。</param>
         public void Knockback(KnockbackInfo info, BattlerController against)
         {
             KnockbackState.Knockback(info, against);
         }
 
+        /// <summary>
+        /// 毎フレーム行う処理を実行します。
+        /// </summary>
         public abstract void Control();
+        /// <summary>
+        /// キャラクターが死亡した際の処理を行います。
+        /// </summary>
         public abstract void Die();
 
         protected virtual void OnDestroy()

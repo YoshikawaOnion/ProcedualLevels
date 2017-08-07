@@ -6,6 +6,9 @@ using UnityEngine;
 
 namespace ProcedualLevels.Models
 {
+    /// <summary>
+    /// 制限時間を過ぎると敵が現れ始めるスポナーの振る舞いを提供します。
+    /// </summary>
     public class TimeLimitSpawnerBehavior : ISpawnerBehavior
     {
         public IObservable<Unit> GetSpawnStream(AdventureContext context)

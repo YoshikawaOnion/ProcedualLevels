@@ -23,6 +23,7 @@ namespace ProcedualLevels.Models
         public int PathReducingChance = 4;
         [Tooltip("一部屋に対する敵のいるマスの割合")]
         public float EnemyCountRatio = 0.01f;
+        [Tooltip("当たり判定用に余裕を取る大きさ")]
         public int ColliderMargin;
         public int PlatformSpan = 2;
     }

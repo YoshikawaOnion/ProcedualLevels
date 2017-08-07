@@ -15,8 +15,8 @@ namespace ProcedualLevels.Views
             var model = new Models.GameManager();
             var view = Instantiate(viewPrefab);
 
-			var dungeonGen = Resources.Load<DungeonGenAsset>(Models.Def.DungeonGenAssetPath);
-			var battlerGen = Resources.Load<GameParameterAsset>(Models.Def.GameParameterAssetPath);
+            var dungeonGen = AssetRepository.I.DungeonGenAsset;
+            var battlerGen = AssetRepository.I.GameParameterAsset;
 
             Observable.EveryUpdate()
                       .Skip(1)

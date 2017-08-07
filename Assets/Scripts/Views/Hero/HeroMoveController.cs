@@ -35,7 +35,7 @@ namespace ProcedualLevels.Views
         private Rigidbody2D Rigidbody { get; set; }
         private HeroAnimationController Animation { get; set; }
         private Collider2D WallDetecter { get; set; }
-        private WalkController WalkController { get; set; }
+        private MoveController MoveController { get; set; }
 
         private float GravityScale { get; set; }
         private int JumpCount { get; set; }
@@ -49,7 +49,7 @@ namespace ProcedualLevels.Views
             Hero = GetComponent<HeroController>();
             Rigidbody = GetComponent<Rigidbody2D>();
             Animation = GetComponent<HeroAnimationController>();
-            WalkController = GetComponent<WalkController>();
+            MoveController = GetComponent<MoveController>();
             WalkSubject = new Subject<int>();
             JumpSubject = new Subject<bool>();
             WallDetecter = transform.Find("WallDetecter").GetComponent<Collider2D>();
@@ -344,9 +344,9 @@ namespace ProcedualLevels.Views
         /// </summary>
         private void ActualyWalk(float powerScale)
         {
-            WalkController.Walk(WalkDirection, powerScale);
+            var vx = MoveController.GetMoveSpeed(Rigidbody.velocity.x, WalkDirection, powerScale);
+            Rigidbody.velocity = Rigidbody.velocity.MergeX(vx);
 
-            var velocity = Rigidbody.velocity.x;
             Animation.AnimateWalk(WalkDirection);
         }
     }

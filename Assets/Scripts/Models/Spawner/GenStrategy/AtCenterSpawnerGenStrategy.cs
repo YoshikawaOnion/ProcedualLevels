@@ -5,6 +5,9 @@ using UnityEngine;
 
 namespace ProcedualLevels.Models
 {
+    /// <summary>
+    /// スポナーを部屋の中央に配置するアルゴリズムを提供するクラス。
+    /// </summary>
     public class AtCenterSpawnerGenStrategy : ISpawnerGenStrategy
     {
         public IEnumerable<Spawner> Generate(MapData map, ISpawnerBehavior behavior, EnemiesAbility ability)

@@ -33,6 +33,7 @@ namespace ProcedualLevels.Models
             map.Spawners.ForEach(x => x.Initialize(context));
             view.Initialize(context);
 
+            // プレイヤーがゴールするか死んだらリセット
             view.OnGoal.Merge(view.OnPlayerDie)
                 .SelectMany(x => Observable.Timer(TimeSpan.FromSeconds(2)))
                 .First()
@@ -45,13 +46,21 @@ namespace ProcedualLevels.Models
                 nextViewStream.Subscribe(nextView => next.Initialize(dungeonAsset, gameAsset, nextView));
             })
                 .AddTo(Disposable);
-            
+
+            // 残り時間を減らしていく
             Observable.Interval(TimeSpan.FromSeconds(1))
                       .Where(x => context.TimeLimit.Value > 0)
                       .Subscribe(x => context.TimeLimit.Value -= 1)
                       .AddTo(Disposable);
         }
 
+        /// <summary>
+        /// マップデータを生成します。
+        /// </summary>
+        /// <returns>生成したマップデータ。</returns>
+        /// <param name="asset">GameParameterAsset。</param>
+        /// <param name="battlerAsset">Battler asset.</param>
+        /// <param name="view">View.</param>
         public MapData GenerateMap(DungeonGenAsset asset, GameParameterAsset battlerAsset, IAdventureView view)
         {
             var generator = new MapGenerator(battlerAsset, asset);

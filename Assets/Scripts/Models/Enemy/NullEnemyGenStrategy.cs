@@ -5,6 +5,9 @@ using UnityEngine;
 
 namespace ProcedualLevels.Models
 {
+    /// <summary>
+    /// 敵を一体も生成しないアルゴリズムを提供します。
+    /// </summary>
     public class NullEnemyGenStrategy : EnemyGenStrategy
     {
         public override void PlaceEnemies(MapData map,

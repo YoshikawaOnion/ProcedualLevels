@@ -6,14 +6,19 @@ using UnityEngine;
 
 namespace ProcedualLevels.Views
 {
+    /// <summary>
+    /// プレイヤーを見つけると追跡する敵キャラクターの振る舞いを提供するコンポーネント。
+    /// </summary>
     public class ChasingEnemyController : FindingEnemyController
 	{
-        private WalkController WalkController { get; set; }
+        private MoveController MoveController { get; set; }
+        private Rigidbody2D Rigidbody { get; set; }
 
         public override void Initialize(Models.Enemy enemy, AdventureViewContext context)
         {
             base.Initialize(enemy, context);
-            WalkController = GetComponent<WalkController>();
+            MoveController = GetComponent<MoveController>();
+            Rigidbody = GetComponent<Rigidbody2D>();
         }
 
         public override void ControlAtIdle()
@@ -29,7 +34,8 @@ namespace ProcedualLevels.Views
 
 			var direction = (Context.Hero.transform.position - transform.position).normalized;
             var walkDirection = Helper.Sign(direction.x, 0.2f);
-            WalkController.Walk(walkDirection, 1);
+            var vx = MoveController.GetMoveSpeed(Rigidbody.velocity.x, walkDirection, 1);
+            Rigidbody.velocity = Rigidbody.velocity.MergeX(vx);
         }
     }
 }

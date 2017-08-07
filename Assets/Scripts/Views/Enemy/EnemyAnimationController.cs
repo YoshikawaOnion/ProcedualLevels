@@ -29,6 +29,7 @@ namespace ProcedualLevels.Views
             IsDead = false;
 
             Sprite = GetComponentInChildren<Script_SpriteStudio_Root>();
+            Disposable = new CompositeDisposable();
             PlayAnimation(IdleKey, LoopInfinite);
 
             // 戦闘の参加者が自分だったら攻撃モーションを再生
@@ -36,12 +37,14 @@ namespace ProcedualLevels.Views
             var responsibleBattle = eventReceiver.OnPlayerBattleWithEnemyReceiver
                                                  .Where(x => x.Index == enemy.Enemy.Index)
                                                  .Where(x => !IsDead);
-            responsibleBattle.Subscribe(x => PlayAnimation(AttackKey, 1));
+            responsibleBattle.Subscribe(x => PlayAnimation(AttackKey, 1))
+                             .AddTo(Disposable);
 
             // 攻撃モーションが終わると待機モーションを再生
             responsibleBattle.SelectMany(WaitAnimationFinish())
                              .Repeat()
-                             .Subscribe(x => PlayAnimation(IdleKey, LoopInfinite));
+                             .Subscribe(x => PlayAnimation(IdleKey, LoopInfinite))
+                             .AddTo(Disposable);
         }
 
         /// <summary>
@@ -51,7 +54,14 @@ namespace ProcedualLevels.Views
         public IObservable<Unit> AnimateDie()
         {
             IsDead = true;
+            if (Disposable != null)
+			{
+				Disposable.Dispose();
+				Disposable = null;
+            }
+
             PlayAnimation(DamageKey, 1);
+
             return WaitAnimationFinish();
         }
 
