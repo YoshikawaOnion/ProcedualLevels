@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using ProcedualLevels.Common;
 using UniRx;
 using UnityEngine;
 
@@ -15,7 +16,7 @@ namespace ProcedualLevels.Models
         public Spike(int index, IAdventureView view)
         {
             Index = index;
-            Attack = 3;
+            Attack = AssetRepository.I.GameParameterAsset.SpikeDamage;
 
             view.OnBattlerTouchSpike
                 .Where(x => x.Item1.Index == Index)

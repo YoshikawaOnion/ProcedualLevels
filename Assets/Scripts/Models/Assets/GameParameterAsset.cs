@@ -11,5 +11,6 @@ namespace ProcedualLevels.Models
         public float KnockbackJumpPower;
         public float KnockbackStanTimeFactor;
         public int TimeLimitSeconds;
+        public int SpikeDamage;
     }
 }
