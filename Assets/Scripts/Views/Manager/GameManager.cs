@@ -58,6 +58,7 @@ namespace ProcedualLevels.Views
 				Hero = HeroController,
 				EventReceiver = EventFacade,
 				Model = context,
+                Manager = this
 			};
 
             SetMaptipUp(context);
@@ -176,7 +177,7 @@ namespace ProcedualLevels.Views
             });
 		}
 
-        public void SpawnEnemy(Enemy enemy)
+        public EnemyController SpawnEnemy(Enemy enemy)
 		{
 			EnemyController prefab;
 			if (!EnemyPrefabs.TryGetValue(enemy.Ability.PrefabName, out prefab))
@@ -194,6 +195,7 @@ namespace ProcedualLevels.Views
 			obj.transform.SetParent(RootObjectRepository.I.ManagerDraw.transform);
 
             EnemyControllers.Add(obj);
+            return obj;
         }
     }
 }

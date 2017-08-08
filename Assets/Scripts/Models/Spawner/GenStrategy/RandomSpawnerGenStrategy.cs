@@ -10,14 +10,12 @@ namespace ProcedualLevels.Models
     /// </summary>
     public class RandomSpawnerGenStrategy : ISpawnerGenStrategy
     {
-        public IEnumerable<Spawner> Generate(MapData map,
-                                             ISpawnerBehavior behavior,
-                                             EnemiesAbility ability)
+        public IEnumerable<Spawner> Generate(MapData map, SpawnerParameter spawnerParameter)
         {
             foreach (var div in map.Divisions)
             {
                 var location = Helper.GetRandomLocation(div.Room, 1);
-                yield return new Spawner(behavior, ability)
+                yield return new Spawner(spawnerParameter)
                 {
                     InitialPosition = location
                 };

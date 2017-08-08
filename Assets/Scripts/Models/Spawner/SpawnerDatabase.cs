@@ -24,14 +24,14 @@ namespace ProcedualLevels.Models
             {
                 new SpawnerParameter()
                 {
-                    Name = "GhostSpawner",
+                    PrefabName = "GhostSpawner",
                     Generator = new AtCenterSpawnerGenStrategy(),
                     Behavior = new TimeLimitSpawnerBehavior(),
                     EnemiesAbility = database.Enemies[2],
                 },
                 new SpawnerParameter()
                 {
-                    Name = "SlimeSpawner",
+                    PrefabName = "SlimeSpawner",
                     Generator = new RandomSpawnerGenStrategy(),
                     Behavior = new TimeSpanSpawnerBehavior(TimeSpan.FromSeconds(20)),
                     EnemiesAbility = database.Enemies[0],

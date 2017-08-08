@@ -11,5 +11,6 @@ namespace ProcedualLevels.Views
         public IGameEventReceiver EventReceiver { get; set; }
         public HeroController Hero { get; set; }
         public AdventureContext Model { get; set; }
+        public GameManager Manager { get; set; }
     }
 }

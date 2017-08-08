@@ -68,52 +68,6 @@ namespace ProcedualLevels.Models
             return map.IsRoom(x, y) || map.IsPath(x, y);
         }
 
-        private void PlaceCollisionBlock(MapData map, IMapPath path)
-        {
-            var pathRooms = path.GetRooms();
-            foreach (var pathRoom in pathRooms)
-            {
-                var rooms = map.Divisions.Select(x => x.Room)
-                               .Concat(pathRooms.Except(new[] { pathRoom }));
-                foreach (var room in rooms)
-                {
-                    // 垂直通路と部屋の交点の右上
-                    if (pathRoom.Bottom <= room.Top && room.Top <= pathRoom.Top
-                       && room.Left <= pathRoom.Right && pathRoom.Right < room.Right)
-                    {
-                        var pos = new Vector2(pathRoom.Right - 1, room.Top - 1);
-                        AddCollisionBlock(map, pos);
-                    }
-
-                    // 垂直通路と部屋の交点の右下
-                    if (pathRoom.Bottom <= room.Bottom && room.Bottom <= pathRoom.Top
-                       && room.Left <= pathRoom.Right && pathRoom.Right < room.Right)
-                    {
-						var pos = new Vector2(pathRoom.Right - 1, room.Bottom);
-						AddCollisionBlock(map, pos);
-                    }
-
-                    if (pathRoom.Left <= room.Left && room.Left <= pathRoom.Right
-                       && room.Bottom <= pathRoom.Bottom && pathRoom.Bottom <= room.Top)
-                    {
-                        var pos1 = new Vector2(room.Left, pathRoom.Top - 1);
-                        var pos2 = new Vector2(room.Left, pathRoom.Bottom);
-						AddCollisionBlock(map, pos1);
-						AddCollisionBlock(map, pos2);
-                    }
-                }
-            }
-        }
-
-        private void AddCollisionBlock(MapData map, Vector2 pos)
-        {
-            if (!map.IsRoom((int)pos.x, (int)pos.y)
-                && !map.IsPath((int)pos.x, (int)pos.y))
-            {
-                map.CollisionBlocks.Add(pos);
-            }
-        }
-
         private static void PlaceSpawners(MapData map)
         {
             var spawnerDatabase = new SpawnerDatabase();

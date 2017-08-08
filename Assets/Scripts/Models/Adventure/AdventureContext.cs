@@ -20,12 +20,6 @@ namespace ProcedualLevels.Models
             Enemies = new List<Enemy>();
         }
 
-        public void SpawnEnemy(Enemy enemy)
-        {
-            Enemies.Add(enemy);
-            View.SpawnEnemy(enemy);
-        }
-
         public void Dispose()
         {
             Hero.Dispose();

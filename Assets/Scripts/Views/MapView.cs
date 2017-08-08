@@ -3,6 +3,7 @@ using System.Collections;
 using System;
 using ProcedualLevels.Common;
 using ProcedualLevels.Models;
+using System.Collections.Generic;
 
 namespace ProcedualLevels.Views
 {
@@ -48,9 +49,16 @@ namespace ProcedualLevels.Views
 
         private void ShowSpawners(MapData map, GameManager manager, AdventureViewContext viewContext)
         {
-            var prefab = Resources.Load<SpawnerController>("Prefabs/Character/Spawner");
+            var prefabs = new Dictionary<string, SpawnerController>();
             foreach (var spawner in map.Spawners)
             {
+                SpawnerController prefab;
+                if (!prefabs.TryGetValue(spawner.PrefabName, out prefab))
+                {
+                    prefab = Resources.Load<SpawnerController>("Prefabs/Spawner/" + spawner.PrefabName);
+                    prefabs[spawner.PrefabName] = prefab;
+                }
+
                 var obj = Instantiate(prefab);
                 obj.Initialize(spawner, viewContext);
                 obj.transform.SetParent(manager.transform);
