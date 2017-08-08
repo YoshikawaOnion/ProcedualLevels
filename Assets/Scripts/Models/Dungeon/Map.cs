@@ -41,6 +41,10 @@ namespace ProcedualLevels.Models
         /// このマップに所属する衝突判定用のブロックのリストを取得します。
         /// </summary>
         public List<Vector2> CollisionBlocks { get; private set; }
+        /// <summary>
+        /// このマップに所属するトゲブロックのリストを取得します。
+        /// </summary>
+        public List<Spike> Spikes { get; private set; }
 
         public MapData()
         {
@@ -50,6 +54,7 @@ namespace ProcedualLevels.Models
             Platforms = new List<MapPlatform>();
             Spawners = new List<Spawner>();
             CollisionBlocks = new List<Vector2>();
+            Spikes = new List<Spike>();
         }
 
         /// <summary>

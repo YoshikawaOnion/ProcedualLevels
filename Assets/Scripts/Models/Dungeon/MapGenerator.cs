@@ -58,6 +58,11 @@ namespace ProcedualLevels.Models
                             .Where(x => !IsInAnyRooms(map, x));
             map.CollisionBlocks.AddRange(blocks);
 
+            map.Spikes.Add(new Spike(0, view)
+            {
+                InitialPosition = GetRandomLocation(map.Divisions[0].Room, 1),
+            });
+
             return map;
         }
 

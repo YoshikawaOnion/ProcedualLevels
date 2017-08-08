@@ -2,6 +2,7 @@ using UnityEngine;
 using System.Collections;
 using UniRx;
 using System;
+using ProcedualLevels.Common;
 
 namespace ProcedualLevels.Models
 {
@@ -45,6 +46,7 @@ namespace ProcedualLevels.Models
                       .Skip(2)
                       .TakeUntil(view.OnBattle)
                       .TakeUntil(view.OnAttacked)
+                      .TakeUntil(view.OnBattlerTouchSpike.Where(x => x.Item2.Index == index))
                       .Repeat()
                       .Subscribe(x =>
             {

@@ -18,5 +18,6 @@ namespace ProcedualLevels.Models
 		IObservable<Unit> OnGoal { get; }
         IObservable<Unit> OnPlayerDie { get; }
         IObservable<Enemy> OnAttacked { get; }
+        IObservable<Tuple<Spike, Battler>> OnBattlerTouchSpike { get; }
     }
 }

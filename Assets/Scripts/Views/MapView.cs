@@ -33,6 +33,19 @@ namespace ProcedualLevels.Views
             ShowGoal(map, manager);
             ShowSpawners(map, manager, viewContext);
             ShowCollisionBlock(map, manager);
+            ShowSpikes(map, manager);
+        }
+
+        private void ShowSpikes(MapData map, GameManager manager)
+        {
+            var prefab = Resources.Load<SpikeController>("Prefabs/Character/Spike_Control");
+            foreach (var item in map.Spikes)
+            {
+                var obj = Instantiate(prefab);
+                obj.transform.position = item.InitialPosition + Vector2.one * 0.5f;
+                obj.transform.SetParent(RootObjectRepository.I.ManagerDraw.transform);
+                obj.Initialize(item, manager.EventFacade);
+            }
         }
 
         private void ShowCollisionBlock(MapData map, GameManager manager)

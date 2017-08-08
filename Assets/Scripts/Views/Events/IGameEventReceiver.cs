@@ -15,5 +15,6 @@ namespace ProcedualLevels.Views
 		IObservable<Unit> OnPlayerGoalReceiver { get; }
         IObservable<Unit> OnPlayerDieReceiver { get; }
         IObservable<Models.Enemy> OnPlayerAttackedByEnemyReceiver { get; }
+        IObservable<Tuple<Models.Spike, Models.Battler>> OnBattlerTouchedSpikeReceiver { get; }
 	}
 }

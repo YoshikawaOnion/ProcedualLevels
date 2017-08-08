@@ -5,7 +5,7 @@ using UniRx;
 namespace ProcedualLevels.Views
 {
     public class GameEventFacade : IPlayerEventAccepter, IPowerUpItemEventAccepter,
-    IGoalEventAccepter, IGameEventReceiver
+    IGoalEventAccepter, ISpikeEventAccepter, IGameEventReceiver
     {
         public IObservable<Collision2D> OnPlayerCollideWithEggReceiver { get { return onPlayerCollideWithEgg; } }
         public IObserver<Collision2D> OnPlayerCollideWithEggSender { get { return onPlayerCollideWithEgg; } }
@@ -38,5 +38,9 @@ namespace ProcedualLevels.Views
         public IObservable<Models.Enemy> OnPlayerAttackedByEnemyReceiver { get { return onPlayerAttackedByEnemy; } }
         public IObserver<Models.Enemy> OnPlayerAttackedByEnemySender { get { return onPlayerAttackedByEnemy; } }
         private Subject<Models.Enemy> onPlayerAttackedByEnemy = new Subject<Models.Enemy>();
+
+        public IObservable<Tuple<Models.Spike, Models.Battler>> OnBattlerTouchedSpikeReceiver { get { return onBattlerTouchedSpike; } }
+        public IObserver<Tuple<Models.Spike, Models.Battler>> OnBattlerTouchedSpikeSender { get { return onBattlerTouchedSpike; } }
+        private Subject<Tuple<Models.Spike, Models.Battler>> onBattlerTouchedSpike = new Subject<Tuple<Models.Spike,Models.Battler>>();
     }
 }
