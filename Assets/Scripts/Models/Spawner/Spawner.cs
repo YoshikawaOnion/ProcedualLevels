@@ -32,12 +32,11 @@ namespace ProcedualLevels.Models
                                       .Select(x => new Enemy(context.NextBattlerIndex,
                                                              InitialPosition,
                                                              Ability,
-                                                             context.View));
-
+                                                             context.View))
+                                      .Do(x => context.NextBattlerIndex++);
             Disposable = SpawnObservable.Subscribe(x =>
             {
                 context.Enemies.Add(x);
-                ++context.NextBattlerIndex;
             });
         }
 
