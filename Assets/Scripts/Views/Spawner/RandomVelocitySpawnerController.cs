@@ -13,7 +13,7 @@ namespace ProcedualLevels.Views
 
         public override void Initialize(Models.Spawner spawner, AdventureViewContext context)
         {
-            spawner.SpawnObservable.Subscribe(x =>
+            Disposable = spawner.SpawnObservable.Subscribe(x =>
             {
                 var obj = context.Manager.SpawnEnemy(x);
                 var vx = Helper.RandomInRange(-MaxSpeed, MaxSpeed);

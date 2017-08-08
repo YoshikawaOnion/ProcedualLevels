@@ -8,9 +8,17 @@ namespace ProcedualLevels.Views
 {
     public class SpawnerController : MonoBehaviour
     {
+        protected IDisposable Disposable { get; set; }
+
         public virtual void Initialize(Models.Spawner spawner, AdventureViewContext context)
 		{
-            spawner.SpawnObservable.Subscribe(x => context.Manager.SpawnEnemy(x));
+            Disposable = spawner.SpawnObservable
+                                .Subscribe(x => context.Manager.SpawnEnemy(x));
+        }
+
+        private void OnDestroy()
+        {
+            Disposable.Dispose();
         }
     }
 }
