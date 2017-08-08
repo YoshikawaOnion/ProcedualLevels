@@ -58,10 +58,7 @@ namespace ProcedualLevels.Models
                             .Where(x => !IsInAnyRooms(map, x));
             map.CollisionBlocks.AddRange(blocks);
 
-            map.Spikes.Add(new Spike(0, view)
-            {
-                InitialPosition = GetRandomLocation(map.Divisions[0].Room, 1),
-            });
+            PlaceSpikes(map, view);
 
             return map;
         }
@@ -204,6 +201,34 @@ namespace ProcedualLevels.Models
                     };
                     map.Platforms.Add(platform);
                 }
+            }
+        }
+
+        private void PlaceSpikes(MapData map, IAdventureView view)
+        {
+            var number = 3;
+
+            for (int i = 0; i < number; i++)
+            {
+                MapRectangle room;
+                do
+                {
+                    room = map.Divisions.GetRandom().Room;
+                } while (room.IsInside(map.GoalLocation.x, map.GoalLocation.y));
+
+                Vector2 pos;
+                do
+                {
+                    var x = Helper.GetRandomInRange(room.Left + DungeonAsset.ColliderMargin,
+                                                    room.Right - DungeonAsset.ColliderMargin);
+                    pos = new Vector2(x, room.Bottom + DungeonAsset.ColliderMargin);
+                } while (map.IsPath((int)pos.x, (int)pos.y));
+
+                var spike = new Spike(i, view)
+                {
+                    InitialPosition = pos
+                };
+                map.Spikes.Add(spike);
             }
         }
 
