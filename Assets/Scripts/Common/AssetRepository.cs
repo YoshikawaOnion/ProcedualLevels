@@ -1,8 +1,9 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using ProcedualLevels.Models;
 using UnityEngine;
 
-namespace ProcedualLevels.Models
+namespace ProcedualLevels.Common
 {
     /// <summary>
     /// モデルでよく使われるアセットを管理するシングルトン クラス。

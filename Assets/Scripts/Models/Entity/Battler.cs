@@ -1,6 +1,7 @@
 using UnityEngine;
 using System.Collections;
 using UniRx;
+using ProcedualLevels.Common;
 
 namespace ProcedualLevels.Models
 {
