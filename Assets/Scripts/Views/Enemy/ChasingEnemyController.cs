@@ -12,13 +12,11 @@ namespace ProcedualLevels.Views
     public class ChasingEnemyController : FindingEnemyController
 	{
         private MoveController MoveController { get; set; }
-        private new Rigidbody2D Rigidbody { get; set; }
 
         public override void Initialize(Models.Enemy enemy, AdventureViewContext context)
         {
             base.Initialize(enemy, context);
             MoveController = GetComponent<MoveController>();
-            Rigidbody = GetComponent<Rigidbody2D>();
         }
 
         public override void ControlAtIdle()

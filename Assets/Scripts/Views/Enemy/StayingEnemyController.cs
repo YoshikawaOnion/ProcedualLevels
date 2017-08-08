@@ -13,14 +13,12 @@ namespace ProcedualLevels.Views
     {
         private Vector2 InitialPosition { get; set; }
         private MoveController MoveController { get; set; }
-        private new Rigidbody2D Rigidbody { get; set; }
 
         public override void Initialize(Models.Enemy enemy, AdventureViewContext context)
         {
             base.Initialize(enemy, context);
             InitialPosition = transform.position;
             MoveController = GetComponent<MoveController>();
-            Rigidbody = GetComponent<Rigidbody2D>();
         }
 
         public override void ControlAtIdle()

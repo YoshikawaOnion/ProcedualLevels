@@ -1,4 +1,4 @@
-﻿using System;
+﻿﻿using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -7,27 +7,68 @@ namespace ProcedualLevels.Models
 {
     public class OnBottomVerticalPath : IMapPath
     {
-        public MapRectangle BottomPath { get; private set; }
+        public MapRectangle StartPath { get; private set; }
         public MapRectangle MiddlePath { get; private set; }
-        public MapRectangle TopPath { get; private set; }
+        public MapRectangle EndPath { get; private set; }
 
-        public OnBottomVerticalPath(MapRectangle bottomPath, MapRectangle middlePath, MapRectangle topPath)
+        public OnBottomVerticalPath(MapRectangle startPath, MapRectangle middlePath, MapRectangle endPath)
         {
-            BottomPath = bottomPath;
+            StartPath = startPath;
             MiddlePath = middlePath;
-            TopPath = topPath;
+            EndPath = endPath;
         }
 
-        public IEnumerable<Vector2> GetCollisionBlocks()
+        public IEnumerable<Vector2> GetCollisionBlocks(MapData map, MapConnection connection)
         {
-            yield break;
+            {
+                var minorBlockX = connection.BottomDivision.Room.Right - 1;
+                var minorTopBlockY = StartPath.Top - 1;
+                var minorBottomBlockY = StartPath.Bottom;
+                yield return new Vector2(minorBlockX, minorTopBlockY);
+                yield return new Vector2(minorBlockX, minorBottomBlockY);
+            }
+            {
+                var majorBlockX = connection.TopDivision.Room.Right - 1;
+                var majorTopBlockY = EndPath.Top - 1;
+                var majorBottomBlockY = EndPath.Bottom;
+                yield return new Vector2(majorBlockX, majorTopBlockY);
+                yield return new Vector2(majorBlockX, majorBottomBlockY);
+            }
+            {
+                var cornerBlockX = MiddlePath.Left;
+                var cornerBottomBlockY = StartPath.Top - 1;
+                var cornerTopBlockY = EndPath.Bottom;
+                var cornerTopBlock2Y = EndPath.Top;
+                yield return new Vector2(cornerBlockX, cornerBottomBlockY);
+                yield return new Vector2(cornerBlockX, cornerTopBlockY);
+                yield return new Vector2(cornerBlockX, cornerTopBlock2Y);
+            }
+
+            foreach (var div in map.Divisions)
+            {
+                var room = div.Room;
+                if (room.Left <= MiddlePath.Right && MiddlePath.Right <= room.Right)
+                {
+                    var x = MiddlePath.Right - 1;
+                    if (MiddlePath.Bottom <= room.Bottom && room.Bottom <= MiddlePath.Top)
+                    {
+                        var y = room.Bottom;
+                        yield return new Vector2(x, y);
+                    }
+                    if (MiddlePath.Bottom <= room.Top && room.Top <= MiddlePath.Top)
+                    {
+                        var y = room.Top - 1;
+                        yield return new Vector2(x, y);
+                    }
+                }
+            }
         }
 
         public IEnumerable<MapRectangle> GetRooms()
         {
-            yield return BottomPath;
+            yield return StartPath;
             yield return MiddlePath;
-            yield return TopPath;
+            yield return EndPath;
         }
 
         public static OnBottomVerticalPath CreatePath(MapDivision bottomDiv, MapDivision topDiv)

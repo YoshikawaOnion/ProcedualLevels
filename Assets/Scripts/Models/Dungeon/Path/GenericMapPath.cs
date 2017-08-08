@@ -19,7 +19,7 @@ namespace ProcedualLevels.Models
             return Rectangles;
         }
 
-        public IEnumerable<Vector2> GetCollisionBlocks()
+        public IEnumerable<Vector2> GetCollisionBlocks(MapData map, MapConnection connection)
         {
             yield break;
         }

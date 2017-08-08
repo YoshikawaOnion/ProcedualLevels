@@ -54,10 +54,18 @@ namespace ProcedualLevels.Models
             PlaceEnemies(view, map);
             PlaceSpawners(map);
 
-            var blocks = map.Connections.SelectMany(x => x.Path.GetCollisionBlocks());
+            var blocks = map.Connections.SelectMany(x => x.Path.GetCollisionBlocks(map, x))
+                            .Where(x => !IsInAnyRooms(map, x));
             map.CollisionBlocks.AddRange(blocks);
 
             return map;
+        }
+
+        private bool IsInAnyRooms(MapData map, Vector2 pos)
+        {
+            var x = (int)pos.x;
+            var y = (int)pos.y;
+            return map.IsRoom(x, y) || map.IsPath(x, y);
         }
 
         private void PlaceCollisionBlock(MapData map, IMapPath path)
