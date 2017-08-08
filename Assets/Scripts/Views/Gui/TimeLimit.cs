@@ -11,9 +11,9 @@ namespace ProcedualLevels.Views
     public class TimeLimit : MonoBehaviour
     {
         [SerializeField]
-        private Color dangerColor;
+        private Color dangerColor = Color.white;
         [SerializeField]
-        private Color warningColor;
+        private Color warningColor = Color.white;
 
         private Text Text { get; set; }
         private CompositeDisposable Disposable { get; set; }

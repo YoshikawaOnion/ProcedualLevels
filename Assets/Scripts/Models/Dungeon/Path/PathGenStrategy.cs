@@ -31,6 +31,6 @@ namespace ProcedualLevels.Models
 			Asset = Resources.Load<OnBorderPathGenAsset>("Assets/OnBorderPathGenAsset");
 		}
 
-        public abstract void ConnectRooms(MapData map);
+        public abstract IEnumerable<MapConnection> ConnectRooms(MapData map);
     }
 }

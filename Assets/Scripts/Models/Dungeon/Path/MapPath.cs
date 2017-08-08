@@ -56,5 +56,10 @@ namespace ProcedualLevels.Models
         {
             return new MapPath(BottomPath.Clone(), Connection.Clone(), TopPath.Clone());
         }
+
+        public IEnumerable<Vector2> GetCollisionBlocks()
+        {
+            yield break;
+        }
     }
 }

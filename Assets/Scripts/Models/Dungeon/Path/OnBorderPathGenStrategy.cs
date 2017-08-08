@@ -8,10 +8,11 @@ namespace ProcedualLevels.Models
 {
     public class OnBorderPathGenStrategy : PathGenStrategy
     {
-        public override void ConnectRooms(MapData map)
+        public override IEnumerable<MapConnection> ConnectRooms(MapData map)
         {
-            ConnectRooms(map, true, (me, other) => me.Right == other.Left);
-            ConnectRooms(map, false, (me, other) => me.Top == other.Bottom);
+            var con1 = ConnectRooms(map, true, (me, other) => me.Right == other.Left);
+            var con2 = ConnectRooms(map, false, (me, other) => me.Top == other.Bottom);
+            return con1.Concat(con2);
         }
 
         /// <summary>
@@ -21,7 +22,7 @@ namespace ProcedualLevels.Models
         /// <param name="horizontal"><c>true</c> の時、水平な通路を生成できる時のみ生成します。
         /// <c>false</c> の時、鉛直な通路を生成できる時のみ生成します。</param>
         /// <param name="isAdjacent">第二引数の部屋が第一引数の部屋から見て右上に隣接しているかどうかを判定する述語。</param>
-        private void ConnectRooms(MapData map,
+        private IEnumerable<MapConnection> ConnectRooms(MapData map,
                                   bool horizontal,
                                   Func<MapRectangle, MapRectangle, bool> isAdjacent)
         {
@@ -35,8 +36,8 @@ namespace ProcedualLevels.Models
                 {
                     var path = CreatePath(bottomDiv, topDiv, horizontal, list);
                     var connection = new MapConnection(bottomDiv, topDiv, path, horizontal);
-                    bottomDiv.Connections.Add(connection);
                     list.Add(connection);
+                    yield return connection;
                 }
             }
         }

@@ -18,5 +18,10 @@ namespace ProcedualLevels.Models
         {
             return Rectangles;
         }
+
+        public IEnumerable<Vector2> GetCollisionBlocks()
+        {
+            yield break;
+        }
     }
 }

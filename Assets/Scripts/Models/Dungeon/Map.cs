@@ -9,10 +9,14 @@ namespace ProcedualLevels.Models
     /// </summary>
     public class MapData
     {
+		/// <summary>
+		/// このマップに所属する区画のリストを取得します。
+		/// </summary>
+		public List<MapDivision> Divisions { get; private set; }
         /// <summary>
-        /// このマップに所属する区画のリストを取得します。
+        /// このマップに所属する通路のリストを取得します。
         /// </summary>
-        public List<MapDivision> Divisions { get; private set; }
+		public List<MapConnection> Connections { get; set; }
         /// <summary>
         /// スタート地点の位置を取得または設定します。
         /// </summary>
@@ -41,6 +45,7 @@ namespace ProcedualLevels.Models
         public MapData()
         {
             Divisions = new List<MapDivision>();
+            Connections = new List<MapConnection>();
             Enemies = new List<Enemy>();
             Platforms = new List<MapPlatform>();
             Spawners = new List<Spawner>();
@@ -73,16 +78,13 @@ namespace ProcedualLevels.Models
         /// <param name="bottom">Bottom.</param>
         public bool IsPath(int left, int bottom)
         {
-            foreach (var item in Divisions)
+            foreach (var connection in Connections)
             {
-                foreach (var connection in item.Connections)
+                foreach (var path in connection.Path.GetRooms())
                 {
-                    foreach (var path in connection.Path.GetRooms())
+                    if (IsInRectanble(left, bottom, path.ReduceOnEdge(1)))
                     {
-                        if (IsInRectanble(left, bottom, path.ReduceOnEdge(1)))
-                        {
-                            return true;
-                        }
+                        return true;
                     }
                 }
             }

@@ -17,7 +17,7 @@ namespace ProcedualLevels.Models
                                           ref int index)
         {
             var bossRoomList = new List<int>();
-            int indexCopy = index;
+            int indexCopy = index;    // ラムダ式は参照引数をキャプチャできないのでコピー
             Action<int, int, int> addEnemy = (left, bottom, roomIndex) =>
             {
                 if (bossRoomList.Contains(roomIndex))
@@ -32,52 +32,26 @@ namespace ProcedualLevels.Models
                 ++indexCopy;
             };
 
-            // 自分からゴール部屋へ通路が伸びていたらボスを配置
-            foreach (var div in map.Divisions)
+            var goalDiv = map.Divisions.First(x => x.Room
+                                               .IsInside(map.GoalLocation.x, map.GoalLocation.y));
+            var intersectedCons = map.Connections
+                                     .Where(x => x.Path.GetRooms()
+                                            .Any(y => y.IsIntersect(goalDiv.Room)));
+            foreach (var connection in intersectedCons)
             {
-                var connectionsForGoal = div.Connections
-                                            .Where(x => x.TopDivision.Room
-                                                   .IsInside(map.GoalLocation.x, map.GoalLocation.y));
-                foreach (var connection in connectionsForGoal)
-				{
-                    var xPos = connection.Path.GetRooms().Min(x => x.Left);
-                    int yPos = 0;
-                    if (connection.TopDivision.Room.Bottom > div.Room.Bottom)
-					{
-						yPos = connection.Path.GetRooms().Min(x => x.Bottom);
-                    }
-                    else
-                    {
-                        yPos = connection.Path.GetRooms().Max(x => x.Bottom);
-                    }
-                    addEnemy(xPos, yPos, div.Index);
-                }
-            }
-
-            // ゴール部屋へ通路が伸びている部屋から、その上下の部屋にも通路が伸びていたら上下の部屋にも配置
-            //*/
-            foreach (var div in map.Divisions)
-            {
-                var adjacentConnections = div.Connections
-                                             .Where(x => x.TopDivision.Bound.Bottom == div.Bound.Top
-                                                   && x.TopDivision.Bound.Left == div.Bound.Left);
-                foreach (var connection in adjacentConnections)
+                var rooms = connection.Path.GetRooms();
+                var enemyX = rooms.Min(x => x.Left);
+                int enemyY;
+                if (connection.TopDivision.Room.Bottom > connection.BottomDivision.Room.Bottom)
                 {
-                    if (bossRoomList.Contains(div.Index))
-                    {
-                        var xPos = connection.Path.GetRooms().Min(x => x.Left);
-                        var yPos = connection.Path.GetRooms().Max(x => x.Bottom);
-                        addEnemy(xPos, yPos, connection.TopDivision.Index);
-                    }
-                    else if(bossRoomList.Contains(connection.TopDivision.Index))
-                    {
-                        var xPos = connection.Path.GetRooms().Min(x => x.Left);
-                        var yPos = connection.Path.GetRooms().Min(x => x.Bottom);
-                        addEnemy(xPos, yPos, div.Index);
-                    }
+                    enemyY = rooms.Min(x => x.Bottom);
                 }
+                else
+                {
+                    enemyY = rooms.Max(x => x.Bottom);
+                }
+                addEnemy(enemyX, enemyY, connection.BottomDivision.Index);
             }
-            //*/
 
             index = indexCopy;
         }

@@ -67,6 +67,12 @@ public class MapRectangle
         return x >= Left && x < Right && y >= Bottom && y < Top;
     }
 
+    public bool IsIntersect(MapRectangle other)
+    {
+        return Left <= other.Right && Right >= other.Left
+                            && Bottom <= other.Top && Top >= other.Bottom;
+    }
+
 	/// <summary>
 	/// 指定した軸に沿った正の方向の端の座標を取得します。
 	/// </summary>

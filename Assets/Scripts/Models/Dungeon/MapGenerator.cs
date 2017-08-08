@@ -45,7 +45,7 @@ namespace ProcedualLevels.Models
             GenerateRooms(leftBottom, rightTop, map);
 
             var pathGen = new OnBottomPathGenStrategy();
-            pathGen.ConnectRooms(map);
+            map.Connections = pathGen.ConnectRooms(map).ToList();
 
             ReducePathesAtRandom(map);
 
@@ -54,12 +54,8 @@ namespace ProcedualLevels.Models
             PlaceEnemies(view, map);
             PlaceSpawners(map);
 
-            var pathes = map.Divisions.SelectMany(x => x.Connections)
-                            .Select(x => x.Path);
-            foreach (var path in pathes)
-            {
-                PlaceCollisionBlock(map, path);
-            }
+            var blocks = map.Connections.SelectMany(x => x.Path.GetCollisionBlocks());
+            map.CollisionBlocks.AddRange(blocks);
 
             return map;
         }
@@ -157,31 +153,18 @@ namespace ProcedualLevels.Models
             var head = map.Divisions[0];
             var loop = (int)(map.Divisions.Count * DungeonAsset.PathReducingChance);
 
-            MarkConnectedRooms(head, 0);
+            MarkConnectedRooms(map, head, 0);
             for (int i = 0; i < loop; i++)
             {
-                var divIndex = GetRandomInRange(0, map.Divisions.Count - 1);
-                var connections = map.Divisions[divIndex].Connections;
-                if (connections.Count == 0)
-                {
-                    continue;
-                }
-
-                var pathIndex = GetRandomInRange(0, connections.Count - 1);
-                if (pathIndex >= connections.Count)
-                {
-                    continue;
-                }
-                var path = connections[pathIndex];
-                connections.RemoveAt(pathIndex);
-
-                MarkConnectedRooms(head, i + 1);
+                var connection = map.Connections.GetRandom();
+                map.Connections.Remove(connection);
+                MarkConnectedRooms(map, head, i + 1);
 
                 foreach (var item in map.Divisions)
                 {
                     if (item.ReducingMarker != i + 1)
                     {
-                        connections.Add(path);
+                        map.Connections.Add(connection);
                         break;
                     }
                 }
@@ -193,17 +176,20 @@ namespace ProcedualLevels.Models
         /// </summary>
         /// <param name="root">繋がっていると判定する根元の部屋。</param>
         /// <param name="index">マークの値。</param>
-        private void MarkConnectedRooms(MapDivision root, int index)
+        private void MarkConnectedRooms(MapData map, MapDivision root, int index)
         {
             if (root.ReducingMarker == index)
             {
                 return;
             }
             root.ReducingMarker = index;
-            foreach (var item in root.Connections)
+
+            var connections = map.Connections.Where(x => x.BottomDivision.Index == root.Index
+                                                    || x.TopDivision.Index == root.Index);
+            foreach (var item in connections)
             {
-                MarkConnectedRooms(item.BottomDivision, index);
-                MarkConnectedRooms(item.TopDivision, index);
+                MarkConnectedRooms(map, item.BottomDivision, index);
+                MarkConnectedRooms(map, item.TopDivision, index);
             }
         }
 

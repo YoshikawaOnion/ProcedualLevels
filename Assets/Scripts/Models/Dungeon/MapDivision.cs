@@ -2,6 +2,7 @@ using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
 using UniRx;
+using System;
 
 namespace ProcedualLevels.Models
 {
@@ -25,13 +26,9 @@ namespace ProcedualLevels.Models
 
         /// <summary>
         /// この部屋から伸びている通路を取得または設定します。
-        /// </summary>
+		/// </summary>
+        [Obsolete]
         public List<MapConnection> Connections { get; private set; }
         public int ReducingMarker { get; set; }
-
-        public MapDivision()
-        {
-            Connections = new List<MapConnection>();
-        }
     }
 }

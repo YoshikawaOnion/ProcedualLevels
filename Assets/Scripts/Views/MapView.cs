@@ -88,12 +88,13 @@ namespace ProcedualLevels.Views
                 obj.GetComponent<BoxCollider2D>().enabled = false;
 
                 InstantiateRect(maze, prefab, division.Room);
-                foreach (var connection in division.Connections)
+            }
+
+            foreach (var connection in map.Connections)
+            {
+                foreach (var segment in connection.Path.GetRooms())
                 {
-                    foreach (var segment in connection.Path.GetRooms())
-                    {
-                        InstantiateRect(maze, prefab, segment);
-                    }
+                    InstantiateRect(maze, prefab, segment);
                 }
             }
         }

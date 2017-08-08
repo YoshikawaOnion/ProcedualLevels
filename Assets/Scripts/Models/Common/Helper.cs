@@ -75,5 +75,23 @@ namespace ProcedualLevels.Models
             var max = source.Max(selector);
             return source.First(x => selector(x).CompareTo(max) == 0);
         }
+
+		/// <summary>
+		/// コレクションからランダムに一つの要素を返します。
+		/// </summary>
+		/// <returns>ランダムに選ばれた要素。</returns>
+		/// <param name="source">選ぶ元となるコレクション。</param>
+		public static T GetRandom<T>(this IEnumerable<T> source)
+		{
+			if (source.Any())
+			{
+				var index = Models.Helper.GetRandomInRange(0, source.Count() - 1);
+				return source.ElementAt(index);
+			}
+			else
+			{
+				return default(T);
+			}
+		}
     }
 }

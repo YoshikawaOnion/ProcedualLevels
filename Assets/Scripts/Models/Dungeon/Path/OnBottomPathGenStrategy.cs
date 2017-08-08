@@ -8,27 +8,21 @@ namespace ProcedualLevels.Models
 {
     public class OnBottomPathGenStrategy : PathGenStrategy
     {
-        public override void ConnectRooms(MapData map)
+        public override IEnumerable<MapConnection> ConnectRooms(MapData map)
         {
-            var list = new List<MapConnection>();
             Func<MapRectangle, MapRectangle, bool> isAdjacentOnRight = (b, t) => b.Right == t.Left;
             Func<MapRectangle, MapRectangle, bool> isAdjacentOnTop = (b, t) => b.Top == t.Bottom
                                                                                 && b.Left == t.Left;
-
             foreach (var bottomDiv in map.Divisions)
             {
-                //*
                 var horizontalAdjacents = map.Divisions
                                              .Where(x => isAdjacentOnRight(bottomDiv.Bound, x.Bound));
                 foreach (var topDiv in horizontalAdjacents)
                 {
                     var path = CreatePath(bottomDiv, topDiv, map);
-                    var connection = new MapConnection(bottomDiv, topDiv, path, true);
-                    bottomDiv.Connections.Add(connection);
-                    list.Add(connection);
+                    yield return new MapConnection(bottomDiv, topDiv, path, true);
                 }
-                //*/
-                //*
+
                 var verticalAdjacents = map.Divisions
                                            .Where(x => isAdjacentOnTop(bottomDiv.Bound, x.Bound));
                 foreach (var topDiv in verticalAdjacents)
@@ -40,12 +34,9 @@ namespace ProcedualLevels.Models
                         {
                             continue;
                         }
-                        var connection = new MapConnection(bottomDiv, topDiv, path, true);
-                        bottomDiv.Connections.Add(connection);
-						list.Add(connection);
+                        yield return new MapConnection(bottomDiv, topDiv, path, true);
                     }
                 }
-                //*/
             }
         }
 

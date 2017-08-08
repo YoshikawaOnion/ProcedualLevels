@@ -7,5 +7,6 @@ namespace ProcedualLevels.Models
     public interface IMapPath
     {
         IEnumerable<MapRectangle> GetRooms();
+        IEnumerable<Vector2> GetCollisionBlocks();
     }
 }
