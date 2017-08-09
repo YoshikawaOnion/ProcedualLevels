@@ -35,6 +35,7 @@ namespace ProcedualLevels.Views
 
             // 他のキャラクターにぶつかったらそれも押し飛ばす
             Context.OnCollisionStay2DAsObservable()
+                   .SkipUntil(Observable.Timer(TimeSpan.FromMilliseconds(64)))
                    .Select(x => x.gameObject.GetComponent<EnemyController>())
                    .Where(x => x != null)
                    .Subscribe(x =>
