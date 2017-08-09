@@ -181,6 +181,9 @@
             <filename>y3.png</filename>
             <filename>y4.png</filename>
             <filename>y5.png</filename>
+            <filename>y6.png</filename>
+            <filename>y7.png</filename>
+            <filename>y8.png</filename>
         </array>
         <key>ignoreFileList</key>
         <array/>
