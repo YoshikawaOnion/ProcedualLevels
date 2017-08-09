@@ -27,18 +27,40 @@ namespace ProcedualLevels.Views
             Move = GetComponent<HeroMoveController>();
             OnBattle = new Subject<Unit>();
 
-            gameObject.OnCollisionStay2DAsObservable()
-                      .Select(x => x.gameObject.GetComponent<EnemyController>())
-                      .Where(x => x != null)
-                      .PauseBy(OnBattle, TimeSpan.FromMilliseconds(750))
-                      .Subscribe(x => BattleTargets.Add(x))
-                      .AddTo(Disposable);
+            var onTouchingEnemy = gameObject.OnCollisionStay2DAsObservable()
+                                          .Select(x => x.gameObject.GetComponent<EnemyController>())
+                                          .Where(x => x != null);
+            
+            onTouchingEnemy.PauseBy(OnBattle, TimeSpan.FromMilliseconds(750))
+                           .Subscribe(x => BattleTargets.Add(x))
+                           .AddTo(Disposable);
+
+            // 敵を押し込んでいる間は攻撃アニメを繰り返し再生する
+            onTouchingEnemy.FirstOrDefault(x => IsAttackingFor(x))
+                           .SelectMany(x => GetSwingingLoop(x))
+                           .TakeWhile(x => x != null && IsAttackingFor(x))
+                           .RepeatSafe()
+                           .Subscribe(x => Animation.AnimateAttack(x.gameObject))
+                           .AddTo(Disposable);
 
             var hero = GetComponent<HeroController>();
             eventReceiver.OnBattlerTouchedSpikeReceiver
                          .Where(x => x.Item2.Battler.Index == hero.Battler.Index)
                          .ThrottleFirst(TimeSpan.FromMilliseconds(750))
                          .Subscribe(x => Animation.AnimateDamage(x.Item1.gameObject));
+        }
+
+        private IObservable<EnemyController> GetSwingingLoop(EnemyController enemy)
+        {
+            return Observable.Return(0L)
+                             .Concat(Observable.Interval(TimeSpan.FromMilliseconds(250)))
+                             .Select(x => enemy);
+        }
+
+        private bool IsAttackingFor(EnemyController x)
+        {
+            var distance = x.transform.position - transform.position;
+            return distance.x * Move.WalkDirection > 0;
         }
 
         void Update()
@@ -49,12 +71,10 @@ namespace ProcedualLevels.Views
                                               .Select(x => x.First());
                 foreach (var target in distincted)
 				{
-					var distance = target.transform.position - transform.position;
-					if (distance.x * Move.WalkDirection > 0)
+					if (IsAttackingFor(target))
 					{
 						EventAccepter.OnPlayerBattleWithEnemySender
 									 .OnNext(target.Enemy);
-						Animation.AnimateAttack(target.gameObject);
 					}
 					else
 					{
