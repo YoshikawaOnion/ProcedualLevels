@@ -7,6 +7,6 @@ namespace ProcedualLevels.Views
 {
     public interface ISpikeEventAccepter
     {
-        IObserver<Tuple<Models.Spike, Models.Battler>> OnBattlerTouchedSpikeSender { get; }
+        IObserver<Tuple<SpikeController, BattlerController>> OnBattlerTouchedSpikeSender { get; }
     }
 }

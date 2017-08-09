@@ -15,6 +15,7 @@ namespace ProcedualLevels.Views
         private GameObject Maze { get; set; }
         private GameObject DebugRoot { get; set; }
         private Goal Goal { get; set; }
+        private List<SpikeController> Spikes { get; set; }
 
         // TODO: map, managerの良い説明が思い浮かばない。設計が悪そう。
         /// <summary>
@@ -27,6 +28,7 @@ namespace ProcedualLevels.Views
         {
             var mazePrefab = Resources.Load<GameObject>("Prefabs/Dungeon/Maze_Control");
             Maze = Instantiate(mazePrefab);
+            Spikes = new List<SpikeController>();
 
             ShowRooms(map, Maze);
             ShowPlatforms(map, Maze);
@@ -45,6 +47,7 @@ namespace ProcedualLevels.Views
                 obj.transform.position = item.InitialPosition + Vector2.one * 0.5f;
                 obj.transform.SetParent(RootObjectRepository.I.ManagerDraw.transform);
                 obj.Initialize(item, manager.EventFacade);
+                Spikes.Add(obj);
             }
         }
 
@@ -95,6 +98,10 @@ namespace ProcedualLevels.Views
             }
             Destroy(Maze.gameObject);
             Destroy(DebugRoot.gameObject);
+            foreach (var item in Spikes)
+            {
+                Destroy(item.gameObject);
+            }
         }
 
         private void ShowRooms(MapData map, GameObject maze)

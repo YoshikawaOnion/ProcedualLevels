@@ -55,8 +55,9 @@ namespace ProcedualLevels.Models
                       .AddTo(Disposable);
         }
 
-        public void Dispose()
+        public override void Dispose()
         {
+            base.Dispose();
             Disposable.Dispose();
         }
     }

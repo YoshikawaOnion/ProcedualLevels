@@ -9,6 +9,8 @@ namespace ProcedualLevels.Views
 {
     public class SpikeController : MonoBehaviour
     {
+        public Spike Spike { get; set; }
+
         public void Initialize(Spike spike,
                                ISpikeEventAccepter eventAccepter)
         {
@@ -17,8 +19,10 @@ namespace ProcedualLevels.Views
                       .Where(x => x != null)
                       .Subscribe(x =>
             {
+                Spike = spike;
+
                 eventAccepter.OnBattlerTouchedSpikeSender
-                             .OnNext(Tuple.Create(spike, x.Battler));
+                             .OnNext(Tuple.Create(this, x));
             });
         }
     }

@@ -39,8 +39,8 @@ namespace ProcedualLevels.Views
         public IObserver<Models.Enemy> OnPlayerAttackedByEnemySender { get { return onPlayerAttackedByEnemy; } }
         private Subject<Models.Enemy> onPlayerAttackedByEnemy = new Subject<Models.Enemy>();
 
-        public IObservable<Tuple<Models.Spike, Models.Battler>> OnBattlerTouchedSpikeReceiver { get { return onBattlerTouchedSpike; } }
-        public IObserver<Tuple<Models.Spike, Models.Battler>> OnBattlerTouchedSpikeSender { get { return onBattlerTouchedSpike; } }
-        private Subject<Tuple<Models.Spike, Models.Battler>> onBattlerTouchedSpike = new Subject<Tuple<Models.Spike,Models.Battler>>();
+        public IObservable<Tuple<SpikeController,BattlerController>> OnBattlerTouchedSpikeReceiver { get { return onBattlerTouchedSpike; } }
+        public IObserver<Tuple<SpikeController,BattlerController>> OnBattlerTouchedSpikeSender { get { return onBattlerTouchedSpike; } }
+        private Subject<Tuple<SpikeController,BattlerController>> onBattlerTouchedSpike = new Subject<Tuple<SpikeController,BattlerController>>();
     }
 }

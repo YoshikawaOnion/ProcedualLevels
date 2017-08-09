@@ -23,12 +23,12 @@ namespace ProcedualLevels.Models
             get { return DungeonAsset.VerticalPathThickness + DungeonAsset.ColliderMargin * 2; }
         }
 
-        private GameParameterAsset BattlerAsset { get; set; }
+        private GameParameterAsset GameParameterAsset { get; set; }
         private DungeonGenAsset DungeonAsset { get; set; }
 
         public MapGenerator(GameParameterAsset battlerAsset, DungeonGenAsset dungeonAsset)
         {
-            BattlerAsset = battlerAsset;
+            GameParameterAsset = battlerAsset;
             DungeonAsset = dungeonAsset;
         }
 
@@ -206,7 +206,7 @@ namespace ProcedualLevels.Models
 
         private void PlaceSpikes(MapData map, IAdventureView view)
         {
-            var number = 3;
+            var number = GameParameterAsset.SpikeNumber;
 
             for (int i = 0; i < number; i++)
             {

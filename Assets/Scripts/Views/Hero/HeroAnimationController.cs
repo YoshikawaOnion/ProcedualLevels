@@ -30,6 +30,7 @@ namespace ProcedualLevels.Views
         private Subject<float> DirectionSubject { get; set; }
         private bool IsDead { get; set; }
         private string AnimationKeyPlaying { get; set; }
+        private IDisposable PlayingDisposable { get; set; }
 
         /// <summary>
         /// アニメーションの管理を開始します。
@@ -91,6 +92,10 @@ namespace ProcedualLevels.Views
             {
                 return;
             }
+            if (PlayingDisposable != null)
+            {
+                PlayingDisposable.Dispose();
+            }
 
             var direction = target.transform.position - transform.position;
             if (direction.x > 0)
@@ -104,7 +109,7 @@ namespace ProcedualLevels.Views
                 Direction = -1;
             }
 
-            WaitAnimationFinish().Subscribe(x =>
+            PlayingDisposable = WaitAnimationFinish().Subscribe(x =>
             {
                 if (Direction > 0)
                 {
@@ -114,8 +119,7 @@ namespace ProcedualLevels.Views
 				{
                     PlayAnimation(IdleLeftAnimation, LoopInfinite);
                 }                
-            })
-                                 .AddTo(Disposable);
+            });
         }
 
         /// <summary>
@@ -128,6 +132,10 @@ namespace ProcedualLevels.Views
 			{
 				return;
 			}
+            if(PlayingDisposable != null)
+            {
+                PlayingDisposable.Dispose();
+            }
 
 			var direction = target.transform.position - transform.position;
 			if (direction.x > 0)
@@ -141,7 +149,7 @@ namespace ProcedualLevels.Views
 				Direction = -1;
 			}
 
-			WaitAnimationFinish().Subscribe(x =>
+			PlayingDisposable = WaitAnimationFinish().Subscribe(x =>
 			{
 				if (Direction > 0)
 				{
@@ -151,8 +159,7 @@ namespace ProcedualLevels.Views
 				{
 					PlayAnimation(IdleLeftAnimation, LoopInfinite);
 				}
-			})
-								 .AddTo(Disposable);
+			});
 		}
 
         /// <summary>
@@ -162,6 +169,10 @@ namespace ProcedualLevels.Views
         public IObservable<Unit> AnimateDie()
         {
             IsDead = true;
+            if (PlayingDisposable != null)
+            {
+                PlayingDisposable.Dispose();
+            }
             Disposable.Dispose();
             Disposable = null;
 
@@ -202,6 +213,10 @@ namespace ProcedualLevels.Views
             if (Disposable != null)
 			{
 				Disposable.Dispose();
+            }
+            if (PlayingDisposable != null)
+            {
+                PlayingDisposable.Dispose();
             }
         }
     }

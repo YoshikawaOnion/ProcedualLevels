@@ -18,7 +18,7 @@ namespace ProcedualLevels.Views
 		private HeroMoveController Move { get; set; }
         private Subject<Unit> OnBattle { get; set; }
 
-        public void Initialize(IPlayerEventAccepter eventAccepter)
+        public void Initialize(IPlayerEventAccepter eventAccepter, IGameEventReceiver eventReceiver)
         {
             BattleTargets = new List<EnemyController>();
             EventAccepter = eventAccepter;
@@ -33,13 +33,21 @@ namespace ProcedualLevels.Views
                       .PauseBy(OnBattle, TimeSpan.FromMilliseconds(750))
                       .Subscribe(x => BattleTargets.Add(x))
                       .AddTo(Disposable);
+
+            var hero = GetComponent<HeroController>();
+            eventReceiver.OnBattlerTouchedSpikeReceiver
+                         .Where(x => x.Item2.Battler.Index == hero.Battler.Index)
+                         .ThrottleFirst(TimeSpan.FromMilliseconds(750))
+                         .Subscribe(x => Animation.AnimateDamage(x.Item1.gameObject));
         }
 
         void Update()
         {
             if (BattleTargets.Any())
             {
-                foreach (var target in BattleTargets)
+                var distincted = BattleTargets.GroupBy(x => x.Battler.Index)
+                                              .Select(x => x.First());
+                foreach (var target in distincted)
 				{
 					var distance = target.transform.position - transform.position;
 					if (distance.x * Move.WalkDirection > 0)
@@ -52,7 +60,7 @@ namespace ProcedualLevels.Views
 					{
 						EventAccepter.OnPlayerAttackedByEnemySender
 									 .OnNext(target.Enemy);
-						//Animation.AnimateDamage(target.gameObject);
+						Animation.AnimateDamage(target.gameObject);
 					}
                 }
 

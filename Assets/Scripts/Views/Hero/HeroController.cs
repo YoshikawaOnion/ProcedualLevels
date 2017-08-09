@@ -32,7 +32,8 @@ namespace ProcedualLevels.Views
         /// <param name="eventAccepter">このクラスからのイベントを受け付けるインスタンス。</param>
         public void Initialize(Hero hero,
                                GameObject gameUi,
-                               IPlayerEventAccepter eventAccepter)
+                               IPlayerEventAccepter eventAccepter,
+                               IGameEventReceiver eventReceiver)
         {
             base.Initialize(hero);
             Hero = hero;
@@ -51,7 +52,7 @@ namespace ProcedualLevels.Views
                                .GetComponent<ControllerButton>();
 
             var battle = GetComponent<HeroBattleController>();
-            battle.Initialize(eventAccepter);
+            battle.Initialize(eventAccepter, eventReceiver);
         }
 
         public override void Control()

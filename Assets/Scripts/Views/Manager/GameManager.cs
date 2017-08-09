@@ -48,7 +48,8 @@ namespace ProcedualLevels.Views
             OnGoal = EventFacade.OnPlayerGoalReceiver;
             OnPlayerDie = EventFacade.OnPlayerDieReceiver;
             OnAttacked = EventFacade.OnPlayerAttackedByEnemyReceiver;
-            OnBattlerTouchSpike = EventFacade.OnBattlerTouchedSpikeReceiver;
+            OnBattlerTouchSpike = EventFacade.OnBattlerTouchedSpikeReceiver
+                                             .Select(x => Tuple.Create(x.Item1.Spike, x.Item2.Battler));
         }
 
         public void Initialize(AdventureContext context)
@@ -101,7 +102,7 @@ namespace ProcedualLevels.Views
             HeroController = Instantiate(heroPrefab);
             HeroController.transform.position = context.Map.StartLocation + Vector2.one * 0.5f;
             HeroController.transform.SetPositionZ(heroPrefab.transform.position.z);
-            HeroController.Initialize(context.Hero, RootObjectRepository.I.GameUi, EventFacade);
+            HeroController.Initialize(context.Hero, RootObjectRepository.I.GameUi, EventFacade, EventFacade);
             HeroController.transform.SetParent(RootObjectRepository.I.ManagerDraw.transform);
         }
 
