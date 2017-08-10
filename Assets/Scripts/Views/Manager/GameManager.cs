@@ -87,7 +87,6 @@ namespace ProcedualLevels.Views
 
             gameUi.TimeLimitLabel.Initialize(modelContext);
             gameUi.ClearText.SetActive(false);
-            gameUi.ClearBackground.SetActive(false);
         }
 
         private void SetEnemiesUp(AdventureContext context, AdventureViewContext viewContext)
