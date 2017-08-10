@@ -16,6 +16,7 @@ namespace ProcedualLevels.Views
         private GameObject DebugRoot { get; set; }
         private Goal Goal { get; set; }
         private List<SpikeController> Spikes { get; set; }
+        private bool Quitting { get; set; }
 
         // TODO: map, managerの良い説明が思い浮かばない。設計が悪そう。
         /// <summary>
@@ -24,18 +25,19 @@ namespace ProcedualLevels.Views
         /// <param name="map">この引数に渡したマップに属する要素を表示します。</param>
         /// <param name="manager">このインスタンスが属するゲーム マネージャー。</param>
         /// <param name="viewContext">探索画面の情報を保持するコンテキスト クラス。</param>
-        public void Initialize(MapData map, GameManager manager, AdventureViewContext viewContext)
+        public void Initialize(MapData map, AdventureViewContext viewContext)
         {
             var mazePrefab = Resources.Load<GameObject>("Prefabs/Dungeon/Maze_Control");
             Maze = Instantiate(mazePrefab);
+            Maze.transform.SetParent(transform);
             Spikes = new List<SpikeController>();
 
             ShowRooms(map, Maze);
             ShowPlatforms(map, Maze);
-            ShowGoal(map, manager);
-            ShowSpawners(map, manager, viewContext);
-            ShowCollisionBlock(map, manager);
-            ShowSpikes(map, manager);
+            ShowGoal(map, viewContext.Manager);
+            ShowSpawners(map, viewContext);
+            ShowCollisionBlock(map, viewContext.Manager);
+            ShowSpikes(map, viewContext.Manager);
         }
 
         private void ShowSpikes(MapData map, GameManager manager)
@@ -63,7 +65,7 @@ namespace ProcedualLevels.Views
             }
         }
 
-        private void ShowSpawners(MapData map, GameManager manager, AdventureViewContext viewContext)
+        private void ShowSpawners(MapData map, AdventureViewContext viewContext)
         {
             var prefabs = new Dictionary<string, SpawnerController>();
             foreach (var spawner in map.Spawners)
@@ -77,7 +79,7 @@ namespace ProcedualLevels.Views
 
                 var obj = Instantiate(prefab);
                 obj.Initialize(spawner, viewContext);
-                obj.transform.SetParent(manager.transform);
+                obj.transform.SetParent(viewContext.Manager.transform);
             }
         }
 
@@ -90,14 +92,19 @@ namespace ProcedualLevels.Views
             Goal.Initialize(manager.EventFacade);
         }
 
+        private void OnApplicationQuit()
+        {
+            Quitting = true;
+        }
+
         private void OnDestroy()
 		{
-            if (Goal != null)
-			{
-				Destroy(Goal.gameObject);
+            if (Quitting)
+            {
+                return;
             }
-            Destroy(Maze.gameObject);
-            Destroy(DebugRoot.gameObject);
+
+            Destroy(Goal.gameObject);
             foreach (var item in Spikes)
             {
                 Destroy(item.gameObject);
@@ -109,6 +116,7 @@ namespace ProcedualLevels.Views
             var prefab = Resources.Load<GameObject>("Prefabs/Dungeon/Room_Control");
             DebugRoot = new GameObject();
             DebugRoot.name = "Debug_MazeViewer";
+            DebugRoot.transform.SetParent(transform);
 
             foreach (var division in map.Divisions)
             {

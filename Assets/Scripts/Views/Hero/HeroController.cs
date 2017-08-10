@@ -31,9 +31,9 @@ namespace ProcedualLevels.Views
         /// <param name="hero">プレイヤーキャラクターのモデル クラス。</param>
         /// <param name="eventAccepter">このクラスからのイベントを受け付けるインスタンス。</param>
         public void Initialize(Hero hero,
-                               GameObject gameUi,
                                IPlayerEventAccepter eventAccepter,
-                               IGameEventReceiver eventReceiver)
+                               IGameEventReceiver eventReceiver,
+                               AdventureViewContext context)
         {
             base.Initialize(hero);
             Hero = hero;
@@ -44,12 +44,9 @@ namespace ProcedualLevels.Views
             Animation = GetComponent<HeroAnimationController>();
             Animation.Initialize();
 
-            LeftButton = gameUi.transform.Find("Controller/LeftButton")
-                               .GetComponent<ControllerButton>();
-            RightButton = gameUi.transform.Find("Controller/RightButton")
-                                .GetComponent<ControllerButton>();
-            JumpButton = gameUi.transform.Find("Controller/JumpButton")
-                               .GetComponent<ControllerButton>();
+            LeftButton = context.UiManager.LeftButton;
+            RightButton = context.UiManager.RightButton;
+            JumpButton = context.UiManager.JumpButton;
 
             var battle = GetComponent<HeroBattleController>();
             battle.Initialize(eventAccepter, eventReceiver);

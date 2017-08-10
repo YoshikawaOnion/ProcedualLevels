@@ -12,5 +12,6 @@ namespace ProcedualLevels.Views
         public HeroController Hero { get; set; }
         public AdventureContext Model { get; set; }
         public GameManager Manager { get; set; }
+        public GameUiManager UiManager { get; set; }
     }
 }

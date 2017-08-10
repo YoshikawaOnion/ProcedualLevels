@@ -15,19 +15,19 @@ namespace ProcedualLevels.Views
         [SerializeField]
         private Color warningColor = Color.white;
 
-        private Text Text { get; set; }
         private CompositeDisposable Disposable { get; set; }
         private Color InitialColor { get; set; }
+        private UILabel Label { get; set; }
 
-        private void Start()
-		{
-			Text = GetComponent<Text>();
-			InitialColor = Text.color;
-		}
+        private void Awake()
+        {
+            Label = GetComponent<UILabel>();
+            InitialColor = Label.color;
+        }
 
         public void Initialize(Models.AdventureContext context)
         {
-            Text.color = InitialColor;
+            Label.color = InitialColor;
 
             if (Disposable != null)
             {
@@ -43,21 +43,21 @@ namespace ProcedualLevels.Views
                 stringBuilder.Append(minutes.ToString("00"));
                 stringBuilder.Append(":");
                 stringBuilder.Append(seconds.ToString("00"));
-                Text.text = stringBuilder.ToString();
+                Label.text = stringBuilder.ToString();
             }).AddTo(Disposable);
 
             context.TimeLimit.FirstOrDefault(x => x == 0)
-                   .Subscribe(x => Text.color = dangerColor)
+                   .Subscribe(x => Label.color = dangerColor)
                    .AddTo(Disposable);
             context.TimeLimit.FirstOrDefault(x => x <= 30)
-                   .Subscribe(x => Text.color = warningColor)
+                   .Subscribe(x => Label.color = warningColor)
                    .AddTo(Disposable);
         }
 
         private void OnDestroy()
         {
             Disposable.Dispose();
-            Text = null;
+            Label = null;
         }
     }
 }

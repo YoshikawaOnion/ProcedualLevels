@@ -30,6 +30,9 @@ namespace ProcedualLevels.Views
             WallRenderer = Instantiate(wallRendererPrefab);
             RoomRenderer = Instantiate(roomRendererPrefab);
             PlatformRenderer = Instantiate(platformRendererPrefab);
+            WallRenderer.transform.SetParent(transform);
+            RoomRenderer.transform.SetParent(transform);
+            PlatformRenderer.transform.SetParent(transform);
         }
 
         private void OnDestroy()
