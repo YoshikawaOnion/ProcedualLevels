@@ -1,4 +1,4 @@
-﻿using System.Collections;
+﻿﻿using System.Collections;
 using System.Collections.Generic;
 using UniRx;
 using UnityEngine;
@@ -21,15 +21,17 @@ namespace ProcedualLevels.Views
             onPushed = new Subject<Unit>();
         }
 
-        public void Push()
+        void OnPress(bool isDown)
         {
-            IsHold = true;
-            onPushed.OnNext(Unit.Default);
-        }
-
-        public void Release()
-        {
-            IsHold = false;
+            if (isDown)
+            {
+                IsHold = true;
+                onPushed.OnNext(Unit.Default);
+            }
+            else
+            {
+                IsHold = false;
+            }
         }
     }
 }

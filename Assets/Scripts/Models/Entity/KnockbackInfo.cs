@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using ProcedualLevels.Common;
 using UnityEngine;
@@ -15,7 +16,7 @@ namespace ProcedualLevels.Models
         public int Power { get; private set; }
         public float KnockbackPower { get; private set; }
         public float KnockbackJumpPower { get; private set; }
-        public float StanTime { get; private set; }
+        public float StanTime { get; set; }
 
         /// <summary>
         /// パラメーターを指定して、KnockbackInfoの新しいインスタンスを生成します。
@@ -43,5 +44,16 @@ namespace ProcedualLevels.Models
 			KnockbackJumpPower = asset.KnockbackJumpPower;
 			StanTime = 1;
 		}
+
+        public KnockbackInfo Clone()
+        {
+            return new KnockbackInfo(BattlerSubject, BattlerAgainst, false)
+            {
+                KnockbackPower = KnockbackPower,
+                KnockbackJumpPower = KnockbackJumpPower,
+                StanTime = StanTime,
+                Power = Power
+            };
+        }
     }
 }

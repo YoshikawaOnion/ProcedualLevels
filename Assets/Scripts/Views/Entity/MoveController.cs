@@ -29,7 +29,7 @@ namespace ProcedualLevels.Views
 		{
 			var velocity = currentVelocity;
 			var a = -Mathf.Sign(velocity) * stoppingAccel * powerScale;
-			velocity = velocity + a;
+			velocity += a;
 			if (Mathf.Abs(velocity) <= stoppingAccel)
 			{
 				velocity = 0;
@@ -68,7 +68,7 @@ namespace ProcedualLevels.Views
 				if (direction * velocity < 0)
 				{
 					var a = Mathf.Sign(direction) * stoppingAccel * powerScale;
-					velocity = velocity + a;
+					velocity += a;
 					if (Mathf.Abs(velocity) <= stoppingAccel)
 					{
 						velocity = 0;
@@ -82,7 +82,7 @@ namespace ProcedualLevels.Views
 				else if (Mathf.Abs(velocity) < maxSpeed)
 				{
 					var a = Mathf.Sign(direction) * movingAccel * powerScale;
-					velocity = velocity + a;
+					velocity += a;
 				}
 			}
 
