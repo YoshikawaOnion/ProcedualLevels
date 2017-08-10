@@ -68,7 +68,7 @@ namespace ProcedualLevels.Views
                 {
                     var heroPos = HeroController.transform.position.MergeZ(-10);
                     RootObjectRepository.I.Camera.transform.position = heroPos;
-                    gameUi.UiCamera.transform.position = heroPos;
+                    gameUi.UiCamera.transform.position = heroPos.MergeZ(-2000);
                 }
             });
 
