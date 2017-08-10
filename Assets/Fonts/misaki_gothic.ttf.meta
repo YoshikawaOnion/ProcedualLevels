@@ -1,0 +1,21 @@
+fileFormatVersion: 2
+guid: df5e63f2625c74802b1916a02e42b85a
+timeCreated: 1492162287
+licenseType: Pro
+TrueTypeFontImporter:
+  serializedVersion: 4
+  fontSize: 16
+  forceTextureCase: -2
+  characterSpacing: 0
+  characterPadding: 1
+  includeFontData: 1
+  fontName: MisakiGothic
+  fontNames:
+  - MisakiGothic
+  fallbackFontReferences: []
+  customCharacters: 
+  fontRenderingMode: 0
+  ascentCalculationMode: 1
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
