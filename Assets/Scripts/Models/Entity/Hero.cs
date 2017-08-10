@@ -20,7 +20,7 @@ namespace ProcedualLevels.Models
                 Hp.Value -= x.Attack.Value;
                 x.Hp.Value -= Attack.Value;
                 var knockbackForThis = new KnockbackInfo(this, x, false);
-                var knockbackForEnemy = new KnockbackInfo(x, this, false);
+                var knockbackForEnemy = new KnockbackInfo(x, this, false, 1);
                 view.Knockback(knockbackForThis);
                 view.Knockback(knockbackForEnemy);
             })

@@ -20,7 +20,7 @@ namespace ProcedualLevels.Views
 			MoveController = GetComponent<MoveController>();
             Disposable = new CompositeDisposable();
 
-            var stayTriggerTimes = (int)Helper.RandomInRange(20, 40);
+            var stayTriggerTimes = (int)Helper.GetRandomInRange(20, (float)40);
             Observable.Interval(TimeSpan.FromSeconds(stayTriggerTimes))
                 .FirstOrDefault()
                 .Subscribe(x =>

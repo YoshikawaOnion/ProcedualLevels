@@ -77,7 +77,7 @@ namespace ProcedualLevels.Common
             return source.First(x => selector(x).CompareTo(max) == 0);
         }
 
-        public static float RandomInRange(float min, float max)
+        public static float GetRandomInRange(float min, float max)
         {
             if (min > max)
             {

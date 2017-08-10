@@ -23,7 +23,7 @@ namespace ProcedualLevels.Models
         /// <param name="subject">ノックバックを受けるバトラー。</param>
         /// <param name="against">ノックバックを発生させるバトラー。</param>
         /// <param name="noResist">ノックバックを受ける側が無抵抗に最大のノックバックを受けるかどうかを表す真偽値。</param>
-        public KnockbackInfo(Battler subject, Battler against, bool noResist)
+        public KnockbackInfo(Battler subject, Battler against, bool noResist, int minPower = 0)
         {
             var asset = AssetRepository.I.GameParameterAsset;
 
@@ -36,11 +36,12 @@ namespace ProcedualLevels.Models
 				var knockbackPower = Mathf.Max(0, against.Attack.Value - subject.Attack.Value);
 				Power = knockbackPower;
             }
+            Power = Mathf.Max(minPower, Power);
 			BattlerSubject = subject;
 			BattlerAgainst = against;
 			KnockbackPower = Power * asset.KnockbackPowerFactor;
 			KnockbackJumpPower = asset.KnockbackJumpPower;
-			StanTime = 1 * asset.KnockbackStanTimeFactor;
+			StanTime = 1;
 		}
     }
 }

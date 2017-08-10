@@ -10,6 +10,9 @@ namespace ProcedualLevels.Views
 {
     public abstract class BattlerController : MonoBehaviour
     {
+        [SerializeField]
+        public float knockbackStanTimeFactor;
+
         public Models.Battler Battler { get; private set; }
         public Rigidbody2D Rigidbody { get; private set; }
         public BattlerKnockbackState KnockbackState { get; set; }
