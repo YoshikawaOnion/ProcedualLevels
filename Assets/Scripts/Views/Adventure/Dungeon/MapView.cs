@@ -23,9 +23,9 @@ namespace ProcedualLevels.Views
         /// マップに属する要素を表示します。
         /// </summary>
         /// <param name="map">この引数に渡したマップに属する要素を表示します。</param>
-        /// <param name="manager">このインスタンスが属するゲーム マネージャー。</param>
         /// <param name="viewContext">探索画面の情報を保持するコンテキスト クラス。</param>
-        public void Initialize(MapData map, AdventureViewContext viewContext)
+        /// <param name="eventFacade">このビューで使用するイベント送受信口。</param>
+        public void Initialize(MapData map, AdventureViewContext viewContext, GameEventFacade eventFacade)
         {
             var mazePrefab = Resources.Load<GameObject>("Prefabs/Dungeon/Maze_Control");
             Maze = Instantiate(mazePrefab);
@@ -34,13 +34,13 @@ namespace ProcedualLevels.Views
 
             ShowRooms(map, Maze);
             ShowPlatforms(map, Maze);
-            ShowGoal(map, viewContext);
+            ShowGoal(map, viewContext, eventFacade);
             ShowSpawners(map, viewContext);
-            ShowCollisionBlock(map, viewContext.Manager);
-            ShowSpikes(map, viewContext.Manager);
+            ShowCollisionBlock(map);
+            ShowSpikes(map, eventFacade);
         }
 
-        private void ShowSpikes(MapData map, GameManager manager)
+        private void ShowSpikes(MapData map, GameEventFacade eventFacade)
         {
             var prefab = Resources.Load<SpikeController>("Prefabs/Character/Spike_Control");
             foreach (var item in map.Spikes)
@@ -48,12 +48,12 @@ namespace ProcedualLevels.Views
                 var obj = Instantiate(prefab);
                 obj.transform.position = item.InitialPosition + Vector2.one * 0.5f;
                 obj.transform.SetParent(RootObjectRepository.I.ManagerDraw.transform);
-                obj.Initialize(item, manager.EventFacade);
+                obj.Initialize(item, eventFacade);
                 Spikes.Add(obj);
             }
         }
 
-        private void ShowCollisionBlock(MapData map, GameManager manager)
+        private void ShowCollisionBlock(MapData map)
         {
             var prefab = Resources.Load<GameObject>("Prefabs/Dungeon/CollisionBlock");
             var offset = Vector2.one * 0.5f;
@@ -61,7 +61,7 @@ namespace ProcedualLevels.Views
             {
                 var obj = Instantiate(prefab);
                 obj.transform.position = item + offset;
-                obj.transform.SetParent(manager.transform);
+                obj.transform.SetParent(transform);
             }
         }
 
@@ -79,17 +79,17 @@ namespace ProcedualLevels.Views
 
                 var obj = Instantiate(prefab);
                 obj.Initialize(spawner, viewContext);
-                obj.transform.SetParent(viewContext.Manager.transform);
+                obj.transform.SetParent(transform);
             }
         }
 
-        private void ShowGoal(MapData map, AdventureViewContext context)
+        private void ShowGoal(MapData map, AdventureViewContext context, GameEventFacade eventFacade)
         {
             var goalPrefab = Resources.Load<Goal>("Prefabs/Dungeon/Goal_Control");
             Goal = Instantiate(goalPrefab);
             Goal.transform.position = map.GoalLocation + new Vector2(0.5f, 0.5f);
             Goal.transform.SetParent(RootObjectRepository.I.ManagerDraw.transform);
-            Goal.Initialize(context, context.Manager.EventFacade);
+            Goal.Initialize(context, eventFacade);
         }
 
         private void OnApplicationQuit()
@@ -98,7 +98,7 @@ namespace ProcedualLevels.Views
         }
 
         private void OnDestroy()
-		{
+        {
             if (Quitting)
             {
                 return;
@@ -139,8 +139,8 @@ namespace ProcedualLevels.Views
         {
             var prefab = Resources.Load<GameObject>("Prefabs/Dungeon/Platform_Control");
             foreach (var platform in map.Platforms)
-			{
-				var obj = Instantiate(prefab);
+            {
+                var obj = Instantiate(prefab);
                 var x = platform.Left;
                 var width = platform.Right - platform.Left;
                 obj.transform.SetParent(parent.transform);

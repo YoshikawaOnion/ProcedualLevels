@@ -15,7 +15,7 @@ namespace ProcedualLevels.Views
         {
             Disposable = spawner.SpawnObservable.Subscribe(x =>
             {
-                var obj = context.Manager.SpawnEnemy(x);
+                var obj = context.ObjectManager.SpawnEnemy(x);
                 var vx = Helper.GetRandomInRange(-MaxSpeed, MaxSpeed);
                 obj.Rigidbody.velocity = obj.Rigidbody.velocity.MergeX(vx);
             });

@@ -11,29 +11,17 @@ using UniRx.Triggers;
 
 namespace ProcedualLevels.Views
 {
+    /// <summary>
+    /// 冒険画面のビュー機能の実装をモデルに提供するクラス。
+    /// </summary>
     public class GameManager : MonoBehaviour, IAdventureView
     {
         [SerializeField]
         private GameUiManager gameUiPrefab = null;
 
-        private Dictionary<string, EnemyController> EnemyPrefabs { get; set; }
-
-        private HeroController HeroController { get; set; }
-        private List<EnemyController> EnemyControllers { get; set; }
-        private MapView MapView { get; set; }
-        private MapTipRenderer MapTipRenderer { get; set; }
         private AdventureViewContext Context { get; set; }
-
-        public GameEventFacade EventFacade { get; set; }
-        public BattlerController[] Battlers
-        {
-            get
-            {
-                return EnemyControllers.Cast<BattlerController>()
-                                       .Append(HeroController)
-                                       .ToArray();
-            }
-        }
+        private GameEventFacade EventFacade { get; set; }
+        private GameObjectManager ObjectManager { get; set; }
 
         public IObservable<Enemy> OnBattle { get; private set; }
         public IObservable<PowerUp> OnGetPowerUp { get; private set; }
@@ -45,8 +33,6 @@ namespace ProcedualLevels.Views
         private void Start()
         {
             EventFacade = new GameEventFacade();
-            EnemyControllers = new List<EnemyController>();
-            EnemyPrefabs = new Dictionary<string, EnemyController>();
             OnBattle = EventFacade.OnPlayerBattleWithEnemyReceiver;
             OnGetPowerUp = EventFacade.OnPlayerGetPowerUpReceiver;
             OnGoal = EventFacade.OnPlayerGoalReceiver;
@@ -54,6 +40,9 @@ namespace ProcedualLevels.Views
             OnAttacked = EventFacade.OnPlayerAttackedByEnemyReceiver;
             OnBattlerTouchSpike = EventFacade.OnBattlerTouchedSpikeReceiver
                                              .Select(x => Tuple.Create(x.Item1.Spike, x.Item2.Battler));
+
+            var gomPrefab = Resources.Load<GameObjectManager>("Prefabs/Manager/GameObjectManager");
+            ObjectManager = Instantiate(gomPrefab);
         }
 
         public void Initialize(AdventureContext modelContext)
@@ -62,9 +51,9 @@ namespace ProcedualLevels.Views
             this.UpdateAsObservable()
                 .Subscribe(x =>
             {
-                if (HeroController != null)
+                if (Context.Hero != null)
                 {
-                    var heroPos = HeroController.transform.position.MergeZ(-10);
+                    var heroPos = Context.Hero.transform.position.MergeZ(-10);
                     RootObjectRepository.I.Camera.transform.position = heroPos.AddY(1);
                     gameUi.UiCamera.transform.position = heroPos.MergeZ(-2000);
                 }
@@ -74,74 +63,16 @@ namespace ProcedualLevels.Views
             {
                 EventReceiver = EventFacade,
                 Model = modelContext,
-                Manager = this,
-                UiManager = gameUi
+                UiManager = gameUi,
+                ObjectManager = ObjectManager
             };
-            Context.Hero = SetHeroUp(modelContext, Context);
 
-            MapTipRenderer = SetMaptipUp(modelContext);
-            SetEnemiesUp(modelContext, Context);
-            MapView = SetMapUp(modelContext, Context);
+            ObjectManager.Initialize(modelContext, Context, EventFacade);
+            Context.Hero = ObjectManager.HeroController;
 
             gameUi.TimeLimitLabel.Initialize(modelContext);
             gameUi.ClearText.SetActive(false);
         }
-
-        private void SetEnemiesUp(AdventureContext context, AdventureViewContext viewContext)
-        {
-            foreach (var enemy in context.Enemies)
-            {
-                SpawnEnemy(enemy);
-            }
-        }
-
-        private MapTipRenderer SetMaptipUp(AdventureContext context)
-        {
-            var maptipManagerPrefab = Resources.Load<MapTipRenderer>("Prefabs/Manager/MaptipRenderer");
-            var obj = Instantiate(maptipManagerPrefab);
-            obj.Initialize(context.Map);
-            return obj;
-        }
-
-        private MapView SetMapUp(AdventureContext context, AdventureViewContext viewContext)
-        {
-            var mapPrefab = Resources.Load<MapView>("Prefabs/Dungeon/Map");
-            var obj = Instantiate(mapPrefab);
-            obj.Initialize(context.Map, viewContext);
-            return obj;
-        }
-
-        private HeroController SetHeroUp(AdventureContext context, AdventureViewContext viewContext)
-        {
-            var heroPrefab = Resources.Load<HeroController>("Prefabs/Character/Hero");
-            HeroController = Instantiate(heroPrefab);
-            HeroController.transform.position = context.Map.StartLocation + Vector2.one * 0.5f;
-            HeroController.transform.SetPositionZ(heroPrefab.transform.position.z);
-            HeroController.Initialize(context.Hero, EventFacade, EventFacade, viewContext);
-            HeroController.transform.SetParent(RootObjectRepository.I.ManagerDraw.transform);
-            return HeroController;
-        }
-
-        private void OnDestroy()
-        {
-            foreach (var battler in Battlers)
-            {
-                if (battler != null)
-                {
-                    Destroy(battler.gameObject);
-                }
-            }
-            if (MapView != null)
-            {
-                Destroy(MapView.gameObject);
-            }
-            if (MapTipRenderer != null)
-            {
-                Destroy(MapTipRenderer.gameObject);
-            }
-            EventFacade = null;
-        }
-
 
         /// <summary>
         /// ノックバック情報に基づいてノックバックを発生させます。
@@ -149,7 +80,7 @@ namespace ProcedualLevels.Views
         /// <param name="info">ノックバック情報</param>
         public void Knockback(KnockbackInfo info)
         {
-            var battlers = Battlers;
+            var battlers = ObjectManager.Battlers;
             var subject = battlers.FirstOrDefault(x => x.Battler.Index == info.BattlerSubject.Index);
             var against = battlers.FirstOrDefault(x => x.Battler.Index == info.BattlerAgainst.Index);
 
@@ -165,7 +96,7 @@ namespace ProcedualLevels.Views
         /// <param name="subject">死亡したキャラクターのモデル。</param>
         public void ShowDeath(Battler subject)
         {
-            var obj = Battlers.FirstOrDefault(x => x.Battler.Index == subject.Index);
+            var obj = ObjectManager.Battlers.FirstOrDefault(x => x.Battler.Index == subject.Index);
             obj.Die();
         }
 
@@ -176,12 +107,7 @@ namespace ProcedualLevels.Views
         /// <param name="powerUp">パワーアップアイテムのモデル。</param>
         public void PlacePowerUp(int battlerIndex, PowerUp powerUp)
         {
-            var battler = Battlers.First(x => x.Battler.Index == battlerIndex);
-            var prefab = Resources.Load<PowerUpItemController>("Prefabs/Character/PowerUp");
-            var obj = Instantiate(prefab);
-            obj.Initialize(powerUp, EventFacade);
-            obj.transform.position = battler.transform.position.MergeZ(obj.transform.position.z);
-            obj.transform.SetParent(transform);
+            ObjectManager.SpawnPowerUp(battlerIndex, powerUp);
         }
 
         /// <summary>
@@ -194,6 +120,7 @@ namespace ProcedualLevels.Views
             var view = Instantiate(viewPrefab);
             Destroy(gameObject);
             Destroy(Context.UiManager.gameObject);
+            Destroy(ObjectManager.gameObject);
             return Observable.EveryUpdate()
                              .Skip(1)
                              .First()
@@ -201,27 +128,6 @@ namespace ProcedualLevels.Views
             {
                 return (IAdventureView)view;
             });
-        }
-
-        public EnemyController SpawnEnemy(Enemy enemy)
-        {
-            EnemyController prefab;
-            if (!EnemyPrefabs.TryGetValue(enemy.Ability.PrefabName, out prefab))
-            {
-                prefab = Resources.Load<EnemyController>
-                                  ("Prefabs/Enemy/" + enemy.Ability.PrefabName);
-                EnemyPrefabs[enemy.Ability.PrefabName] = prefab;
-            }
-
-            var obj = Instantiate(prefab);
-            obj.transform.position = enemy.InitialPosition
-                .ToVector3()
-                .MergeZ(prefab.transform.position.z);
-            obj.Initialize(enemy, Context);
-            obj.transform.SetParent(RootObjectRepository.I.ManagerDraw.transform);
-
-            EnemyControllers.Add(obj);
-            return obj;
         }
     }
 }

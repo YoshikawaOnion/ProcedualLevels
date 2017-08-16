@@ -13,7 +13,7 @@ namespace ProcedualLevels.Views
         public virtual void Initialize(Models.Spawner spawner, AdventureViewContext context)
 		{
             Disposable = spawner.SpawnObservable
-                                .Subscribe(x => context.Manager.SpawnEnemy(x));
+                                .Subscribe(x => context.ObjectManager.SpawnEnemy(x));
         }
 
         private void OnDestroy()
