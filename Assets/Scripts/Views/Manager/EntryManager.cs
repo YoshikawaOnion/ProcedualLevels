@@ -19,9 +19,7 @@ namespace ProcedualLevels.Views
             var dungeonGen = AssetRepository.I.DungeonGenAsset;
             var battlerGen = AssetRepository.I.GameParameterAsset;
 
-            Observable.EveryUpdate()
-                      .Skip(1)
-                      .First()
+            Observable.NextFrame()
                       .Subscribe(x =>
 			{
 				model.Initialize(dungeonGen, battlerGen, view);
