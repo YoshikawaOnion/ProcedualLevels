@@ -14,9 +14,7 @@ namespace ProcedualLevels.Views
     public class GameManager : MonoBehaviour, IAdventureView
     {
         [SerializeField]
-        private GameUiManager gameUiPrefab;
-        [SerializeField]
-        private Camera gameUiCamera;
+        private GameUiManager gameUiPrefab = null;
 
         private Dictionary<string, EnemyController> EnemyPrefabs { get; set; }
 
@@ -81,9 +79,9 @@ namespace ProcedualLevels.Views
             };
             Context.Hero = SetHeroUp(modelContext, Context);
 
-            SetMaptipUp(modelContext);
+            MapTipRenderer = SetMaptipUp(modelContext);
             SetEnemiesUp(modelContext, Context);
-            SetMapUp(modelContext, Context);
+            MapView = SetMapUp(modelContext, Context);
 
             gameUi.TimeLimitLabel.Initialize(modelContext);
             gameUi.ClearText.SetActive(false);
@@ -97,18 +95,20 @@ namespace ProcedualLevels.Views
             }
         }
 
-        private void SetMaptipUp(AdventureContext context)
+        private MapTipRenderer SetMaptipUp(AdventureContext context)
         {
             var maptipManagerPrefab = Resources.Load<MapTipRenderer>("Prefabs/Manager/MaptipRenderer");
-            MapTipRenderer = Instantiate(maptipManagerPrefab);
-            MapTipRenderer.Initialize(context.Map);
+            var obj = Instantiate(maptipManagerPrefab);
+            obj.Initialize(context.Map);
+            return obj;
         }
 
-        private void SetMapUp(AdventureContext context, AdventureViewContext viewContext)
+        private MapView SetMapUp(AdventureContext context, AdventureViewContext viewContext)
         {
             var mapPrefab = Resources.Load<MapView>("Prefabs/Dungeon/Map");
-            MapView = Instantiate(mapPrefab);
-            MapView.Initialize(context.Map, viewContext);
+            var obj = Instantiate(mapPrefab);
+            obj.Initialize(context.Map, viewContext);
+            return obj;
         }
 
         private HeroController SetHeroUp(AdventureContext context, AdventureViewContext viewContext)
@@ -143,6 +143,10 @@ namespace ProcedualLevels.Views
         }
 
 
+        /// <summary>
+        /// ノックバック情報に基づいてノックバックを発生させます。
+        /// </summary>
+        /// <param name="info">ノックバック情報</param>
         public void Knockback(KnockbackInfo info)
         {
             var battlers = Battlers;
@@ -155,12 +159,21 @@ namespace ProcedualLevels.Views
             }
         }
 
+        /// <summary>
+        /// キャラクターの死亡をビューに反映します。
+        /// </summary>
+        /// <param name="subject">死亡したキャラクターのモデル。</param>
         public void ShowDeath(Battler subject)
         {
             var obj = Battlers.FirstOrDefault(x => x.Battler.Index == subject.Index);
             obj.Die();
         }
 
+        /// <summary>
+        /// パワーアップアイテムを配置します。
+        /// </summary>
+        /// <param name="index">パワーアップアイテムを落とした敵のインデックス。</param>
+        /// <param name="powerUp">パワーアップアイテムのモデル。</param>
         public void PlacePowerUp(int battlerIndex, PowerUp powerUp)
         {
             var battler = Battlers.First(x => x.Battler.Index == battlerIndex);

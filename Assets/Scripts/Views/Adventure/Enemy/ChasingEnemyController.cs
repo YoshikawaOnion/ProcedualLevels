@@ -14,13 +14,9 @@ namespace ProcedualLevels.Views
     public class ChasingEnemyController : FindingEnemyController
 	{
         [SerializeField]
-        private Collider2D FloorFinderLeft;
+        private Collider2D FloorFinderLeft = null;
         [SerializeField]
-        private Collider2D FloorFinderRight;
-        [SerializeField]
-        private int LeftFloorCountDebug;
-        [SerializeField]
-        private int RightFloorCountDebug;
+        private Collider2D FloorFinderRight = null;
 
         private MoveController MoveController { get; set; }
         private int LeftFloorCount { get; set; }
@@ -67,9 +63,6 @@ namespace ProcedualLevels.Views
             {
                 walkDirection = 0;
             }
-
-            LeftFloorCountDebug = LeftFloorCount;
-            RightFloorCountDebug = RightFloorCount;
 
             var vx = MoveController.GetMoveSpeed(Rigidbody.velocity.x, walkDirection, 1);
             Rigidbody.velocity = Rigidbody.velocity.MergeX(vx);
