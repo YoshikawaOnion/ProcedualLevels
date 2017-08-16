@@ -17,6 +17,7 @@ namespace ProcedualLevels.Views
 		private HeroAnimationController Animation { get; set; }
 		private HeroMoveController Move { get; set; }
         private Subject<Unit> OnBattle { get; set; }
+        private GameObject DamageEffectPrefab { get; set; }
 
         public void Initialize(IPlayerEventAccepter eventAccepter, IGameEventReceiver eventReceiver)
         {
@@ -26,6 +27,7 @@ namespace ProcedualLevels.Views
             Animation = GetComponent<HeroAnimationController>();
             Move = GetComponent<HeroMoveController>();
             OnBattle = new Subject<Unit>();
+            DamageEffectPrefab = Resources.Load<GameObject>("Prefabs/Effects/HitEffect01");
             var collider = GetComponent<BoxCollider2D>();
 
             var onTouchingEnemy = collider.OnCollisionStay2DAsObservable()
@@ -48,7 +50,11 @@ namespace ProcedualLevels.Views
             eventReceiver.OnBattlerTouchedSpikeReceiver
                          .Where(x => x.Item2.Battler.Index == hero.Battler.Index)
                          .ThrottleFirst(TimeSpan.FromMilliseconds(750))
-                         .Subscribe(x => Animation.AnimateDamage(x.Item1.gameObject));
+                         .Subscribe(x => 
+            {
+                Animation.AnimateDamage(x.Item1.gameObject);
+                PlayHitEffect(x.Item1.transform.position);
+            });
         }
 
         private IObservable<EnemyController> GetSwingingLoop(EnemyController enemy)
@@ -83,11 +89,22 @@ namespace ProcedualLevels.Views
 									 .OnNext(target.Enemy);
 						Animation.AnimateDamage(target.gameObject);
 					}
+                    PlayHitEffect(target.transform.position);
                 }
 
                 BattleTargets.Clear();
                 OnBattle.OnNext(Unit.Default);
             }
+        }
+
+        private void PlayHitEffect(Vector3 oppositeLocation)
+        {
+            var obj = Instantiate(DamageEffectPrefab);
+            obj.transform.position = ((transform.position + oppositeLocation) / 2).MergeZ(-2);
+            obj.UpdateAsObservable()
+               .Skip(60)
+               .Subscribe(x => Destroy(obj))
+               .AddTo(Disposable);            
         }
     }
 }
