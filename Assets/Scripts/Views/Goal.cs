@@ -6,11 +6,13 @@ namespace ProcedualLevels.Views
 {
     public class Goal : MonoBehaviour
     {
+        private AdventureViewContext Context { get; set; }
         private IGoalEventAccepter EventAccepter { get; set; }
 
-        public void Initialize(IGoalEventAccepter eventAccepter)
+        public void Initialize(AdventureViewContext context, IGoalEventAccepter eventAccepter)
         {
             EventAccepter = eventAccepter;
+            Context = context;
         }
 
         private void OnTriggerEnter2D(Collider2D collision)
@@ -18,8 +20,7 @@ namespace ProcedualLevels.Views
             if (collision.tag == Def.PlayerTag)
             {
                 EventAccepter.OnPlayerGoalSender.OnNext(UniRx.Unit.Default);
-                var clearText = GameObject.Find("Canvas/GameUi/ClearText");
-                clearText.SetActive(true);
+                Context.UiManager.ClearText.SetActive(true);
             }
         }
     }

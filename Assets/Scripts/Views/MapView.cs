@@ -34,7 +34,7 @@ namespace ProcedualLevels.Views
 
             ShowRooms(map, Maze);
             ShowPlatforms(map, Maze);
-            ShowGoal(map, viewContext.Manager);
+            ShowGoal(map, viewContext);
             ShowSpawners(map, viewContext);
             ShowCollisionBlock(map, viewContext.Manager);
             ShowSpikes(map, viewContext.Manager);
@@ -83,13 +83,13 @@ namespace ProcedualLevels.Views
             }
         }
 
-        private void ShowGoal(MapData map, GameManager manager)
+        private void ShowGoal(MapData map, AdventureViewContext context)
         {
             var goalPrefab = Resources.Load<Goal>("Prefabs/Dungeon/Goal_Control");
             Goal = Instantiate(goalPrefab);
             Goal.transform.position = map.GoalLocation + new Vector2(0.5f, 0.5f);
             Goal.transform.SetParent(RootObjectRepository.I.ManagerDraw.transform);
-            Goal.Initialize(manager.EventFacade);
+            Goal.Initialize(context, context.Manager.EventFacade);
         }
 
         private void OnApplicationQuit()
