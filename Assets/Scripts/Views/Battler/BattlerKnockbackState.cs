@@ -51,5 +51,7 @@ namespace ProcedualLevels.Views
         /// <param name="against">ノックバックを起こした相手のビュー。</param>
         /// <param name="power">ノックバックの強さ。</param>
         public abstract void Knockback(Models.KnockbackInfo info, BattlerController against);
+
+        public abstract void OnTrampled();
     }
 }

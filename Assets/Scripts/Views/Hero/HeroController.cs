@@ -50,6 +50,23 @@ namespace ProcedualLevels.Views
 
             var battle = GetComponent<HeroBattleController>();
             battle.Initialize(eventAccepter, eventReceiver);
+
+            this.OnCollisionStay2DAsObservable()
+                .Subscribe(x =>
+            {
+                var enemy = x.gameObject.GetComponent<EnemyController>();
+                if (enemy != null)
+                {
+                    var contact = x.contacts[0];
+                    if (contact.normal.y > 0)
+                    {
+                        var force = AssetRepository.I.GameParameterAsset.TrampleForce;
+                        Rigidbody.AddForce(new Vector2(0, -force));
+                        enemy.KnockbackState.OnTrampled();
+                    }
+                }
+            })
+                .AddTo(HeroDisposable);
         }
 
         public override void Control()

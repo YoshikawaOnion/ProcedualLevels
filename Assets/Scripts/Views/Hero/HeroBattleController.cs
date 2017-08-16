@@ -26,8 +26,9 @@ namespace ProcedualLevels.Views
             Animation = GetComponent<HeroAnimationController>();
             Move = GetComponent<HeroMoveController>();
             OnBattle = new Subject<Unit>();
+            var collider = GetComponent<BoxCollider2D>();
 
-            var onTouchingEnemy = gameObject.OnCollisionStay2DAsObservable()
+            var onTouchingEnemy = collider.OnCollisionStay2DAsObservable()
                                           .Select(x => x.gameObject.GetComponent<EnemyController>())
                                           .Where(x => x != null);
             

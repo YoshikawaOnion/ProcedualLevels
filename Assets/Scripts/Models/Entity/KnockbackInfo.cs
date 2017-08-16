@@ -11,11 +11,11 @@ namespace ProcedualLevels.Models
     /// </summary>
     public class KnockbackInfo
     {
-        public Battler BattlerSubject { get; private set; }
-        public Battler BattlerAgainst { get; private set; }
-        public int Power { get; private set; }
-        public float KnockbackPower { get; private set; }
-        public float KnockbackJumpPower { get; private set; }
+        public Battler BattlerSubject { get; set; }
+        public Battler BattlerAgainst { get; set; }
+        public int Power { get; set; }
+        public float KnockbackPower { get; set; }
+        public float KnockbackJumpPower { get; set; }
         public float StanTime { get; set; }
 
         /// <summary>

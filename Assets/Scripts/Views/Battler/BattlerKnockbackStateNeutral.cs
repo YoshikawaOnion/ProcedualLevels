@@ -39,5 +39,10 @@ namespace ProcedualLevels.Views
                 jumpState.SetJumpState();
             }
         }
+
+        public override void OnTrampled()
+        {
+            ChangeState(new BattlerKnockbackStateTrampled(Context));
+        }
     }
 }

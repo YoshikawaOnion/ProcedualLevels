@@ -10,8 +10,12 @@ namespace ProcedualLevels.Models
         public float KnockbackPowerFactor;
         public float KnockbackJumpPower;
         public float KnockbackStanTimeFactor;
+        [Tooltip("ノックバックの連鎖ごとのスタン時間増加量")]
+        public float KnockbackChainStanTimeDelta;
         public int TimeLimitSeconds;
         public int SpikeDamage;
         public int SpikeNumber;
+        public float TrampleForce;
+        public float RecoverTimeFromTrampled;
     }
 }

@@ -49,7 +49,7 @@ namespace ProcedualLevels.Views
                     var factor = Helper.GetRandomInRange(0, 0.8f);
                     var power = new Vector2(0, AssetRepository.I.GameParameterAsset.KnockbackJumpPower * factor);
                     var info = Info.Clone();
-                    info.StanTime = Info.StanTime + 0.1f;
+                    info.StanTime = Info.StanTime + AssetRepository.I.GameParameterAsset.KnockbackChainStanTimeDelta;
                     x.Rigidbody.AddForce(power);
                     x.Knockback(info, Against);
                 })
@@ -63,6 +63,11 @@ namespace ProcedualLevels.Views
 
         protected override void Control()
         {
+        }
+
+        public override void OnTrampled()
+        {
+            ChangeState(new BattlerKnockbackStateTrampled(Context));
         }
     }
 }
