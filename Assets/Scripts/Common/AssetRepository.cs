@@ -20,8 +20,8 @@ namespace ProcedualLevels.Common
             get { return instance_ = instance_ ?? new AssetRepository(); }
         }
 
-        public DungeonGenAsset DungeonGenAsset { get; set; }
-        public GameParameterAsset GameParameterAsset { get; set; }
+        public DungeonGenAsset DungeonGenAsset { get; private set; }
+        public GameParameterAsset GameParameterAsset { get; private set; }
 
         public AssetRepository()
         {

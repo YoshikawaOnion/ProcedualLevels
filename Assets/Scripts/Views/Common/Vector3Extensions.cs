@@ -5,7 +5,6 @@ namespace ProcedualLevels.Common
 {
     public static class Vector3Extensions
     {
-
         public static Vector3 CreateFromArray(float[] array)
         {
             if (array.Length == 3)
@@ -21,21 +20,6 @@ namespace ProcedualLevels.Common
         public static float[] ToArray(this Vector3 vector)
         {
             return new[] { vector.x, vector.y, vector.z };
-        }
-
-        public static Vector3 XReplacedBy(this Vector3 vector, float x)
-        {
-            return new Vector3(x, vector.y, vector.z);
-        }
-
-        public static Vector3 YReplacedBy(this Vector3 vector, float y)
-        {
-            return new Vector3(vector.x, y, vector.z);
-        }
-
-        public static Vector3 ZReplacedBy(this Vector3 vector, float z)
-        {
-            return new Vector3(vector.x, vector.y, z);
         }
 
         static public Vector3 MergeX(this Vector3 v, float x)

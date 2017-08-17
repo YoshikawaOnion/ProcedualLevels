@@ -73,8 +73,8 @@ namespace ProcedualLevels.Common
         /// <param name="margin">部屋の外周からの最小距離。</param>
         public static Vector2 GetRandomLocation(MapRectangle room, int margin)
         {
-            var x = GetRandomInRange(room.Left + margin, room.Right - margin);
-            var y = GetRandomInRange(room.Bottom + margin, room.Top - margin);
+            var x = UnityEngine.Random.Range(room.Left + margin, room.Right - margin);
+            var y = UnityEngine.Random.Range(room.Bottom + margin, room.Top - margin);
             return new Vector2(x + 0.5f, y + 0.5f);
         }
 
@@ -143,7 +143,7 @@ namespace ProcedualLevels.Common
         {
             if (source.Any())
 			{
-				var index = Helper.GetRandomInRange(0, source.Count() - 1);
+                var index = UnityEngine.Random.Range(0, source.Count() - 1);
 				return source.ElementAt(index);
             }
             else

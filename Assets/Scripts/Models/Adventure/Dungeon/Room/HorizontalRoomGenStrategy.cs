@@ -92,7 +92,7 @@ namespace ProcedualLevels.Models
             var boundMax = horizontal ? Asset.BoundMaxWidth : Asset.BoundMaxHeight;
 
             var max = Mathf.Min(boundMax, rootProxy.PrimalLength - ChildBoundMinSize);
-            var rand = Helper.GetRandomInRange(ParentBoundMinSize, max);
+            var rand = UnityEngine.Random.Range(ParentBoundMinSize, max);
 			childProxy.PrimalMinor = rootProxy.PrimalMinor + rand;
 			childProxy.PrimalMajor = rootProxy.PrimalMajor;
 			childProxy.SecondMinor = rootProxy.SecondMinor;
