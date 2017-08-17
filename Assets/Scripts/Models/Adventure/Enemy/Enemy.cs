@@ -36,8 +36,8 @@ namespace ProcedualLevels.Models
             Ability = ability;
 
 			Observable.Interval(TimeSpan.FromMilliseconds(500))
-					  .Skip(2)
-					  .TakeUntil(view.OnBattle)
+					  .Skip(3)
+					  .TakeUntil(view.OnBattle.Where(x => x.Index == Index))
 					  .Repeat()
 					  .Subscribe(x =>
 			{

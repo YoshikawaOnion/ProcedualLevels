@@ -26,16 +26,15 @@ namespace ProcedualLevels.Views
             this.Battler = battler;
             Disposable = new CompositeDisposable();
 
-            var canvasPrefab = Resources.Load<GameObject>("Prefabs/Character/BattlerCanvas");
+            var canvasPrefab = Resources.Load<BattlerCanvas>("Prefabs/Character/BattlerCanvas");
             var canvas = Instantiate(canvasPrefab);
 			canvas.transform.SetParent(transform);
 			canvas.transform.localPosition = Vector3.zero;
 
-            var hpBar = canvas.transform.Find("HpBar").GetComponent<Image>();
             battler.Hp.Subscribe(x =>
             {
                 var ratio = (float)x / battler.MaxHp.Value;
-                hpBar.fillAmount = ratio;
+                canvas.HpBar.fillAmount = ratio;
             }).AddTo(Disposable);
 
             Rigidbody = GetComponent<Rigidbody2D>();

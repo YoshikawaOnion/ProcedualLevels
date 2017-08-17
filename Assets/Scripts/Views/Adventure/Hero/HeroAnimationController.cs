@@ -24,8 +24,10 @@ namespace ProcedualLevels.Views
 		public static readonly string DamageRightAnimation = "Damage_Right";
         public static readonly int LoopInfinite = 0;
 
+        [SerializeField]
+        private Script_SpriteStudio_Root Sprite;
+
         private int Direction { get; set; }
-        private Script_SpriteStudio_Root Sprite { get; set; }
         private CompositeDisposable Disposable { get; set; }
         private Subject<float> DirectionSubject { get; set; }
         private bool IsDead { get; set; }
@@ -38,7 +40,6 @@ namespace ProcedualLevels.Views
 		public void Initialize()
 		{
             Disposable = new CompositeDisposable();
-            Sprite = transform.Find("Player2").GetComponent<Script_SpriteStudio_Root>();
             DirectionSubject = new Subject<float>();
             IsDead = false;
 

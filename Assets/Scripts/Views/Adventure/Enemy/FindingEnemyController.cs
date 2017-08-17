@@ -10,6 +10,8 @@ namespace ProcedualLevels.Views
     /// </summary>
     public abstract class FindingEnemyController : EnemyController
 	{
+        public GameObject SearchArea;
+
         /// <summary>
         /// プレイヤーを発見したかどうかの状態を取得または設定します。
         /// </summary>

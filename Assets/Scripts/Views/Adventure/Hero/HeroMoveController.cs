@@ -32,12 +32,13 @@ namespace ProcedualLevels.Views
         [Tooltip("壁張り付き中の落下速度")]
         [SerializeField]
         private float wallDraggingVelocity = 0;
+        [SerializeField]
+        private Collider2D WallDetecter;
 
-        private CompositeDisposable JumpStateDisposable { get; set; }
+        private CompositeDisposable Disposable { get; set; }
         private HeroController Hero { get; set; }
         private Rigidbody2D Rigidbody { get; set; }
         private HeroAnimationController Animation { get; set; }
-        private Collider2D WallDetecter { get; set; }
         private MoveController MoveController { get; set; }
 
         private float GravityScale { get; set; }
@@ -58,7 +59,6 @@ namespace ProcedualLevels.Views
             MoveController = GetComponent<MoveController>();
             WalkSubject = new Subject<int>();
             JumpSubject = new Subject<bool>();
-            WallDetecter = transform.Find("WallDetecter").GetComponent<Collider2D>();
             JumpCount = 0;
             GravityScale = Rigidbody.gravityScale;
             SetFullJumpState();
@@ -70,11 +70,11 @@ namespace ProcedualLevels.Views
         /// </summary>
         public void InitializeState()
         {
-            if (JumpStateDisposable != null)
+            if (Disposable != null)
             {
-                JumpStateDisposable.Dispose();
+                Disposable.Dispose();
             }
-            JumpStateDisposable = new CompositeDisposable();
+            Disposable = new CompositeDisposable();
         }
 
         /// <summary>
@@ -131,7 +131,7 @@ namespace ProcedualLevels.Views
                        .Where(x => x)
                        .FirstOrDefault()
                        .Subscribe(x => WallJump(direction))
-                       .AddTo(JumpStateDisposable);
+                       .AddTo(Disposable);
             //*/
 
             // ずり落ちたり壁を離れたらジャンプ状態へ遷移
@@ -140,14 +140,14 @@ namespace ProcedualLevels.Views
                                || x.gameObject.tag == Def.PlatformTag)
                         .FirstOrDefault()
                         .Subscribe(x => CheckJump())
-                        .AddTo(JumpStateDisposable);
+                        .AddTo(Disposable);
 
             // 順方向のキーを押し込むと落下速度が減少
             WalkSubject.SkipWhile(x => Rigidbody.velocity.y > 0)
                        .Where(x => x * direction < 0)
                        .Subscribe(x => Rigidbody.velocity = Rigidbody.velocity
                                   .MergeY(-wallDraggingVelocity))
-                       .AddTo(JumpStateDisposable);
+                       .AddTo(Disposable);
         }
 
         /// <summary>
@@ -165,7 +165,7 @@ namespace ProcedualLevels.Views
             // 時間が経過するとジャンプ状態に遷移
             Observable.Timer(TimeSpan.FromMilliseconds(200))
                       .Subscribe(x => CheckJump())
-                      .AddTo(JumpStateDisposable);
+                      .AddTo(Disposable);
         }
 
 
@@ -179,7 +179,7 @@ namespace ProcedualLevels.Views
                        .FirstOrDefault()
                        .Repeat()
                        .Subscribe(x => Jump())
-                       .AddTo(JumpStateDisposable);
+                       .AddTo(Disposable);
         }
 
         /// <summary>
@@ -193,7 +193,7 @@ namespace ProcedualLevels.Views
                 .Where(x => x.gameObject.tag == Def.TerrainTag
                        || x.gameObject.tag == Def.PlatformTag)
                 .Subscribe(collision => CheckGround(collision))
-                .AddTo(JumpStateDisposable);
+                .AddTo(Disposable);
         }
 
         /// <summary>
@@ -206,7 +206,7 @@ namespace ProcedualLevels.Views
                 .Where(x => x.gameObject.tag == Def.TerrainTag
                       || x.gameObject.tag == Def.PlatformTag)
                 .Subscribe(x => CheckGrabingWall(x))
-                .AddTo(JumpStateDisposable);
+                .AddTo(Disposable);
         }
 
         /// <summary>
@@ -222,7 +222,7 @@ namespace ProcedualLevels.Views
                 CheckJump();
                 ++JumpCount;
             })
-                .AddTo(JumpStateDisposable);
+                .AddTo(Disposable);
         }
 
         /// <summary>
@@ -231,7 +231,7 @@ namespace ProcedualLevels.Views
         private void ActivateWalk(float powerScale)
         {
             WalkSubject.Subscribe(x => ActualyWalk(powerScale))
-                       .AddTo(JumpStateDisposable);
+                       .AddTo(Disposable);
         }
 
 
@@ -298,7 +298,8 @@ namespace ProcedualLevels.Views
                                          .Select(x => Unit.Default);
             jumpStopper1.Merge(jumpStopper2)
                         .FirstOrDefault()
-                        .Subscribe(x => Rigidbody.gravityScale = GravityScale);
+                        .Subscribe(x => Rigidbody.gravityScale = GravityScale)
+                        .AddTo(Hero);
 
             ++JumpCount;
             IsOnGround = false;
