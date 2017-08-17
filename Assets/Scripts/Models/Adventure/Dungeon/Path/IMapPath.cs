@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using ProcedualLevels.Common;
 using UnityEngine;
 
 namespace ProcedualLevels.Models

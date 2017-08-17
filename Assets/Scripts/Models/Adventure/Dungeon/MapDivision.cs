@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UniRx;
 using System;
+using ProcedualLevels.Common;
 
 namespace ProcedualLevels.Models
 {

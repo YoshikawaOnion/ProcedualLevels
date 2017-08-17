@@ -22,6 +22,11 @@ namespace ProcedualLevels.Models
             TimeSpan = timeSpan;
         }
 
+        /// <summary>
+        /// スポナーから敵が現れるタイミングを制御するストリームを取得します。
+        /// </summary>
+        /// <returns>敵が現れるタイミングを制御するストリーム。</returns>
+        /// <param name="context">探索シーンのコンテキスト クラス。</param>
         public IObservable<Unit> GetSpawnStream(AdventureContext context)
         {
             return Observable.Interval(TimeSpan)

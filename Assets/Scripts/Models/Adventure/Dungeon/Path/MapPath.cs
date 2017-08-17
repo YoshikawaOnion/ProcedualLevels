@@ -2,11 +2,12 @@ using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
 using System;
+using ProcedualLevels.Common;
 
 namespace ProcedualLevels.Models
 {
     /// <summary>
-    /// マップ内の通路を表すクラス。
+    /// 3つの矩形パーツからなるマップ内の通路を表すクラス。
     /// </summary>
     public class MapPath : IMapPath
     {

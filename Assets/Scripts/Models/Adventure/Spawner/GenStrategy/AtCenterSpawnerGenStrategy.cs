@@ -10,6 +10,12 @@ namespace ProcedualLevels.Models
     /// </summary>
     public class AtCenterSpawnerGenStrategy : ISpawnerGenStrategy
     {
+        /// <summary>
+        /// スポナーを生成します。
+        /// </summary>
+        /// <returns>生成したスポナーのコレクション。</returns>
+        /// <param name="map"></param>
+        /// <param name="spawnerParameter"></param>
         public IEnumerable<Spawner> Generate(MapData map, SpawnerParameter parameter)
         {
             var startX = map.StartLocation.x;

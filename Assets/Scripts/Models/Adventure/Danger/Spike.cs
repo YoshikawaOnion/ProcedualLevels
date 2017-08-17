@@ -7,11 +7,24 @@ using UnityEngine;
 
 namespace ProcedualLevels.Models
 {
+    /// <summary>
+    /// トゲを表すクラス。
+    /// </summary>
     public class Spike
     {
+        /// <summary>
+        /// トゲの初期位置を取得または設定します。
+        /// </summary>
         public Vector2 InitialPosition { get; set; }
-        public int Index { get; set; }
-        public int Attack { get; set; }
+        /// <summary>
+        /// トゲの一意なインデックスを取得します。
+        /// </summary>
+        public int Index { get; private set; }
+        /// <summary>
+        /// このトゲに当たった際のダメージ量を取得します。
+        /// </summary>
+        /// <value>The attack.</value>
+        public int Attack { get; private set; }
 
         public Spike(int index, IAdventureView view)
         {

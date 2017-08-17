@@ -11,9 +11,11 @@ namespace ProcedualLevels.Models
     /// </summary>
     public abstract class Battler
 	{
+        /// <summary>
+        /// このキャラクターの一意なインデックス。
+        /// </summary>
         public int Index { get; set; }
 		public ReactiveProperty<int> Attack { get; private set; }
-        public ReactiveProperty<int> Range { get; private set; }
 		public ReactiveProperty<int> Hp { get; private set; }
 		public ReactiveProperty<int> MaxHp { get; private set; }
         public ReactiveProperty<bool> IsAlive { get; private set; }
@@ -25,7 +27,6 @@ namespace ProcedualLevels.Models
             this.Index = index;
 
 			Attack = new ReactiveProperty<int>(1);
-            Range = new ReactiveProperty<int>(1);
 			Hp = new ReactiveProperty<int>(10);
 			MaxHp = new ReactiveProperty<int>(10);
             IsAlive = new ReactiveProperty<bool>(true);

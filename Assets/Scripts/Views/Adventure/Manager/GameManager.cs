@@ -23,11 +23,29 @@ namespace ProcedualLevels.Views
         private GameEventFacade EventFacade { get; set; }
         private GameObjectManager ObjectManager { get; set; }
 
+        /// <summary>
+        /// プレイヤーが敵と戦闘したことを通知するストリームを取得します。
+        /// </summary>
         public IObservable<Enemy> OnBattle { get; private set; }
+        /// <summary>
+        /// プレイヤーがパワーアップアイテムを入手したことを通知するストリームを取得します。
+        /// </summary>
         public IObservable<PowerUp> OnGetPowerUp { get; private set; }
+        /// <summary>
+        /// プレイヤーがゴールへ到達したことを通知するストリームを取得します。
+        /// </summary>
         public IObservable<Unit> OnGoal { get; private set; }
+        /// <summary>
+        /// プレイヤーの死亡処理をしたことを通知するストリームを取得します。
+        /// </summary>
         public IObservable<Unit> OnPlayerDie { get; private set; }
+        /// <summary>
+        /// プレイヤーが敵から一方的に攻撃されたことを通知するストリームを取得します。
+        /// </summary>
         public IObservable<Enemy> OnAttacked { get; private set; }
+        /// <summary>
+        /// プレイヤーがトゲにぶつかったことを通知するストリームを取得します。
+        /// </summary>
         public IObservable<Tuple<Spike, Battler>> OnBattlerTouchSpike { get; private set; }
 
         private void Start()
@@ -45,6 +63,10 @@ namespace ProcedualLevels.Views
             ObjectManager = Instantiate(gomPrefab);
         }
 
+        /// <summary>
+        /// このビューを初期化します。
+        /// </summary>
+        /// <param name="context">モデル側のコンテキスト オブジェクト。</param>
         public void Initialize(AdventureContext modelContext)
         {
             var gameUi = Instantiate(gameUiPrefab);

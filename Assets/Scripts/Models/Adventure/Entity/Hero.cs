@@ -6,6 +6,9 @@ using ProcedualLevels.Common;
 
 namespace ProcedualLevels.Models
 {
+    /// <summary>
+    /// 主人公の状態を表すクラス。
+    /// </summary>
     public class Hero : Battler
     {
         private CompositeDisposable Disposable { get; set; }

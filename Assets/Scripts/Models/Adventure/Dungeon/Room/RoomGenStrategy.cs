@@ -5,6 +5,9 @@ using UnityEngine;
 
 namespace ProcedualLevels.Models
 {
+    /// <summary>
+    /// 部屋を生成するアルゴリズムを提供するクラス。
+    /// </summary>
     public abstract class RoomGenStrategy
 	{
 		protected RandomRoomGenAsset Asset { get; set; }
@@ -21,6 +24,11 @@ namespace ProcedualLevels.Models
 			Asset = Resources.Load<RandomRoomGenAsset>("Assets/RandomRoomGenAsset");
         }
 
+        /// <summary>
+        /// ダンジョンに部屋を生成します。
+        /// </summary>
+        /// <returns>生成した部屋のコレクション。</returns>
+        /// <param name="root">ダンジョンの大きさを表す矩形範囲。</param>
         public abstract IEnumerable<MapDivision> GenerateRooms(MapRectangle root);
 
 		/// <summary>

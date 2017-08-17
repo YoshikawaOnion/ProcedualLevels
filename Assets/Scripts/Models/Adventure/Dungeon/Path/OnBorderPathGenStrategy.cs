@@ -7,6 +7,9 @@ using UnityEngine;
 
 namespace ProcedualLevels.Models
 {
+    /// <summary>
+    /// 区画の境界線に沿って通路を生成するアルゴリズムを提供するクラス。
+    /// </summary>
     public class OnBorderPathGenStrategy : PathGenStrategy
     {
         public override IEnumerable<MapConnection> ConnectRooms(MapData map)

@@ -5,10 +5,22 @@ using System;
 
 namespace ProcedualLevels.Models
 {
+    /// <summary>
+    /// 敵キャラクターを表すクラス。
+    /// </summary>
     public class Enemy : Battler
     {
+        /// <summary>
+        /// この敵キャラクターの初期位置。
+        /// </summary>
         public Vector2 InitialPosition { get; private set; }
+        /// <summary>
+        /// この敵キャラクターを倒すとアイテムをドロップするかどうかを表す真偽値。
+        /// </summary>
         public bool DropPowerUp { get; set; }
+        /// <summary>
+        /// この敵キャラクターのパラメータ。
+        /// </summary>
         public EnemiesAbility Ability { get; set; }
 
         private CompositeDisposable Disposable { get; set; }

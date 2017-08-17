@@ -6,10 +6,23 @@ using UnityEngine;
 
 namespace ProcedualLevels.Models
 {
+    /// <summary>
+    /// 部屋の底から、その上にある部屋の底へ接続する通路を表すクラス。
+    /// </summary>
     public class OnBottomVerticalPath : IMapPath
     {
+        /// <summary>
+        /// 始点の部屋の底から水平に伸びる部分の矩形を取得します。
+        /// </summary>
         public MapRectangle StartPath { get; private set; }
+        /// <summary>
+        /// <see cref="StartPath"/> の終点から鉛直に伸びる部分の矩形を取得します。
+        /// </summary>
         public MapRectangle MiddlePath { get; private set; }
+        /// <summary>
+        /// <see cref="MiddlePath"/> の終点から終点の部屋の底へ水平に伸びる部分の矩形を取得します。
+        /// </summary>
+        /// <value>The end path.</value>
         public MapRectangle EndPath { get; private set; }
 
         public OnBottomVerticalPath(MapRectangle startPath, MapRectangle middlePath, MapRectangle endPath)
@@ -19,6 +32,12 @@ namespace ProcedualLevels.Models
             EndPath = endPath;
         }
 
+        /// <summary>
+        /// この通路に必要な、ダンジョンの角の衝突判定用ブロックの位置を決定します。
+        /// </summary>
+        /// <returns>衝突判定用ブロックの位置のコレクション。</returns>
+        /// <param name="map">マップデータ。</param>
+        /// <param name="connection">この通路が属する接続データ。</param>
         public IEnumerable<Vector2> GetCollisionBlocks(MapData map, MapConnection connection)
         {
             {
@@ -65,6 +84,9 @@ namespace ProcedualLevels.Models
             }
         }
 
+        /// <summary>
+        /// この通路に属する空間のコレクションを取得します。
+        /// </summary>
         public IEnumerable<MapRectangle> GetRooms()
         {
             yield return StartPath;
@@ -72,6 +94,12 @@ namespace ProcedualLevels.Models
             yield return EndPath;
         }
 
+        /// <summary>
+        /// 指定した2つの区画に属するを繋ぐ <see cref="OnBottomVerticalPath"/> を生成します。
+        /// </summary>
+        /// <returns>生成された通路。</returns>
+        /// <param name="bottomDiv">下側の区画。</param>
+        /// <param name="topDiv">上側の区画。</param>
         public static OnBottomVerticalPath CreatePath(MapDivision bottomDiv, MapDivision topDiv)
         {
             var asset = AssetRepository.I.DungeonGenAsset;

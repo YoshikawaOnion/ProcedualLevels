@@ -7,6 +7,9 @@ using UnityEngine;
 
 namespace ProcedualLevels.Models
 {
+    /// <summary>
+    /// 左から右に向かって部屋を生成するアルゴリズムを提供するクラス。
+    /// </summary>
     public class HorizontalRoomGenStrategy : RoomGenStrategy
 	{
         private HorizontalRoomGenAsset RoomGenAsset { get; set; }
@@ -16,6 +19,11 @@ namespace ProcedualLevels.Models
             RoomGenAsset = Resources.Load<HorizontalRoomGenAsset>("Assets/HorizontalRoomGenAsset");
         }
 
+        /// <summary>
+        /// ダンジョンに部屋を生成します。
+        /// </summary>
+        /// <returns>生成した部屋のコレクション。</returns>
+        /// <param name="root">ダンジョンの大きさを表す矩形範囲。</param>
         public override IEnumerable<MapDivision> GenerateRooms(MapRectangle root)
 		{
 			var divisions = GenerateDivisions(root, true)
@@ -36,11 +44,13 @@ namespace ProcedualLevels.Models
                 list.Add(element);
 			}
 
-            //AlignBottom(list);
-
             return list;
 		}
 
+        /// <summary>
+        /// 部屋どうしの下端を揃えます。
+        /// </summary>
+        /// <param name="list">揃える部屋のリスト。</param>
         private void AlignBottom(List<MapDivision> list)
 		{
             foreach (var item in list)
@@ -58,6 +68,12 @@ namespace ProcedualLevels.Models
             }
         }
 
+        /// <summary>
+        /// 指定した範囲を分ける区画を生成します。
+        /// </summary>
+        /// <returns>分割された区画のコレクション。</returns>
+        /// <param name="root">分割する範囲を表す矩形範囲。</param>
+        /// <param name="horizontal"><c>true</c> を指定すると、最初の分割を水平に分割します。</param>
         private IEnumerable<MapRectangle> GenerateDivisions(MapRectangle root, bool horizontal)
         {
             MapRectangle child = new MapRectangle();
@@ -101,18 +117,15 @@ namespace ProcedualLevels.Models
             }
         }
 
+        /// <summary>
+        /// 区画の中に部屋を生成します。
+        /// </summary>
+        /// <returns>生成した部屋の範囲。</returns>
+        /// <param name="bound">部屋を生成できる区画の範囲。</param>
         protected override MapRectangle CreateRoom(MapRectangle bound)
 		{
 			var room = bound.Clone();
 
-            /*
-			var widthMinReduce = Mathf.Max(2 * MarginSize, bound.Width - RoomMaxWidth);
-			var heightMinReduce = Mathf.Max(2 * MarginSize, bound.Height - RoomMaxHeight);
-			var widthMaxReduce = Mathf.Max(2 * MarginSize, bound.Width - RoomMinWidth);
-			var heightMaxReduce = Mathf.Max(2 * MarginSize, bound.Height - RoomMinHeight);
-			var widthReduce = Helper.GetRandomInRange(widthMinReduce, widthMaxReduce);
-			var heightReduce = Helper.GetRandomInRange(heightMinReduce, heightMaxReduce);
-            //*/
             var widthReduce = MarginSize;
             var heightReduce = Mathf.Max(MarginSize, bound.Height - RoomMaxHeight);
 

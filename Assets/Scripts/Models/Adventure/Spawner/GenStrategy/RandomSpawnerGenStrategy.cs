@@ -11,6 +11,12 @@ namespace ProcedualLevels.Models
     /// </summary>
     public class RandomSpawnerGenStrategy : ISpawnerGenStrategy
     {
+        /// <summary>
+        /// スポナーを生成します。
+        /// </summary>
+        /// <returns>生成したスポナーのコレクション。</returns>
+        /// <param name="map"></param>
+        /// <param name="spawnerParameter"></param>
         public IEnumerable<Spawner> Generate(MapData map, SpawnerParameter spawnerParameter)
         {
             foreach (var div in map.Divisions)

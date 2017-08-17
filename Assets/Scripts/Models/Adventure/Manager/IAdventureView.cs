@@ -6,6 +6,10 @@ namespace ProcedualLevels.Models
 {
     public interface IAdventureView
     {
+        /// <summary>
+        /// このビューを初期化します。
+        /// </summary>
+        /// <param name="context">モデル側のコンテキスト オブジェクト。</param>
         void Initialize(AdventureContext context);
         /// <summary>
         /// ノックバック情報に基づいてノックバックを発生させます。
@@ -24,13 +28,34 @@ namespace ProcedualLevels.Models
         /// <param name="powerUp">パワーアップアイテムのモデル。</param>
         void PlacePowerUp(int index, PowerUp powerUp);
 
+        /// <summary>
+        /// 探検画面のビューをリセットします。
+        /// </summary>
 		IObservable<IAdventureView> ResetAsync();
 
+        /// <summary>
+        /// プレイヤーが敵と戦闘したことを通知するストリームを取得します。
+        /// </summary>
 		IObservable<Enemy> OnBattle { get; }
+        /// <summary>
+        /// プレイヤーがパワーアップアイテムを入手したことを通知するストリームを取得します。
+        /// </summary>
 		IObservable<PowerUp> OnGetPowerUp { get; }
+        /// <summary>
+        /// プレイヤーがゴールへ到達したことを通知するストリームを取得します。
+        /// </summary>
 		IObservable<Unit> OnGoal { get; }
+        /// <summary>
+        /// プレイヤーの死亡処理をしたことを通知するストリームを取得します。
+        /// </summary>
         IObservable<Unit> OnPlayerDie { get; }
+        /// <summary>
+        /// プレイヤーが敵から一方的に攻撃されたことを通知するストリームを取得します。
+        /// </summary>
         IObservable<Enemy> OnAttacked { get; }
+        /// <summary>
+        /// プレイヤーがトゲにぶつかったことを通知するストリームを取得します。
+        /// </summary>
         IObservable<Tuple<Spike, Battler>> OnBattlerTouchSpike { get; }
     }
 }

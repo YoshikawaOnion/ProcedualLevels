@@ -6,8 +6,16 @@ using UnityEngine;
 
 namespace ProcedualLevels.Models
 {
+    /// <summary>
+    /// ランダムに部屋を生成するアルゴリズムを提供するクラス。
+    /// </summary>
     public class RandomRoomGenStrategy : RoomGenStrategy
     {
+        /// <summary>
+        /// ダンジョンに部屋を生成します。
+        /// </summary>
+        /// <returns>生成した部屋のコレクション。</returns>
+        /// <param name="root">ダンジョンの大きさを表す矩形範囲。</param>
         public override IEnumerable<MapDivision> GenerateRooms(MapRectangle root)
 		{
 			var divisions = GenerateDivisions(root, true)

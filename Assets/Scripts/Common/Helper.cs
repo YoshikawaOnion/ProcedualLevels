@@ -9,6 +9,14 @@ namespace ProcedualLevels.Common
 {
     public static class Helper
     {
+        /// <summary>
+        /// 指定した値を指定した範囲内に丸めます。
+        /// </summary>
+        /// <returns>指定した値を丸めた値。</returns>
+        /// <param name="value">丸める値。</param>
+        /// <param name="min">値の最小値。</param>
+        /// <param name="max">値の最大値。</param>
+        /// <typeparam name="T">値の型。</typeparam>
         public static T Clamp<T>(T value, T min, T max)
             where T : IComparable<T>
         {
@@ -26,6 +34,13 @@ namespace ProcedualLevels.Common
             }
         }
 
+        /// <summary>
+        /// コレクションの末尾に要素を1つ追加したコレクションを返します。
+        /// </summary>
+        /// <returns>末尾に要素が追加されたコレクション。</returns>
+        /// <param name="source">要素を追加する先となるコレクション。</param>
+        /// <param name="value">追加する要素。</param>
+        /// <typeparam name="T">要素の型。</typeparam>
         public static IEnumerable<T> Append<T>(this IEnumerable<T> source, T value)
         {
             foreach (var item in source)
@@ -63,6 +78,14 @@ namespace ProcedualLevels.Common
             return new Vector2(x + 0.5f, y + 0.5f);
         }
 
+        /// <summary>
+        /// コレクションから最小値を持つ要素を取り出します。
+        /// </summary>
+        /// <returns>最小値を持つ要素。</returns>
+        /// <param name="source">要素を検索するコレクション。</param>
+        /// <param name="selector">要素から比較する値を取り出すデリゲート。</param>
+        /// <typeparam name="T">要素の型。</typeparam>
+        /// <typeparam name="U">比較する値の型。</typeparam>
         public static T MinItem<T, U>(this IEnumerable<T> source, Func<T, U> selector)
             where U : IComparable<U>
         {
@@ -70,6 +93,14 @@ namespace ProcedualLevels.Common
             return source.First(x => selector(x).CompareTo(min) == 0);
         }
 
+        /// <summary>
+        /// コレクションから最大値を持つ要素を取り出します。
+        /// </summary>
+        /// <returns>最大値を持つ要素。</returns>
+        /// <param name="source">要素を検索するコレクション。</param>
+        /// <param name="selector">要素から比較する値を取り出すデリゲート。</param>
+        /// <typeparam name="T">要素の型。</typeparam>
+        /// <typeparam name="U">比較する値の型。</typeparam>
         public static T MaxItem<T, U>(this IEnumerable<T> source, Func<T, U> selector)
             where U : IComparable<U>
         {
@@ -77,6 +108,12 @@ namespace ProcedualLevels.Common
             return source.First(x => selector(x).CompareTo(max) == 0);
         }
 
+        /// <summary>
+        /// 指定した範囲内の乱数を返します。
+        /// </summary>
+        /// <returns>指定した範囲内の乱数。</returns>
+        /// <param name="min">乱数の最小値。</param>
+        /// <param name="max">乱数の最大値。</param>
         public static float GetRandomInRange(float min, float max)
         {
             if (min > max)

@@ -6,9 +6,19 @@ using UnityEngine;
 
 namespace ProcedualLevels.Models
 {
+    /// <summary>
+    /// 部屋の底から水平に通路を伸びる通路を表すクラス。
+    /// </summary>
     public class OnBottomHorizontalPath : IMapPath
     {
+        /// <summary>
+        /// 始点の部屋の底から水平に伸びている部分の矩形を取得します。
+        /// </summary>
         public MapRectangle StartPath { get; private set; }
+        /// <summary>
+        /// 終点の部屋までの高さの差を補うために垂直に伸びている部分の矩形を取得します。
+        /// 高さを補う必要がなかった場合は null です。
+        /// </summary>
         public MapRectangle EndPath { get; private set; }
 
         /// <summary>
@@ -23,6 +33,12 @@ namespace ProcedualLevels.Models
             EndPath = endPath;
         }
 
+        /// <summary>
+        /// この通路に必要な、ダンジョンの角の衝突判定用ブロックの位置を決定します。
+        /// </summary>
+        /// <returns>衝突判定用ブロックの位置のコレクション。</returns>
+        /// <param name="map">マップデータ。</param>
+        /// <param name="connection">この通路が属する接続データ。</param>
         public IEnumerable<Vector2> GetCollisionBlocks(MapData map, MapConnection connection)
         {
             {
@@ -83,6 +99,9 @@ namespace ProcedualLevels.Models
             }
         }
 
+        /// <summary>
+        /// この通路に属する空間のコレクションを取得します。
+        /// </summary>
         public IEnumerable<MapRectangle> GetRooms()
         {
             yield return StartPath;
