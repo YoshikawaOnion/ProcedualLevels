@@ -41,10 +41,16 @@ namespace ProcedualLevels.Views
                     .Subscribe(x => adder(-1));
         }
 
+        /// <summary>
+        /// オーバーライドされることで、プレイヤーを発見する前に毎フレーム実行される処理を実行します。
+        /// </summary>
         public override void ControlAtIdle()
         {
         }
 
+        /// <summary>
+        /// オーバーライドされることで、プレイヤーを発見した後に毎フレーム実行される処理を実行します。
+        /// </summary>
         public override void ControlAtPlayerFound()
 		{
 			if (Context.Hero == null)

@@ -18,6 +18,9 @@ namespace ProcedualLevels.Views
         {
         }
 
+        /// <summary>
+        /// この状態の処理を開始します。
+        /// </summary>
         public override void Subscribe()
         {
             base.Subscribe();
@@ -44,10 +47,16 @@ namespace ProcedualLevels.Views
                    .AddTo(Disposable);
         }
 
+        /// <summary>
+        /// 移動などの行動ができれば行動します。
+        /// </summary>
         protected override void Control()
         {
         }
 
+        /// <summary>
+        /// 派生クラスで実装されることで、キャラクターがプレイヤーに踏みつけられた時の処理を実行します。
+        /// </summary>
         public override void OnTrampled()
         {
         }

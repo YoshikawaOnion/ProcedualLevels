@@ -27,8 +27,14 @@ namespace ProcedualLevels.Views
             Animation.Initialize(context.EventReceiver);
         }
 
+        /// <summary>
+        /// 毎フレーム行う処理を実行します。
+        /// </summary>
         public override abstract void Control();
 
+        /// <summary>
+        /// キャラクターが死亡した際の処理を行います。
+        /// </summary>
         public override void Die()
         {
             Animation.AnimateDie()

@@ -7,6 +7,9 @@ using ProcedualLevels.Common;
 
 namespace ProcedualLevels.Views
 {
+    /// <summary>
+    /// プレイヤーのアクションを管理するクラス。
+    /// </summary>
     public class HeroMoveController : MonoBehaviour
     {
         [SerializeField]
@@ -39,10 +42,13 @@ namespace ProcedualLevels.Views
 
         private float GravityScale { get; set; }
         private int JumpCount { get; set; }
-        public int WalkDirection { get; set; }
         private bool IsOnGround { get; set; }
         private Subject<int> WalkSubject { get; set; }
         private Subject<bool> JumpSubject { get; set; }
+        /// <summary>
+        /// プレイヤーの現在の歩行方向を取得します。
+        /// </summary>
+        public int WalkDirection { get; private set; }
 
         private void Start()
         {

@@ -9,6 +9,9 @@ using System;
 
 namespace ProcedualLevels.Views
 {
+    /// <summary>
+    /// プレイヤーの戦闘を管理するクラス。
+    /// </summary>
     public class HeroBattleController : MonoBehaviour
     {
         private List<EnemyController> BattleTargets { get; set; }
@@ -33,7 +36,8 @@ namespace ProcedualLevels.Views
             var onTouchingEnemy = collider.OnCollisionStay2DAsObservable()
                                           .Select(x => x.gameObject.GetComponent<EnemyController>())
                                           .Where(x => x != null);
-            
+
+            // 次フレームの戦闘処理の対象として登録。戦闘をした後しばらくは登録しない
             onTouchingEnemy.PauseBy(OnBattle, TimeSpan.FromMilliseconds(750))
                            .Subscribe(x => BattleTargets.Add(x))
                            .AddTo(Disposable);
@@ -47,6 +51,8 @@ namespace ProcedualLevels.Views
                            .AddTo(Disposable);
 
             var hero = GetComponent<HeroController>();
+
+            // トゲに当たったらダメージ。一度当たったら少しの間トゲのダメージを受けない
             eventReceiver.OnBattlerTouchedSpikeReceiver
                          .Where(x => x.Item2.Battler.Index == hero.Battler.Index)
                          .ThrottleFirst(TimeSpan.FromMilliseconds(750))
@@ -57,6 +63,11 @@ namespace ProcedualLevels.Views
             });
         }
 
+        /// <summary>
+        /// 剣を振るアニメーションを再生するタイミングを表すストリームを取得します。
+        /// </summary>
+        /// <returns>アニメーションのタイミングを表すストリーム。</returns>
+        /// <param name="enemy">戦闘対象の敵キャラクター。</param>
         private IObservable<EnemyController> GetSwingingLoop(EnemyController enemy)
         {
             return Observable.Return(0L)

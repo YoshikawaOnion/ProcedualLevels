@@ -52,6 +52,9 @@ namespace ProcedualLevels.Views
         /// <param name="power">ノックバックの強さ。</param>
         public abstract void Knockback(Models.KnockbackInfo info, BattlerController against);
 
+        /// <summary>
+        /// 派生クラスで実装されることで、キャラクターがプレイヤーに踏みつけられた時の処理を実行します。
+        /// </summary>
         public abstract void OnTrampled();
     }
 }

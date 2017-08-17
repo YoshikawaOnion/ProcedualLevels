@@ -7,6 +7,9 @@ using UnityEngine;
 
 namespace ProcedualLevels.Views
 {
+    /// <summary>
+    /// ゲーム本体のエントリポイント。
+    /// </summary>
     public class EntryManager : MonoBehaviour
     {
         private void Start()

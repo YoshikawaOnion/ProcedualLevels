@@ -69,6 +69,9 @@ namespace ProcedualLevels.Views
                 .AddTo(HeroDisposable);
         }
 
+        /// <summary>
+        /// 毎フレーム行う処理を実行します。
+        /// </summary>
         public override void Control()
         {
             var horizontalInput = (int)Input.GetAxisRaw("Horizontal");
@@ -82,6 +85,9 @@ namespace ProcedualLevels.Views
             JumpController.ControlJump(jump);
         }
 
+        /// <summary>
+        /// キャラクターが死亡した際の処理を行います。
+        /// </summary>
         public override void Die()
         {
             HeroDisposable.Dispose();
@@ -91,10 +97,8 @@ namespace ProcedualLevels.Views
             {
                 Destroy(gameObject);
             });
-            //*
             EventAccepter.OnPlayerDieSender
                          .OnNext(Unit.Default);
-            //*/
         }
     }
 }

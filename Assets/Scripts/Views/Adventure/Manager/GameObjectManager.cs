@@ -51,6 +51,11 @@ namespace ProcedualLevels.Views
             }
         }
 
+        /// <summary>
+        /// 敵をスポーンさせます。
+        /// </summary>
+        /// <returns>生成した敵キャラクターのビュー。</returns>
+        /// <param name="enemy">生成する敵キャラクターのモデル。</param>
         public EnemyController SpawnEnemy(Enemy enemy)
         {
             var obj = SetEnemyUp(enemy);
@@ -58,6 +63,11 @@ namespace ProcedualLevels.Views
             return obj;
         }
 
+        /// <summary>
+        /// パワーアップアイテムをスポーンさせます。
+        /// </summary>
+        /// <param name="battlerIndex">アイテムを落とす敵のインデックス。</param>
+        /// <param name="powerUp">パワーアップアイテムのモデル。</param>
         public void SpawnPowerUp(int battlerIndex, PowerUp powerUp)
         {
             PowerUpItemController obj = SetPowerupUp(battlerIndex, powerUp);

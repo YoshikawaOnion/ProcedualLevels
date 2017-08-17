@@ -20,6 +20,9 @@ namespace ProcedualLevels.Views
         {
         }
 
+        /// <summary>
+        /// この状態の処理を開始します。
+        /// </summary>
         public override void Subscribe()
         {
             base.Subscribe();
@@ -29,6 +32,10 @@ namespace ProcedualLevels.Views
                       .AddTo(Disposable);
         }
 
+        /// <summary>
+        /// 見つけたオブジェクトがプレイヤーならば、発見した状態に遷移します。
+        /// </summary>
+        /// <param name="collider">捜索範囲に入ったコライダー。</param>
         private void OnSearch(Collider2D collider)
 		{
 			var hero = collider.GetComponent<HeroController>();
@@ -38,6 +45,9 @@ namespace ProcedualLevels.Views
             }
         }
 
+        /// <summary>
+        /// 移動などの行動が可能なら行動します。
+        /// </summary>
         public override void Control()
         {
             Context.ControlAtIdle();

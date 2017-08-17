@@ -6,6 +6,9 @@ using ProcedualLevels.Common;
 
 namespace ProcedualLevels.Views
 {
+    /// <summary>
+    /// ランダムな速度を持たせて敵をスポナーからスポーンさせる振る舞いを提供するクラス。
+    /// </summary>
     public class RandomVelocitySpawnerController : SpawnerController
     {
         [SerializeField]

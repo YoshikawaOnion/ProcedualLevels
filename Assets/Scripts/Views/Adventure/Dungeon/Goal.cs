@@ -4,6 +4,9 @@ using UnityEngine;
 
 namespace ProcedualLevels.Views
 {
+    /// <summary>
+    /// ゴール地点オブジェクトの処理を行うクラス。
+    /// </summary>
     public class Goal : MonoBehaviour
     {
         private AdventureViewContext Context { get; set; }

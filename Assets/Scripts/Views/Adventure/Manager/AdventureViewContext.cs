@@ -6,6 +6,9 @@ using UnityEngine;
 
 namespace ProcedualLevels.Views
 {
+    /// <summary>
+    /// 探索画面のコンテキスト クラス。
+    /// </summary>
     public class AdventureViewContext
     {
         public IGameEventReceiver EventReceiver { get; set; }

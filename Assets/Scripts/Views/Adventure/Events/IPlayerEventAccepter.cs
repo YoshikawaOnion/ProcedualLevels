@@ -5,6 +5,9 @@ using UnityEngine;
 
 namespace ProcedualLevels.Views
 {
+    /// <summary>
+    /// プレイヤーに関するイベントを受け付けるインターフェース。
+    /// </summary>
     public interface IPlayerEventAccepter
     {
         IObserver<Collision2D> OnPlayerCollideWithEggSender { get; }

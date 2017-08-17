@@ -18,12 +18,11 @@ namespace ProcedualLevels.Views
         private List<SpikeController> Spikes { get; set; }
         private bool Quitting { get; set; }
 
-        // TODO: map, managerの良い説明が思い浮かばない。設計が悪そう。
         /// <summary>
         /// マップに属する要素を表示します。
         /// </summary>
         /// <param name="map">この引数に渡したマップに属する要素を表示します。</param>
-        /// <param name="viewContext">探索画面の情報を保持するコンテキスト クラス。</param>
+        /// <param name="viewContext">探索画面の情報を保持するコンテキスト オブジェクト。</param>
         /// <param name="eventFacade">このビューで使用するイベント送受信口。</param>
         public void Initialize(MapData map, AdventureViewContext viewContext, GameEventFacade eventFacade)
         {

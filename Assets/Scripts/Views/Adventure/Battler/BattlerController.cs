@@ -8,6 +8,9 @@ using ProcedualLevels.Models;
 
 namespace ProcedualLevels.Views
 {
+    /// <summary>
+    /// 戦闘に参加できるキャラクターを制御するクラス。
+    /// </summary>
     public abstract class BattlerController : MonoBehaviour
     {
         [SerializeField]

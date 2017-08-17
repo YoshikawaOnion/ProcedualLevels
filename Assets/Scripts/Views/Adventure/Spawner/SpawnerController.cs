@@ -6,6 +6,9 @@ using System;
 
 namespace ProcedualLevels.Views
 {
+    /// <summary>
+    /// スポナーからの敵のスポーン方法を提供するクラス。
+    /// </summary>
     public class SpawnerController : MonoBehaviour
     {
         protected IDisposable Disposable { get; set; }

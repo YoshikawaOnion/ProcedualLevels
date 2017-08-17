@@ -6,6 +6,9 @@ using UniRx.Triggers;
 
 namespace ProcedualLevels.Views
 {
+    /// <summary>
+    /// nGUIに対応したボタンの管理クラス。
+    /// </summary>
     public class ControllerButton : MonoBehaviour
     {
         private Subject<Unit> onPushed;

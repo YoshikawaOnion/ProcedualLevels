@@ -8,6 +8,9 @@ using System;
 
 namespace ProcedualLevels.Views
 {
+    /// <summary>
+    /// 制限時間の表示を制御するクラス。
+    /// </summary>
     public class TimeLimit : MonoBehaviour
     {
         [SerializeField]

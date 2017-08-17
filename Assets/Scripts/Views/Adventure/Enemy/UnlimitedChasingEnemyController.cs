@@ -8,6 +8,9 @@ using UniRx.Triggers;
 
 namespace ProcedualLevels.Views
 {
+    /// <summary>
+    /// 無制限にプレイヤーを追い続ける敵キャラクターの振る舞いを提供します。
+    /// </summary>
     public class UnlimitedChasingEnemyController : EnemyController
     {
         private MoveController MoveController { get; set; }
@@ -33,6 +36,9 @@ namespace ProcedualLevels.Views
                       .AddTo(Disposable);
         }
 
+        /// <summary>
+        /// 毎フレーム行う処理を実行します。
+        /// </summary>
         public override void Control()
 		{
 			if (Context.Hero == null || IsStaying)

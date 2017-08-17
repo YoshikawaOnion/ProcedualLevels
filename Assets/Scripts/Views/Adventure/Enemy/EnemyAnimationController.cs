@@ -24,6 +24,10 @@ namespace ProcedualLevels.Views
         private CompositeDisposable Disposable { get; set; }
         private bool IsDead { get; set; }
 
+        /// <summary>
+        /// 敵キャラクターのアニメーションの管理を開始します。
+        /// </summary>
+        /// <param name="eventReceiver">ゲームイベント受信口。</param>
         public void Initialize(IGameEventReceiver eventReceiver)
         {
             IsDead = false;

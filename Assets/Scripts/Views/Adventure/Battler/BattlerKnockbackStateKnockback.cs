@@ -24,6 +24,9 @@ namespace ProcedualLevels.Views
             Against = against;
         }
 
+        /// <summary>
+        /// この状態の処理を開始します。
+        /// </summary>
         public override void Subscribe()
         {
             base.Subscribe();
@@ -57,14 +60,25 @@ namespace ProcedualLevels.Views
             }
         }
 
+        /// <summary>
+        /// ノックバックができる状態であればノックバックします。
+        /// </summary>
+        /// <param name="against">ノックバックを起こした相手のビュー。</param>
+        /// <param name="power">ノックバックの強さ。</param>
         public override void Knockback(KnockbackInfo info, BattlerController against)
         {
         }
 
+        /// <summary>
+        /// 移動などの行動ができれば行動します。
+        /// </summary>
         protected override void Control()
         {
         }
 
+        /// <summary>
+        /// 派生クラスで実装されることで、キャラクターがプレイヤーに踏みつけられた時の処理を実行します。
+        /// </summary>
         public override void OnTrampled()
         {
             ChangeState(new BattlerKnockbackStateTrampled(Context));

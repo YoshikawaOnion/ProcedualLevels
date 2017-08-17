@@ -21,11 +21,17 @@ namespace ProcedualLevels.Views
             MoveController = GetComponent<MoveController>();
         }
 
+        /// <summary>
+        /// オーバーライドされることで、プレイヤーを発見する前に毎フレーム実行される処理を実行します。
+        /// </summary>
         public override void ControlAtIdle()
         {
             Move();
         }
 
+        /// <summary>
+        /// オーバーライドされることで、プレイヤーを発見した後に毎フレーム実行される処理を実行します。
+        /// </summary>
         public override void ControlAtPlayerFound()
         {
             Move();

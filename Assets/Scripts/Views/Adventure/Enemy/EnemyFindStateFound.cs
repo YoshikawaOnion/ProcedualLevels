@@ -20,6 +20,9 @@ namespace ProcedualLevels.Views
         {
         }
 
+        /// <summary>
+        /// 移動などの行動が可能なら行動します。
+        /// </summary>
         public override void Control()
         {
             Context.ControlAtPlayerFound();

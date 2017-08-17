@@ -4,6 +4,9 @@ using UniRx;
 
 namespace ProcedualLevels.Views
 {
+    /// <summary>
+    /// ゲーム内で発生するイベントを通信するクラス。
+    /// </summary>
     public class GameEventFacade : IPlayerEventAccepter, IPowerUpItemEventAccepter,
     IGoalEventAccepter, ISpikeEventAccepter, IGameEventReceiver
     {
