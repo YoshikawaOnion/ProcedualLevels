@@ -4,9 +4,24 @@ using UniRx;
 using UnityEngine;
 using UniRx.Triggers;
 using System;
+using ProcedualLevels.Common;
 
 namespace ProcedualLevels.Views
 {
+    public class HeroAnimationSetting
+    {
+        public string LeftAnimationKey { get; private set; }
+        public string RightAnimationKey { get; private set; }
+        public bool IsOneShot { get; private set; }
+
+        public HeroAnimationSetting(string leftAnimationKey, string rightAnimationKey, bool isOneShot)
+        {
+            IsOneShot = isOneShot;
+            RightAnimationKey = rightAnimationKey;
+            LeftAnimationKey = leftAnimationKey;
+        }
+    }
+
     /// <summary>
     /// プレイヤーキャラクターのアニメーションを管理するクラス。
     /// </summary>
@@ -22,6 +37,10 @@ namespace ProcedualLevels.Views
 		public static readonly string AttackRightAnimation = "Attack_Right";
 		public static readonly string DamageLeftAnimation = "Damage_Left";
 		public static readonly string DamageRightAnimation = "Damage_Right";
+        public static readonly string GrabingWallLeftAnimation = "Kabe_Left";
+        public static readonly string GrabingWallRightAnimation = "Kabe_Right";
+        public static readonly string WallJumpLeftAnimation = "Roll_Left2";
+        public static readonly string WallJumpRightAnimation = "Roll_Right2";
         public static readonly int LoopInfinite = 0;
 
         [SerializeField]
@@ -32,7 +51,9 @@ namespace ProcedualLevels.Views
         private Subject<float> DirectionSubject { get; set; }
         private bool IsDead { get; set; }
         private string AnimationKeyPlaying { get; set; }
-        private IDisposable PlayingDisposable { get; set; }
+        private CompositeDisposable PlayingDisposable { get; set; }
+
+        private Dictionary<string, HeroAnimationSetting> Settings { get; set; }
 
         /// <summary>
         /// アニメーションの管理を開始します。
@@ -42,45 +63,59 @@ namespace ProcedualLevels.Views
             Disposable = new CompositeDisposable();
             DirectionSubject = new Subject<float>();
             IsDead = false;
+            Direction = 1;
 
-			PlayAnimation(IdleRightAnimation, LoopInfinite);
+            Settings = new Dictionary<string, HeroAnimationSetting>();
+            Settings["Idle"] = new HeroAnimationSetting(IdleLeftAnimation, IdleRightAnimation, false);
+            Settings["Walk"] = new HeroAnimationSetting(WalkLeftAnimation, WalkRightAnimation, false);
+            Settings["Jump"] = new HeroAnimationSetting(JumpLeftAnimation, JumpRightAnimation, false);
+            Settings["Attack"] = new HeroAnimationSetting(AttackLeftAnimation, AttackRightAnimation, false);
+            Settings["Damage"] = new HeroAnimationSetting(DamageLeftAnimation, DamageRightAnimation, true);
+            Settings["GrabingWall"] = new HeroAnimationSetting(GrabingWallLeftAnimation, GrabingWallRightAnimation, false);
+            Settings["WallJump"] = new HeroAnimationSetting(WallJumpLeftAnimation, WallJumpRightAnimation, false);
 
+            AnimateNeutral();
+        }
+
+        public void InitializeState()
+        {
+            if (PlayingDisposable != null)
+            {
+                PlayingDisposable.Dispose();
+            }
+            PlayingDisposable = new CompositeDisposable();
+        }
+
+        public void AnimateNeutral()
+        {
+            InitializeState();
             DirectionSubject.DistinctUntilChanged()
                             .Subscribe(direction =>
             {
                 if (Mathf.Abs(direction) < float.Epsilon)
-				{
-					if (Direction > 0)
-					{
-						PlayAnimation(IdleRightAnimation, LoopInfinite);
-					}
-					else
-					{
-						PlayAnimation(IdleLeftAnimation, LoopInfinite);
-					}
-				}
-				else if (direction > 0)
-				{
-					PlayAnimation(WalkRightAnimation, LoopInfinite);
-					Direction = 1;
-				}
-				else if (direction < 0)
-				{
-					PlayAnimation(WalkLeftAnimation, LoopInfinite);
-					Direction = -1;
-				}
-			});
+                {
+                    PlayAnimation(Settings["Idle"], Direction);
+                }
+                else
+                {
+                    Debug.Log("Walk");
+                    PlayAnimation(Settings["Walk"], (int)direction);
+                    Direction = Helper.Sign(direction);
+                }                
+            }).AddTo(PlayingDisposable);
         }
+
         /// <summary>
-        /// 指定した歩行方向をアニメーションマネージャに設定し、対応するアニメーションを再生します。
+        /// 指定した歩行方向をアニメーションマネージャに設定します。
         /// </summary>
         /// <param name="direction">現在の歩行方向。</param>
-        public void AnimateWalk(float direction)
+        public void UpdateWalkDirection(float direction)
         {
             if (IsDead)
             {
                 return;
             }
+
             DirectionSubject.OnNext(direction);
         }
 
@@ -93,34 +128,13 @@ namespace ProcedualLevels.Views
             {
                 return;
             }
-            if (PlayingDisposable != null)
-            {
-                PlayingDisposable.Dispose();
-            }
+
+            InitializeState();
 
             var direction = target.transform.position - transform.position;
-            if (direction.x > 0)
-            {
-                PlayAnimation(AttackRightAnimation, 1);
-                Direction = 1;
-            }
-            else
-            {
-                PlayAnimation(AttackLeftAnimation, 1);
-                Direction = -1;
-            }
-
-            PlayingDisposable = WaitAnimationFinish().Subscribe(x =>
-            {
-                if (Direction > 0)
-                {
-                    PlayAnimation(IdleRightAnimation, LoopInfinite);
-                }
-                else
-				{
-                    PlayAnimation(IdleLeftAnimation, LoopInfinite);
-                }                
-            });
+            PlayAnimation(Settings["Attack"], (int)direction.x);
+            Direction = Helper.Sign((int)direction.x);
+            Debug.Log("Attack");
         }
 
         /// <summary>
@@ -133,34 +147,15 @@ namespace ProcedualLevels.Views
 			{
 				return;
 			}
-            if(PlayingDisposable != null)
-            {
-                PlayingDisposable.Dispose();
-            }
 
-			var direction = target.transform.position - transform.position;
-			if (direction.x > 0)
-			{
-				PlayAnimation(DamageRightAnimation, 1);
-				Direction = 1;
-			}
-			else
-			{
-				PlayAnimation(DamageLeftAnimation, 1);
-				Direction = -1;
-			}
+            InitializeState();
 
-			PlayingDisposable = WaitAnimationFinish().Subscribe(x =>
-			{
-				if (Direction > 0)
-				{
-					PlayAnimation(IdleRightAnimation, LoopInfinite);
-				}
-				else
-				{
-					PlayAnimation(IdleLeftAnimation, LoopInfinite);
-				}
-			});
+            var direction = target.transform.position - transform.position;
+            PlayAnimation(Settings["Damage"], (int)direction.x);
+            Direction = Helper.Sign((int)direction.x);
+
+			WaitAnimationFinish().Subscribe(x => PlayAnimation(Settings["Damage"], Direction))
+                                 .AddTo(PlayingDisposable);
 		}
 
         /// <summary>
@@ -174,18 +169,8 @@ namespace ProcedualLevels.Views
             {
                 PlayingDisposable.Dispose();
             }
-            Disposable.Dispose();
-            Disposable = null;
 
-            if (Direction > 0)
-            {
-                PlayAnimation(DamageRightAnimation, 1);
-            }
-            else
-            {
-                PlayAnimation(DamageLeftAnimation, 1);
-            }
-
+            PlayAnimation(Settings["Damage"], Direction);
             return WaitAnimationFinish();
         }
 
@@ -218,6 +203,19 @@ namespace ProcedualLevels.Views
             if (PlayingDisposable != null)
             {
                 PlayingDisposable.Dispose();
+            }
+        }
+
+        private void PlayAnimation(HeroAnimationSetting setting, int direction)
+        {
+            var loopTimes = setting.IsOneShot ? 1 : LoopInfinite;
+            if (direction > 0)
+            {
+                PlayAnimation(setting.RightAnimationKey, loopTimes);
+            }
+            else if (direction < 0)
+            {
+                PlayAnimation(setting.LeftAnimationKey, loopTimes);
             }
         }
     }

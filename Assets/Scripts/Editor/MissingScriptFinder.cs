@@ -4,14 +4,8 @@ using UnityEngine;
 using UnityEditor;
 using System.Linq;
 
-[InitializeOnLoad]
 public class MissinScriptFinder : ScriptableObject
 {
-    static MissinScriptFinder()
-    {
-        CheckMissingScript();
-    }
-
     [MenuItem("Tools/Onion.Yoshikawa/Check Missing Script")]
     public static void CheckMissingScript()
     {

@@ -42,12 +42,13 @@ namespace ProcedualLevels.Views
                            .Subscribe(x => BattleTargets.Add(x))
                            .AddTo(Disposable);
 
-            // 敵を押し込んでいる間は攻撃アニメを繰り返し再生する
-            onTouchingEnemy.FirstOrDefault(x => IsAttackingFor(x))
-                           .SelectMany(x => GetSwingingLoop(x))
-                           .TakeWhile(x => x != null && IsAttackingFor(x))
-                           .RepeatSafe()
+            onTouchingEnemy.ThrottleFirst(TimeSpan.FromMilliseconds(400))
                            .Subscribe(x => Animation.AnimateAttack(x.gameObject))
+                           .AddTo(Disposable);
+
+            // 敵を押し込んでいる間は攻撃アニメを繰り返し再生する
+            onTouchingEnemy.Throttle(TimeSpan.FromMilliseconds(500))
+                           .Subscribe(x => Animation.AnimateNeutral())
                            .AddTo(Disposable);
 
             var hero = GetComponent<HeroController>();
@@ -61,18 +62,6 @@ namespace ProcedualLevels.Views
                 Animation.AnimateDamage(x.Item1.gameObject);
                 PlayHitEffect(x.Item1.transform.position);
             });
-        }
-
-        /// <summary>
-        /// 剣を振るアニメーションを再生するタイミングを表すストリームを取得します。
-        /// </summary>
-        /// <returns>アニメーションのタイミングを表すストリーム。</returns>
-        /// <param name="enemy">戦闘対象の敵キャラクター。</param>
-        private IObservable<EnemyController> GetSwingingLoop(EnemyController enemy)
-        {
-            return Observable.Return(0L)
-                             .Concat(Observable.Interval(TimeSpan.FromMilliseconds(250)))
-                             .Select(x => enemy);
         }
 
         private bool IsAttackingFor(EnemyController x)

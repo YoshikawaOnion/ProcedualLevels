@@ -324,7 +324,7 @@ namespace ProcedualLevels.Views
                         .FirstOrDefault()
                         .Subscribe(t => Rigidbody.gravityScale = GravityScale);
 
-            Animation.AnimateWalk(direction);
+            Animation.UpdateWalkDirection(direction);
             IsOnGround = false;
             SetWallJumpState();
         }
@@ -354,7 +354,7 @@ namespace ProcedualLevels.Views
             var vx = MoveController.GetMoveSpeed(Rigidbody.velocity.x, WalkDirection, powerScale);
             Rigidbody.velocity = Rigidbody.velocity.MergeX(vx);
 
-            Animation.AnimateWalk(WalkDirection);
+            Animation.UpdateWalkDirection(WalkDirection);
         }
     }
 }
