@@ -168,5 +168,12 @@ namespace ProcedualLevels.Common
             return source.TakeUntil(pause)
                          .Concat(resume);
         }
+
+        public static IObservable<T> RepeatAt<T, U>(this IObservable<T> source,
+                                                   IObservable<U> resume)
+        {
+            var repeat = resume.SelectMany(x => source.RepeatAt(resume));
+            return source.Concat(repeat);
+        }
     }
 }

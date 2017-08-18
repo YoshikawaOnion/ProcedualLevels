@@ -335,7 +335,6 @@ namespace ProcedualLevels.Views
         public void ControlWalk(int direction)
         {
             WalkSubject.OnNext(direction);
-            WalkDirection = direction;
         }
 
         /// <summary>
@@ -353,8 +352,11 @@ namespace ProcedualLevels.Views
         {
             var vx = MoveController.GetMoveSpeed(Rigidbody.velocity.x, WalkDirection, powerScale);
             Rigidbody.velocity = Rigidbody.velocity.MergeX(vx);
+        }
 
-            Animation.UpdateWalkDirection(WalkDirection);
+        public void UpdateWalkDirection(int direction)
+        {
+            WalkDirection = direction;            
         }
     }
 }

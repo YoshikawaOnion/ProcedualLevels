@@ -69,6 +69,16 @@ namespace ProcedualLevels.Views
                 .AddTo(HeroDisposable);
         }
 
+        private void Update()
+        {
+            var horizontalInput = (int)Input.GetAxisRaw("Horizontal");
+            var move = horizontalInput
+                + (LeftButton.IsHold ? -1 : 0)
+                + (RightButton.IsHold ? 1 : 0);
+            Animation.UpdateWalkDirection(move);
+            JumpController.UpdateWalkDirection(move);
+        }
+
         /// <summary>
         /// 毎フレーム行う処理を実行します。
         /// </summary>

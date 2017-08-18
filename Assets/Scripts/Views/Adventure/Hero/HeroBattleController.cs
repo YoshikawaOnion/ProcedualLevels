@@ -42,15 +42,17 @@ namespace ProcedualLevels.Views
                            .Subscribe(x => BattleTargets.Add(x))
                            .AddTo(Disposable);
 
-            onTouchingEnemy.ThrottleFirst(TimeSpan.FromMilliseconds(400))
-                           .Subscribe(x => Animation.AnimateAttack(x.gameObject))
-                           .AddTo(Disposable);
-
-            // 敵を押し込んでいる間は攻撃アニメを繰り返し再生する
-            onTouchingEnemy.Throttle(TimeSpan.FromMilliseconds(500))
+            // 戦闘をしたら戦闘アニメーションを再生
+            onTouchingEnemy.Where(IsAttackingFor)
+                           .DistinctUntilChanged(x => Move.WalkDirection)
+                           .Subscribe(x => Animation.AnimateAttack(x.gameObject));
+            
+            // 少しの間戦闘をしないでいると通常のアニメーションへ遷移
+            onTouchingEnemy.Where(IsAttackingFor)
+                           .Throttle(TimeSpan.FromMilliseconds(200))
                            .Subscribe(x => Animation.AnimateNeutral())
                            .AddTo(Disposable);
-
+            
             var hero = GetComponent<HeroController>();
 
             // トゲに当たったらダメージ。一度当たったら少しの間トゲのダメージを受けない
@@ -82,7 +84,6 @@ namespace ProcedualLevels.Views
                     {
                         EventAccepter.OnPlayerBattleWithEnemySender
                                      .OnNext(target.Enemy);
-                        Animation.AnimateAttack(target.gameObject);
                     }
                     else
                     {
@@ -101,7 +102,8 @@ namespace ProcedualLevels.Views
         private void PlayHitEffect(Vector3 oppositeLocation)
         {
             var obj = Instantiate(DamageEffectPrefab);
-            obj.transform.position = ((transform.position + oppositeLocation) / 2).MergeZ(-2);
+            obj.transform.position = ((transform.position + oppositeLocation) / 2)
+                .MergeZ(obj.transform.position.z);
             obj.UpdateAsObservable()
                .Skip(60)
                .Subscribe(x => Destroy(obj))

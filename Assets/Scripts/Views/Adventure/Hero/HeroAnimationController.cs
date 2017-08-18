@@ -98,7 +98,6 @@ namespace ProcedualLevels.Views
                 }
                 else
                 {
-                    Debug.Log("Walk");
                     PlayAnimation(Settings["Walk"], (int)direction);
                     Direction = Helper.Sign(direction);
                 }                
@@ -132,9 +131,8 @@ namespace ProcedualLevels.Views
             InitializeState();
 
             var direction = target.transform.position - transform.position;
-            PlayAnimation(Settings["Attack"], (int)direction.x);
-            Direction = Helper.Sign((int)direction.x);
-            Debug.Log("Attack");
+            Direction = Helper.Sign(direction.x);
+            PlayAnimation(Settings["Attack"], Direction);
         }
 
         /// <summary>
