@@ -16,9 +16,9 @@ namespace ProcedualLevels.Views
     {
         private List<EnemyController> BattleTargets { get; set; }
         private IPlayerEventAccepter EventAccepter { get; set; }
-		private CompositeDisposable Disposable { get; set; }
-		private HeroAnimationController Animation { get; set; }
-		private HeroMoveController Move { get; set; }
+        private CompositeDisposable Disposable { get; set; }
+        private HeroAnimationController Animation { get; set; }
+        private HeroMoveController Move { get; set; }
         private Subject<Unit> OnBattle { get; set; }
         private GameObject DamageEffectPrefab { get; set; }
 
@@ -77,18 +77,19 @@ namespace ProcedualLevels.Views
                 var distincted = BattleTargets.GroupBy(x => x.Battler.Index)
                                               .Select(x => x.First());
                 foreach (var target in distincted)
-				{
-					if (IsAttackingFor(target))
-					{
-						EventAccepter.OnPlayerBattleWithEnemySender
-									 .OnNext(target.Enemy);
-					}
-					else
-					{
-						EventAccepter.OnPlayerAttackedByEnemySender
-									 .OnNext(target.Enemy);
-						Animation.AnimateDamage(target.gameObject);
-					}
+                {
+                    if (IsAttackingFor(target))
+                    {
+                        EventAccepter.OnPlayerBattleWithEnemySender
+                                     .OnNext(target.Enemy);
+                        Animation.AnimateAttack(target.gameObject);
+                    }
+                    else
+                    {
+                        EventAccepter.OnPlayerAttackedByEnemySender
+                                     .OnNext(target.Enemy);
+                        Animation.AnimateDamage(target.gameObject);
+                    }
                     PlayHitEffect(target.transform.position);
                 }
 
@@ -104,7 +105,7 @@ namespace ProcedualLevels.Views
             obj.UpdateAsObservable()
                .Skip(60)
                .Subscribe(x => Destroy(obj))
-               .AddTo(Disposable);            
+               .AddTo(Disposable);
         }
     }
 }
