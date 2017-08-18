@@ -16,6 +16,7 @@ namespace ProcedualLevels.Views
     public class HeroController : BattlerController
     {
         public Hero Hero { get; private set; }
+        public ReactiveProperty<int> WalkDirection { get; private set; }
         private IPlayerEventAccepter EventAccepter { get; set; }
         private HeroAnimationController Animation { get; set; }
         private HeroMoveController JumpController { get; set; }
@@ -40,9 +41,10 @@ namespace ProcedualLevels.Views
             EventAccepter = eventAccepter;
             JumpController = GetComponent<HeroMoveController>();
             HeroDisposable = new CompositeDisposable();
+            WalkDirection = new ReactiveProperty<int>();
 
             Animation = GetComponent<HeroAnimationController>();
-            Animation.Initialize();
+            Animation.Initialize(WalkDirection);
 
             LeftButton = context.UiManager.LeftButton;
             RightButton = context.UiManager.RightButton;
@@ -75,8 +77,7 @@ namespace ProcedualLevels.Views
             var move = horizontalInput
                 + (LeftButton.IsHold ? -1 : 0)
                 + (RightButton.IsHold ? 1 : 0);
-            Animation.UpdateWalkDirection(move);
-            JumpController.UpdateWalkDirection(move);
+            WalkDirection.Value = move;
         }
 
         /// <summary>
@@ -84,11 +85,7 @@ namespace ProcedualLevels.Views
         /// </summary>
         public override void Control()
         {
-            var horizontalInput = (int)Input.GetAxisRaw("Horizontal");
-            var move = horizontalInput
-                + (LeftButton.IsHold ? -1 : 0)
-                + (RightButton.IsHold ? 1 : 0);
-            JumpController.ControlWalk(move);
+            JumpController.ControlWalk(WalkDirection.Value);
 
             var jump = Input.GetKey(KeyCode.Space)
                             || JumpButton.IsHold;

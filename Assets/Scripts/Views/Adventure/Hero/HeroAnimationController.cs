@@ -48,7 +48,7 @@ namespace ProcedualLevels.Views
 
         private int Direction { get; set; }
         private CompositeDisposable Disposable { get; set; }
-        private Subject<float> DirectionSubject { get; set; }
+        private IObservable<int> DirectionSubject { get; set; }
         private bool IsDead { get; set; }
         private string AnimationKeyPlaying { get; set; }
         private CompositeDisposable PlayingDisposable { get; set; }
@@ -58,10 +58,10 @@ namespace ProcedualLevels.Views
         /// <summary>
         /// アニメーションの管理を開始します。
         /// </summary>
-		public void Initialize()
+		public void Initialize(IObservable<int> directionStream)
 		{
             Disposable = new CompositeDisposable();
-            DirectionSubject = new Subject<float>();
+            DirectionSubject = directionStream;
             IsDead = false;
             Direction = 1;
 
@@ -89,10 +89,21 @@ namespace ProcedualLevels.Views
         public void AnimateNeutral()
         {
             InitializeState();
+
+            Debug.Log("Neutral");
+            if (Direction == 0)
+            {
+                PlayAnimation(Settings["Idle"], Direction);
+            }
+            else
+            {
+                PlayAnimation(Settings["Walk"], Direction);
+            }
+
             DirectionSubject.DistinctUntilChanged()
                             .Subscribe(direction =>
             {
-                if (Mathf.Abs(direction) < float.Epsilon)
+                if (direction == 0)
                 {
                     PlayAnimation(Settings["Idle"], Direction);
                 }
@@ -102,20 +113,6 @@ namespace ProcedualLevels.Views
                     Direction = Helper.Sign(direction);
                 }                
             }).AddTo(PlayingDisposable);
-        }
-
-        /// <summary>
-        /// 指定した歩行方向をアニメーションマネージャに設定します。
-        /// </summary>
-        /// <param name="direction">現在の歩行方向。</param>
-        public void UpdateWalkDirection(float direction)
-        {
-            if (IsDead)
-            {
-                return;
-            }
-
-            DirectionSubject.OnNext(direction);
         }
 
         /// <summary>

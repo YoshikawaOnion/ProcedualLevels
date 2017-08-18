@@ -46,10 +46,6 @@ namespace ProcedualLevels.Views
         private bool IsOnGround { get; set; }
         private Subject<int> WalkSubject { get; set; }
         private Subject<bool> JumpSubject { get; set; }
-        /// <summary>
-        /// プレイヤーの現在の歩行方向を取得します。
-        /// </summary>
-        public int WalkDirection { get; private set; }
 
         private void Start()
         {
@@ -62,7 +58,6 @@ namespace ProcedualLevels.Views
             JumpCount = 0;
             GravityScale = Rigidbody.gravityScale;
             SetFullJumpState();
-            WalkDirection = 0;
         }
 
         /// <summary>
@@ -323,8 +318,8 @@ namespace ProcedualLevels.Views
             jumpStopper1.Merge(jumpStopper2)
                         .FirstOrDefault()
                         .Subscribe(t => Rigidbody.gravityScale = GravityScale);
-
-            Animation.UpdateWalkDirection(direction);
+            
+            Hero.WalkDirection.Value = Helper.Sign(direction);
             IsOnGround = false;
             SetWallJumpState();
         }
@@ -350,13 +345,10 @@ namespace ProcedualLevels.Views
         /// </summary>
         private void ActualyWalk(float powerScale)
         {
-            var vx = MoveController.GetMoveSpeed(Rigidbody.velocity.x, WalkDirection, powerScale);
+            var vx = MoveController.GetMoveSpeed(Rigidbody.velocity.x,
+                                                 Hero.WalkDirection.Value,
+                                                 powerScale);
             Rigidbody.velocity = Rigidbody.velocity.MergeX(vx);
-        }
-
-        public void UpdateWalkDirection(int direction)
-        {
-            WalkDirection = direction;            
         }
     }
 }

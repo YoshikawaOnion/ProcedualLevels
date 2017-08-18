@@ -21,6 +21,7 @@ namespace ProcedualLevels.Views
         private HeroMoveController Move { get; set; }
         private Subject<Unit> OnBattle { get; set; }
         private GameObject DamageEffectPrefab { get; set; }
+        private HeroController Hero { get; set; }
 
         public void Initialize(IPlayerEventAccepter eventAccepter, IGameEventReceiver eventReceiver)
         {
@@ -32,6 +33,7 @@ namespace ProcedualLevels.Views
             OnBattle = new Subject<Unit>();
             DamageEffectPrefab = Resources.Load<GameObject>("Prefabs/Effects/HitEffect01");
             var collider = GetComponent<BoxCollider2D>();
+            Hero = GetComponent<HeroController>();
 
             var onTouchingEnemy = collider.OnCollisionStay2DAsObservable()
                                           .Select(x => x.gameObject.GetComponent<EnemyController>())
@@ -43,21 +45,21 @@ namespace ProcedualLevels.Views
                            .AddTo(Disposable);
 
             // 戦闘をしたら戦闘アニメーションを再生
-            onTouchingEnemy.Where(IsAttackingFor)
-                           .DistinctUntilChanged(x => Move.WalkDirection)
+            onTouchingEnemy.Where(x => IsAttackingFor(x, Hero))
+                           .DistinctUntilChanged(x => Hero.WalkDirection.Value)
+                           .Do(x => Debug.Log("Attack"))
                            .Subscribe(x => Animation.AnimateAttack(x.gameObject));
             
             // 少しの間戦闘をしないでいると通常のアニメーションへ遷移
-            onTouchingEnemy.Where(IsAttackingFor)
-                           .Throttle(TimeSpan.FromMilliseconds(200))
+            onTouchingEnemy.Where(x => IsAttackingFor(x, Hero))
+                           .Throttle(TimeSpan.FromMilliseconds(1000))
+                           .Do(x => Debug.Log("Idle"))
                            .Subscribe(x => Animation.AnimateNeutral())
                            .AddTo(Disposable);
-            
-            var hero = GetComponent<HeroController>();
 
             // トゲに当たったらダメージ。一度当たったら少しの間トゲのダメージを受けない
             eventReceiver.OnBattlerTouchedSpikeReceiver
-                         .Where(x => x.Item2.Battler.Index == hero.Battler.Index)
+                         .Where(x => x.Item2.Battler.Index == Hero.Battler.Index)
                          .ThrottleFirst(TimeSpan.FromMilliseconds(750))
                          .Subscribe(x => 
             {
@@ -66,10 +68,10 @@ namespace ProcedualLevels.Views
             });
         }
 
-        private bool IsAttackingFor(EnemyController x)
+        private bool IsAttackingFor(EnemyController x, HeroController hero)
         {
             var distance = x.transform.position - transform.position;
-            return distance.x * Move.WalkDirection > 0;
+            return distance.x * hero.WalkDirection.Value > 0;
         }
 
         void Update()
@@ -80,7 +82,7 @@ namespace ProcedualLevels.Views
                                               .Select(x => x.First());
                 foreach (var target in distincted)
                 {
-                    if (IsAttackingFor(target))
+                    if (IsAttackingFor(target, Hero))
                     {
                         EventAccepter.OnPlayerBattleWithEnemySender
                                      .OnNext(target.Enemy);
