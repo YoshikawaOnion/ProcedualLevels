@@ -33,7 +33,7 @@ namespace ProcedualLevels.Models
             };
 
             var goalDiv = map.Divisions.First(x => x.Room
-                                               .IsInside(map.GoalLocation.x, map.GoalLocation.y));
+                                              .IsInside(map.GoalLocation.x, map.GoalLocation.y));
             var intersectedCons = map.Connections
                                      .Where(x => x.Path.GetRooms()
                                             .Any(y => y.IsIntersect(goalDiv.Room)));

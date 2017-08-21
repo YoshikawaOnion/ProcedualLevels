@@ -15,7 +15,7 @@ namespace ProcedualLevels.Models
         /// <returns>生成した通路。</returns>
         /// <param name="startDiv">始点となる左側の区画。</param>
         /// <param name="endDiv">終点となる右側の区画。</param>
-        public static IMapPath CreateBottomHorizontalPath(MapDivision startDiv, MapDivision endDiv)
+        public static OnBottomHorizontalPath CreateBottomHorizontalPath(MapDivision startDiv, MapDivision endDiv)
         {
             return OnBottomHorizontalPath.CreateConnection(startDiv, endDiv);
         }

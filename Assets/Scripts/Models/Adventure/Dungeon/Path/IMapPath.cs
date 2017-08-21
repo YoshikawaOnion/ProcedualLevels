@@ -10,6 +10,8 @@ namespace ProcedualLevels.Models
     /// </summary>
     public interface IMapPath
     {
+        bool DebugMark { get; set; }
+
         /// <summary>
         /// この通路に属する空間のコレクションを取得します。
         /// </summary>

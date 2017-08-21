@@ -25,6 +25,8 @@ namespace ProcedualLevels.Models
         /// <value>The end path.</value>
         public MapRectangle EndPath { get; private set; }
 
+        public bool DebugMark { get; set; }
+
         public OnBottomVerticalPath(MapRectangle startPath, MapRectangle middlePath, MapRectangle endPath)
         {
             StartPath = startPath;

@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using ProcedualLevels.Common;
+using System;
 
 namespace ProcedualLevels.Models
 {
@@ -71,6 +72,22 @@ namespace ProcedualLevels.Models
                 if (IsInRectanble(left, bottom, item.Room.ReduceOnEdge(1)))
                 {
                     return true;
+                }
+            }
+            return false;
+        }
+
+        internal bool IsMarkedPath(int left, int bottom)
+        {
+            foreach (var connection in Connections)
+            {
+                foreach (var path in connection.Path.GetRooms())
+                {
+                    if (IsInRectanble(left, bottom, path.ReduceOnEdge(1))
+                       && connection.Path.DebugMark)
+                    {
+                        return true;
+                    }
                 }
             }
             return false;

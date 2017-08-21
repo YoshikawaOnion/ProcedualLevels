@@ -25,6 +25,8 @@ namespace ProcedualLevels.Models
         /// <value>The connection.</value>
         public MapRectangle Connection { get; set; }
 
+        public bool DebugMark { get; set; }
+
         /// <summary>
         /// 全ての通路パーツを列挙します。
         /// </summary>

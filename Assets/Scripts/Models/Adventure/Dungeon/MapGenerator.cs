@@ -50,15 +50,20 @@ namespace ProcedualLevels.Models
             ReducePathesAtRandom(map);
 
             PlaceStartAndGoal(map);
+            Debug.Log("Start Placed.");
             PlacePlatforms(map);
+            Debug.Log("Platforms Placed.");
             PlaceEnemies(view, map);
+            Debug.Log("Enemies Placed.");
             PlaceSpawners(map);
+            Debug.Log("Spawners Placed.");
 
             var blocks = map.Connections.SelectMany(x => x.Path.GetCollisionBlocks(map, x))
                             .Where(x => !IsInAnyRooms(map, x));
             map.CollisionBlocks.AddRange(blocks);
 
             PlaceSpikes(map, view);
+            Debug.Log("Spikes Placed.");
 
             return map;
         }
@@ -86,6 +91,7 @@ namespace ProcedualLevels.Models
             int index = 1;
             foreach (var ability in enemyDatabase.Enemies)
             {
+                Debug.Log(ability.GenerationStrategy.GetType());
                 ability.GenerationStrategy.PlaceEnemies(map, ability, view, ref index);
             }
         }

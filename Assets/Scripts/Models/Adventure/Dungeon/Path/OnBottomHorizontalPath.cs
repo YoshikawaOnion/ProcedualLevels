@@ -21,6 +21,8 @@ namespace ProcedualLevels.Models
         /// </summary>
         public MapRectangle EndPath { get; private set; }
 
+        public bool DebugMark { get; set; }
+
         /// <summary>
         /// 所属する空間を与えて、OnBottomHorizontalPathの新しいインスタンスを生成します。
         /// </summary>

@@ -29,6 +29,9 @@ namespace ProcedualLevels.Models
                 foreach (var topDiv in horizontalAdjacents)
                 {
                     var path = CreatePath(bottomDiv, topDiv);
+                    if (GetDivisionHavingSlimWall(map, path).Any())
+                    {
+                    }
                     yield return new MapConnection(bottomDiv, topDiv, path, true);
                 }
 
@@ -48,13 +51,27 @@ namespace ProcedualLevels.Models
                     }
                 }
             }
+            Debug.Log("Path Generated");
         }
 
         private bool IsThereSlimWall(MapData map, IMapPath path)
         {
             return map.Divisions.Any(x =>
             {
-                return path.GetRooms().Any(y => x.Room.Bottom - y.Top < 0);
+                return path.GetRooms().Any(y => x.Room.Bottom - y.Top < 0
+                                          || x.Room.Top - y.Bottom > 0);
+            });
+        }
+
+        private IEnumerable<MapDivision> GetDivisionHavingSlimWall(MapData map, OnBottomHorizontalPath path)
+        {
+            return map.Divisions.Where(x =>
+            {
+                return path.EndPath != null
+                           && (x.Room.Top - path.EndPath.Bottom > 0
+                               || x.Room.Bottom - path.EndPath.Top < 0)
+                           && (x.Room.Bottom - path.StartPath.Top < 0
+                               || x.Room.Top - path.StartPath.Bottom > 0);
             });
         }
 
@@ -63,7 +80,7 @@ namespace ProcedualLevels.Models
             return PathFactory.CreateBottomVerticalPath(bottomDiv, topDiv);
         }
 
-        private IMapPath CreatePath(MapDivision bottomDiv, MapDivision topDiv)
+        private OnBottomHorizontalPath CreatePath(MapDivision bottomDiv, MapDivision topDiv)
         {
             return PathFactory.CreateBottomHorizontalPath(bottomDiv, topDiv);
         }

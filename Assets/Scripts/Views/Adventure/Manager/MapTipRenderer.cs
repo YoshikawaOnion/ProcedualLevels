@@ -14,25 +14,34 @@ namespace ProcedualLevels.Views
         private BatchRenderer roomRendererPrefab = null;
         [SerializeField]
         private BatchRenderer platformRendererPrefab = null;
+        [SerializeField]
+        private BatchRenderer debugTileRenederPrefab = null;
 
 		private List<Vector3> WallLocations { get; set; }
 		private List<Vector3> RoomLocations { get; set; }
         private List<Vector3> PlatformLocations { get; set; }
+        private List<Vector3> DebugTileLocations { get; set; }
         private BatchRenderer WallRenderer { get; set; }
         private BatchRenderer RoomRenderer { get; set; }
         private BatchRenderer PlatformRenderer { get; set; }
+        private BatchRenderer DebugTileRenderer { get; set; }
 
         private void Awake()
 		{
 			RoomLocations = new List<Vector3>();
 			WallLocations = new List<Vector3>();
             PlatformLocations = new List<Vector3>();
+            DebugTileLocations = new List<Vector3>();
+
             WallRenderer = Instantiate(wallRendererPrefab);
             RoomRenderer = Instantiate(roomRendererPrefab);
             PlatformRenderer = Instantiate(platformRendererPrefab);
+            DebugTileRenderer = Instantiate(debugTileRenederPrefab);
+
             WallRenderer.transform.SetParent(transform);
             RoomRenderer.transform.SetParent(transform);
             PlatformRenderer.transform.SetParent(transform);
+            DebugTileRenderer.transform.SetParent(transform);
         }
 
         private void OnDestroy()
@@ -55,7 +64,11 @@ namespace ProcedualLevels.Views
             {
                 for (int j = -width / 2; j < width / 2; j++)
                 {
-                    if (map.IsRoom(j, i) || map.IsPath(j, i))
+                    if (map.IsMarkedPath(j, i))
+                    {
+                        DebugTileLocations.Add(new Vector3(j, i, 0) + offset);
+                    }
+                    else if (map.IsRoom(j, i) || map.IsPath(j, i))
                     {
                         RoomLocations.Add(new Vector3(j, i, 0) + offset);
                     }
@@ -79,6 +92,10 @@ namespace ProcedualLevels.Views
         // Update is called once per frame
         void Update()
         {
+            foreach (var p in DebugTileLocations)
+            {
+                DebugTileRenderer.AddInstanceT(p);
+            }
             foreach (var p in WallLocations)
             {
                 WallRenderer.AddInstanceT(p);

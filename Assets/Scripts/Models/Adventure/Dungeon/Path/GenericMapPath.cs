@@ -13,6 +13,8 @@ namespace ProcedualLevels.Models
     {
         private IEnumerable<MapRectangle> Rectangles { get; set; }
 
+        public bool DebugMark { get; set; }
+
         public GenericMapPath(IEnumerable<MapRectangle> rectangles)
         {
             Rectangles = rectangles;
