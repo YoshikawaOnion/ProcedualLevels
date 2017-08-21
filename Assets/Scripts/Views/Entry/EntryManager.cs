@@ -5,6 +5,8 @@ using ProcedualLevels.Common;
 using ProcedualLevels.Models;
 using UniRx;
 using UnityEngine;
+using UniRx.Triggers;
+using UnityEngine.SceneManagement;
 
 namespace ProcedualLevels.Views
 {
@@ -19,11 +21,7 @@ namespace ProcedualLevels.Views
         /// <returns>繊維が完了すると探索画面のビューを発行するストリーム。</returns>
         public IObservable<IAdventureView> GotoAdventureAsync()
         {
-            var viewPrefab = Resources.Load<Views.GameManager>("Prefabs/Manager/GameManager");
-            IAdventureView view = Instantiate(viewPrefab);
-            return Observable.NextFrame()
-                             .Select(x => view)
-                             .Take(1);
+            return SceneHelper.ChangeToRootScene();
         }
 
         /// <summary>
@@ -32,11 +30,16 @@ namespace ProcedualLevels.Views
         /// <returns>遷移が完了するとタイトル画面のビューを発行するストリーム。</returns>
         public IObservable<ITitleView> GotoTitleAsync()
         {
-            throw new NotImplementedException();
+            var viewPrefab = Resources.Load<Views.TitleManager>("Prefabs/Manager/TitleManager");
+            ITitleView view = Instantiate(viewPrefab);
+            return Observable.NextFrame()
+                             .Select(x => view)
+                             .Take(1);
         }
 
         private void Start()
         {
+            DontDestroyOnLoad(this);
             var model = new Models.EntryFlow();
             model.RunAsync(this)
                  .Subscribe();

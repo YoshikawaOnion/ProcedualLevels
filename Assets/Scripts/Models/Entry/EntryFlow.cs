@@ -13,16 +13,12 @@ namespace ProcedualLevels.Models
     {
         private IEnumerator Run(IEntryView view)
         {
-            var model = new AdventureFlow();
-
-            IAdventureView nextView = null;
-            yield return view.GotoAdventureAsync()
+            ITitleView nextView = null;
+            yield return view.GotoTitleAsync()
                              .Do(x => nextView = x)
                              .ToYieldInstruction();
 
-            var dungeonGen = AssetRepository.I.DungeonGenAsset;
-            var gameParameter = AssetRepository.I.GameParameterAsset;
-            model.Initialize(dungeonGen, gameParameter, nextView);
+            var model = new TitleManager(nextView);
 
             IFlow flow = model;
             while (true)

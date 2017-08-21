@@ -16,7 +16,7 @@ namespace ProcedualLevels.Models
             View = view;
         }
 
-        private IEnumerator TitleFlow(Action<IFlow> callback)
+        private IEnumerator TitleFlow(IObserver<IFlow> result)
         {
             yield return View.OnTap.Take(1)
                              .ToYieldInstruction();
@@ -27,14 +27,16 @@ namespace ProcedualLevels.Models
                              .ToYieldInstruction();
 
             var adventure = new AdventureFlow();
+            adventure.Initialize(AssetRepository.I.DungeonGenAsset,
+                                 AssetRepository.I.GameParameterAsset,
+                                 nextView);
+            result.OnNext(adventure);
+            result.OnCompleted();
         }
 
         public IObservable<IFlow> Start()
         {
-            IFlow nextFlow = null;
-            return Observable.FromCoroutine(() => TitleFlow(x => nextFlow = x))
-                             .Select(x => nextFlow)
-                             .Take(1);
+            return Observable.FromCoroutine<IFlow>(observer => TitleFlow(observer));
         }
     }
 }

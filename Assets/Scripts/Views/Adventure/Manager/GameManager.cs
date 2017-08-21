@@ -137,18 +137,14 @@ namespace ProcedualLevels.Views
         /// <returns>新しいゲームのビュー。</returns>
         public IObservable<IAdventureView> ResetAsync()
         {
-            var viewPrefab = Resources.Load<Views.GameManager>("Prefabs/Manager/GameManager");
-            var view = Instantiate(viewPrefab);
             Destroy(gameObject);
             Destroy(Context.UiManager.gameObject);
             Destroy(ObjectManager.gameObject);
-            return Observable.EveryUpdate()
-                             .Skip(1)
-                             .First()
-                             .Select(x =>
-            {
-                return (IAdventureView)view;
-            });
+
+            var viewPrefab = Resources.Load<Views.GameManager>("Prefabs/Manager/GameManager");
+            IAdventureView view = Instantiate(viewPrefab);
+            return Observable.NextFrame()
+                             .Select(x => view);
         }
     }
 }
