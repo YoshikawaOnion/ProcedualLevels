@@ -14,8 +14,6 @@ namespace ProcedualLevels.Views
     /// </summary>
     public class HeroBattleController : MonoBehaviour
     {
-        private static readonly int AnimationPriority = 2;
-
         private List<EnemyController> BattleTargets { get; set; }
         private IPlayerEventAccepter EventAccepter { get; set; }
         private CompositeDisposable Disposable { get; set; }

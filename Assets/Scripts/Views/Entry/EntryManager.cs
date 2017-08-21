@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using ProcedualLevels.Common;
 using ProcedualLevels.Models;
@@ -10,23 +11,35 @@ namespace ProcedualLevels.Views
     /// <summary>
     /// ゲーム本体のエントリポイント。
     /// </summary>
-    public class EntryManager : MonoBehaviour
+    public class EntryManager : MonoBehaviour, IEntryView
     {
-        private void Start()
+        /// <summary>
+        /// 探索画面に遷移します。
+        /// </summary>
+        /// <returns>繊維が完了すると探索画面のビューを発行するストリーム。</returns>
+        public IObservable<IAdventureView> GotoAdventureAsync()
         {
             var viewPrefab = Resources.Load<Views.GameManager>("Prefabs/Manager/GameManager");
-            
-            var model = new Models.GameManager();
-            var view = Instantiate(viewPrefab);
+            IAdventureView view = Instantiate(viewPrefab);
+            return Observable.NextFrame()
+                             .Select(x => view)
+                             .Take(1);
+        }
 
-            var dungeonGen = AssetRepository.I.DungeonGenAsset;
-            var battlerGen = AssetRepository.I.GameParameterAsset;
+        /// <summary>
+        /// タイトル画面に遷移します。
+        /// </summary>
+        /// <returns>遷移が完了するとタイトル画面のビューを発行するストリーム。</returns>
+        public IObservable<ITitleView> GotoTitleAsync()
+        {
+            throw new NotImplementedException();
+        }
 
-            Observable.NextFrame()
-                      .Subscribe(x =>
-			{
-				model.Initialize(dungeonGen, battlerGen, view);
-			}); 
+        private void Start()
+        {
+            var model = new Models.EntryFlow();
+            model.RunAsync(this)
+                 .Subscribe();
         }
     }
 }

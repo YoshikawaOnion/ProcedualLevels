@@ -3,19 +3,23 @@ using System.Collections;
 using System.Linq;
 using UniRx;
 using System;
+using ProcedualLevels.Common;
 
 namespace ProcedualLevels.Models
 {
-    public class GameManager
+    public class AdventureFlow : IFlow
     {
         private CompositeDisposable Disposable { get; set; }
+        private IAdventureView View { get; set; }
+        private AdventureContext Context { get; set; }
 
         public void Initialize(DungeonGenAsset dungeonAsset, GameParameterAsset gameAsset, IAdventureView view)
         {
             Disposable = new CompositeDisposable();
+            View = view;
 
             var map = GenerateMap(dungeonAsset, gameAsset, view);
-            var context = new AdventureContext()
+            Context = new AdventureContext()
             {
                 Hero = new Hero(0, view)
                 {
@@ -30,28 +34,8 @@ namespace ProcedualLevels.Models
                 View = view,
                 Spawners = map.Spawners.ToArray()
             };
-            map.Spawners.ForEach(x => x.Initialize(context));
-            view.Initialize(context);
-
-            // プレイヤーがゴールするか死んだらリセット
-            view.OnGoal.Merge(view.OnPlayerDie)
-                .SelectMany(x => Observable.Timer(TimeSpan.FromSeconds(2)))
-                .First()
-                .Subscribe(x =>
-            {
-                context.Dispose();
-                Disposable.Dispose();
-                var next = new GameManager();
-                var nextViewStream = view.ResetAsync();
-                nextViewStream.Subscribe(nextView => next.Initialize(dungeonAsset, gameAsset, nextView));
-            })
-                .AddTo(Disposable);
-
-            // 残り時間を減らしていく
-            Observable.Interval(TimeSpan.FromSeconds(1))
-                      .Where(x => context.TimeLimit.Value > 0)
-                      .Subscribe(x => context.TimeLimit.Value -= 1)
-                      .AddTo(Disposable);
+            map.Spawners.ForEach(x => x.Initialize(Context));
+            view.Initialize(Context);
         }
 
         /// <summary>
@@ -67,6 +51,42 @@ namespace ProcedualLevels.Models
             var leftBottom = new Vector2(-asset.WorldWidth / 2, -asset.WorldHeight / 2);
             var rightTop = new Vector2(asset.WorldWidth / 2, asset.WorldHeight / 2);
             return generator.GenerateMap(leftBottom, rightTop, view);
+        }
+
+        private IEnumerator Run(IObserver<IFlow> result)
+        {
+            // 残り時間を減らしていく
+            Observable.Interval(TimeSpan.FromSeconds(1))
+                      .Where(x => Context.TimeLimit.Value > 0)
+                      .Subscribe(x => Context.TimeLimit.Value -= 1)
+                      .AddTo(Disposable);
+            
+            yield return View.OnGoal.Merge(View.OnPlayerDie)
+                             .Take(1)
+                             .ToYieldInstruction();
+
+            yield return Observable.Timer(TimeSpan.FromSeconds(2))
+                                   .ToYieldInstruction();
+
+            Context.Dispose();
+            Disposable.Dispose();
+
+            IAdventureView nextView = null;
+            yield return View.ResetAsync()
+                             .Do(x => nextView = x)
+                             .ToYieldInstruction();
+
+            var next = new AdventureFlow();
+            next.Initialize(AssetRepository.I.DungeonGenAsset,
+                            AssetRepository.I.GameParameterAsset,
+                            nextView);
+            result.OnNext(next);
+            result.OnCompleted();
+        }
+
+        public IObservable<IFlow> Start()
+        {            
+            return Observable.FromCoroutine<IFlow>(observer => Run(observer));
         }
     }
 }
