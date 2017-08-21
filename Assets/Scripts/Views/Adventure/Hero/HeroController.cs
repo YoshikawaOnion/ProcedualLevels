@@ -41,7 +41,7 @@ namespace ProcedualLevels.Views
             EventAccepter = eventAccepter;
             JumpController = GetComponent<HeroMoveController>();
             HeroDisposable = new CompositeDisposable();
-            WalkDirection = new ReactiveProperty<int>();
+            WalkDirection = new ReactiveProperty<int>(1);
 
             Animation = GetComponent<HeroAnimationController>();
             Animation.Initialize(WalkDirection);
@@ -53,6 +53,7 @@ namespace ProcedualLevels.Views
             var battle = GetComponent<HeroBattleController>();
             battle.Initialize(eventAccepter, eventReceiver);
 
+            // 敵を踏みつけたら敵を踏まれ状態にする
             this.OnCollisionStay2DAsObservable()
                 .Subscribe(x =>
             {

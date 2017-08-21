@@ -8,4 +8,7 @@ public static class Def
     public static readonly string TerrainTag = "Terrain";
     public static readonly string EnemyTag = "Enemy";
     public static readonly string PlatformTag = "Platform";
+
+    public static readonly int MoveAnimationPriority = 1;
+    public static readonly int AttackAnimationPriority = 2;
 }

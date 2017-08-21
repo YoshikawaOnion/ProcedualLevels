@@ -14,6 +14,8 @@ namespace ProcedualLevels.Views
     /// </summary>
     public class HeroBattleController : MonoBehaviour
     {
+        private static readonly int AnimationPriority = 2;
+
         private List<EnemyController> BattleTargets { get; set; }
         private IPlayerEventAccepter EventAccepter { get; set; }
         private CompositeDisposable Disposable { get; set; }
@@ -58,10 +60,13 @@ namespace ProcedualLevels.Views
                            .FirstOrDefault()
                            .Where(x => x != null)
                            .RepeatAt(attackAnimationUpdateStream)
-                           .Subscribe(x => Animation.AnimateAttack(x.gameObject))
+                           .Subscribe(x => Animation.AnimateAttack(x.gameObject,
+                                                                   Def.AttackAnimationPriority,
+                                                                   Def.AttackAnimationPriority))
                            .AddTo(Disposable);
             
-            idleStream.Subscribe(x => Animation.AnimateNeutral())
+            idleStream.Subscribe(x => Animation.AnimateNeutral(Def.AttackAnimationPriority,
+                                                               Def.MoveAnimationPriority))
                       .AddTo(Disposable);
 
             // トゲに当たったらダメージ。一度当たったら少しの間トゲのダメージを受けない
@@ -123,6 +128,11 @@ namespace ProcedualLevels.Views
                .Skip(60)
                .Subscribe(x => Destroy(obj))
                .AddTo(Disposable);
+        }
+
+        private void OnDestroy()
+        {
+            Disposable.Dispose();
         }
     }
 }

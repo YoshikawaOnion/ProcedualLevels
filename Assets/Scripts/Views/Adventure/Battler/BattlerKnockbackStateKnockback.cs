@@ -52,6 +52,7 @@ namespace ProcedualLevels.Views
                     var factor = Helper.GetRandomInRange(0, 0.8f);
                     var power = new Vector2(0, AssetRepository.I.GameParameterAsset.KnockbackJumpPower * factor);
                     var info = Info.Clone();
+                    info.KnockbackPower = info.KnockbackPower + 2;
                     info.StanTime = Info.StanTime + AssetRepository.I.GameParameterAsset.KnockbackChainStanTimeDelta;
                     x.Rigidbody.AddForce(power);
                     x.Knockback(info, Against);

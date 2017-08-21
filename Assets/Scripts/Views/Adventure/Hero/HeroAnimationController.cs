@@ -42,11 +42,25 @@ namespace ProcedualLevels.Views
         public static readonly string WallJumpLeftAnimation = "Roll_Left2";
         public static readonly string WallJumpRightAnimation = "Roll_Right2";
         public static readonly int LoopInfinite = 0;
+        public static readonly int DiePriority = 10;
 
         [SerializeField]
         private Script_SpriteStudio_Root Sprite;
 
-        private int Direction { get; set; }
+        private int direction_;
+        private int Direction
+        {
+            get { return direction_; }
+            set
+            {
+                if (value == 0)
+                {
+                    throw new InvalidOperationException("Direction は 0 にできません。");
+                }
+                direction_ = value;
+            }
+        }
+        private int CurrentPriority { get; set; }
         private CompositeDisposable Disposable { get; set; }
         private IObservable<int> DirectionSubject { get; set; }
         private bool IsDead { get; set; }
@@ -64,6 +78,7 @@ namespace ProcedualLevels.Views
             DirectionSubject = directionStream;
             IsDead = false;
             Direction = 1;
+            CurrentPriority = 0;
 
             Settings = new Dictionary<string, HeroAnimationSetting>();
             Settings["Idle"] = new HeroAnimationSetting(IdleLeftAnimation, IdleRightAnimation, false);
@@ -86,17 +101,17 @@ namespace ProcedualLevels.Views
             PlayingDisposable = new CompositeDisposable();
         }
 
-        public void AnimateNeutral()
+        public void AnimateNeutral(int priority = 0, int overwritePriority = 0)
         {
             InitializeState();
 
             if (Direction == 0)
             {
-                PlayAnimation(Settings["Idle"], Direction);
+                PlayAnimation(Settings["Idle"], Direction, priority, overwritePriority);
             }
             else
             {
-                PlayAnimation(Settings["Walk"], Direction);
+                PlayAnimation(Settings["Walk"], Direction, priority, overwritePriority);
             }
 
             DirectionSubject.DistinctUntilChanged()
@@ -104,11 +119,11 @@ namespace ProcedualLevels.Views
             {
                 if (direction == 0)
                 {
-                    PlayAnimation(Settings["Idle"], Direction);
+                    PlayAnimation(Settings["Idle"], Direction, priority, overwritePriority);
                 }
                 else
                 {
-                    PlayAnimation(Settings["Walk"], (int)direction);
+                    PlayAnimation(Settings["Walk"], (int)direction, priority, overwritePriority);
                     Direction = Helper.Sign(direction);
                 }                
             }).AddTo(PlayingDisposable);
@@ -117,7 +132,7 @@ namespace ProcedualLevels.Views
         /// <summary>
         /// 敵に攻撃する際のアニメーションを再生します。
         /// </summary>
-        public void AnimateAttack(GameObject target)
+        public void AnimateAttack(GameObject target, int priority = 0, int overwritePriority = 0)
         {
             if (IsDead)
             {
@@ -128,14 +143,14 @@ namespace ProcedualLevels.Views
 
             var direction = target.transform.position - transform.position;
             Direction = Helper.Sign(direction.x);
-            PlayAnimation(Settings["Attack"], Direction);
+            PlayAnimation(Settings["Attack"], Direction, priority, overwritePriority);
         }
 
         /// <summary>
         /// 敵から攻撃を受けた際のアニメーションを再生します。
         /// </summary>
         /// <param name="target">Target.</param>
-		public void AnimateDamage(GameObject target)
+		public void AnimateDamage(GameObject target, int priority = 0, int overwritePriority = 0)
 		{
 			if (IsDead)
 			{
@@ -146,11 +161,37 @@ namespace ProcedualLevels.Views
 
             var direction = target.transform.position - transform.position;
             Direction = Helper.Sign(direction.x);
-            PlayAnimation(Settings["Damage"], Direction);
+            PlayAnimation(Settings["Damage"], Direction, priority, overwritePriority);
 
-			WaitAnimationFinish().Subscribe(x => PlayAnimation(Settings["Damage"], Direction))
+			WaitAnimationFinish().Subscribe(x => PlayAnimation(Settings["Damage"], Direction, priority, overwritePriority))
                                  .AddTo(PlayingDisposable);
 		}
+
+        public void AnimateGrabingWall(int direction, int priority = 0, int overwritePriority = 0)
+        {
+            if (IsDead)
+            {
+                return;
+            }
+
+            InitializeState();
+
+            Direction = Helper.Sign(direction);
+            PlayAnimation(Settings["GrabingWall"], Direction, priority, overwritePriority);
+        }
+
+        public void AnimateWallJump(int direction, int priority = 0, int overwritePriority = 0)
+        {
+            if (IsDead)
+            {
+                return;
+            }
+
+            InitializeState();
+
+            Direction = Helper.Sign(direction);
+            PlayAnimation(Settings["WallJump"], Direction, priority, overwritePriority);
+        }
 
         /// <summary>
         /// 死亡時のアニメーションを再生します。
@@ -164,7 +205,7 @@ namespace ProcedualLevels.Views
                 PlayingDisposable.Dispose();
             }
 
-            PlayAnimation(Settings["Damage"], Direction);
+            PlayAnimation(Settings["Damage"], Direction, DiePriority, DiePriority);
             return WaitAnimationFinish();
         }
 
@@ -200,8 +241,14 @@ namespace ProcedualLevels.Views
             }
         }
 
-        private void PlayAnimation(HeroAnimationSetting setting, int direction)
+        private void PlayAnimation(HeroAnimationSetting setting, int direction, int priority, int overwritePriority)
         {
+            if (CurrentPriority > priority)
+            {
+                return;
+            }
+            CurrentPriority = overwritePriority;
+
             var loopTimes = setting.IsOneShot ? 1 : LoopInfinite;
             if (direction > 0)
             {

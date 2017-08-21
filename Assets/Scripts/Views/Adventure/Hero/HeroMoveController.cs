@@ -134,7 +134,11 @@ namespace ProcedualLevels.Views
                         .Where(x => x.gameObject.tag == Def.TerrainTag
                                || x.gameObject.tag == Def.PlatformTag)
                         .FirstOrDefault()
-                        .Subscribe(x => CheckJump())
+                        .Subscribe(x => 
+            {
+                CheckJump();
+                Animation.AnimateNeutral(Def.MoveAnimationPriority, Def.MoveAnimationPriority);
+            })
                         .AddTo(Disposable);
 
             // 順方向のキーを押し込むと落下速度が減少
@@ -241,6 +245,9 @@ namespace ProcedualLevels.Views
                && contact.normal.y >= -groundNormalXRange)
             {
                 SetGrabingWallState(contact.normal.x);
+                Animation.AnimateGrabingWall(Helper.Sign(-contact.normal.x),
+                                             Def.MoveAnimationPriority,
+                                             Def.MoveAnimationPriority);
             }
         }
 
@@ -259,6 +266,7 @@ namespace ProcedualLevels.Views
                     SetGroundState();
                     IsOnGround = true;
                     JumpCount = 0;
+                    Animation.AnimateNeutral(Def.MoveAnimationPriority, Def.MoveAnimationPriority);
                 }
             }
         }
@@ -321,6 +329,7 @@ namespace ProcedualLevels.Views
             
             Hero.WalkDirection.Value = Helper.Sign(direction);
             IsOnGround = false;
+            Animation.AnimateWallJump(Hero.WalkDirection.Value, Def.MoveAnimationPriority, Def.MoveAnimationPriority);
             SetWallJumpState();
         }
 
