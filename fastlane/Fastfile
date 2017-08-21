@@ -1,0 +1,34 @@
+# All available actions: https://docs.fastlane.tools/actions
+# can also be listed using the `fastlane actions` command
+
+fastlane_version "2.46.0"
+
+before_all do
+end
+
+desc "iOS - XCodeビルド & TestFairyへアップロード"
+lane :build_iOS do
+  gym(
+    project: "./bin/ios/Unity-iPhone.xcodeproj",
+    output_directory: "./bin/ios/ipa/",
+    output_name: "ProcedualLevels.ipa",
+    silent: true,
+    clean: true,
+    export_method: "ad-hoc"
+  )
+
+  testfairy(
+    api_key: "ceb81025f5bc30a29d206860b8599a4e20ce08b6",
+    comment: ENV['BUILD_COMMENT'],
+    ipa: "./bin/ios/ipa/ProcedualLevels.ipa"
+  )
+end
+
+desc "Android - TestFairyへアップロード"
+lane :send_Android do
+  testfairy(
+    api_key: "ceb81025f5bc30a29d206860b8599a4e20ce08b6",
+    comment: ENV['BUILD_COMMENT'],
+    ipa: "./bin/android/ProcedualLevels.apk"
+  )
+end
