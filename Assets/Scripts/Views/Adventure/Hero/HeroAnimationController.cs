@@ -90,7 +90,6 @@ namespace ProcedualLevels.Views
         {
             InitializeState();
 
-            Debug.Log("Neutral");
             if (Direction == 0)
             {
                 PlayAnimation(Settings["Idle"], Direction);
@@ -146,8 +145,8 @@ namespace ProcedualLevels.Views
             InitializeState();
 
             var direction = target.transform.position - transform.position;
-            PlayAnimation(Settings["Damage"], (int)direction.x);
-            Direction = Helper.Sign((int)direction.x);
+            Direction = Helper.Sign(direction.x);
+            PlayAnimation(Settings["Damage"], Direction);
 
 			WaitAnimationFinish().Subscribe(x => PlayAnimation(Settings["Damage"], Direction))
                                  .AddTo(PlayingDisposable);

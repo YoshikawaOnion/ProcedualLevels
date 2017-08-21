@@ -169,10 +169,20 @@ namespace ProcedualLevels.Common
                          .Concat(resume);
         }
 
+        /// <summary>
+        /// 指定したストリームに値が流れてきたらストリームを再開する IObservable を生成します。
+        /// </summary>
+        /// <returns>新しいストリーム。</returns>
+        /// <param name="source">再開するストリーム。</param>
+        /// <param name="resume">再開のトリガーとなるストリーム。</param>
+        /// <typeparam name="T">再開するストリームの型。</typeparam>
+        /// <typeparam name="U">再開のトリガーとなるストリームの型。</typeparam>
         public static IObservable<T> RepeatAt<T, U>(this IObservable<T> source,
                                                    IObservable<U> resume)
+            where U : class
         {
-            var repeat = resume.SelectMany(x => source.RepeatAt(resume));
+            var repeat = resume.Take(1)
+                               .SelectMany(x => source.RepeatAt(resume));
             return source.Concat(repeat);
         }
     }

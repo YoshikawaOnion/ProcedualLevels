@@ -44,18 +44,25 @@ namespace ProcedualLevels.Views
                            .Subscribe(x => BattleTargets.Add(x))
                            .AddTo(Disposable);
 
-            // 戦闘をしたら戦闘アニメーションを再生
-            onTouchingEnemy.Where(x => IsAttackingFor(x, Hero))
-                           .DistinctUntilChanged(x => Hero.WalkDirection.Value)
-                           .Do(x => Debug.Log("Attack"))
-                           .Subscribe(x => Animation.AnimateAttack(x.gameObject));
+            // 少しの間戦闘をしないでいると通常のアニメーションへ遷移するためのストリーム
+            var idleStream = onTouchingEnemy.Where(x => IsAttackingFor(x, Hero))
+                                            .Throttle(TimeSpan.FromMilliseconds(500));
+
+            // 攻撃方向を変えたり戦闘をやめたら攻撃アニメーションをリセットするためのストリーム
+            var attackAnimationUpdateStream = onTouchingEnemy.DistinctUntilChanged(x => Hero.WalkDirection.Value)
+                                                             .Skip(1)
+                                                             .Merge(idleStream);
             
-            // 少しの間戦闘をしないでいると通常のアニメーションへ遷移
+            // 戦闘をしたら戦闘アニメーションを再生。
             onTouchingEnemy.Where(x => IsAttackingFor(x, Hero))
-                           .Throttle(TimeSpan.FromMilliseconds(1000))
-                           .Do(x => Debug.Log("Idle"))
-                           .Subscribe(x => Animation.AnimateNeutral())
+                           .FirstOrDefault()
+                           .Where(x => x != null)
+                           .RepeatAt(attackAnimationUpdateStream)
+                           .Subscribe(x => Animation.AnimateAttack(x.gameObject))
                            .AddTo(Disposable);
+            
+            idleStream.Subscribe(x => Animation.AnimateNeutral())
+                      .AddTo(Disposable);
 
             // トゲに当たったらダメージ。一度当たったら少しの間トゲのダメージを受けない
             eventReceiver.OnBattlerTouchedSpikeReceiver
@@ -80,20 +87,26 @@ namespace ProcedualLevels.Views
             {
                 var distincted = BattleTargets.GroupBy(x => x.Battler.Index)
                                               .Select(x => x.First());
+                BattlerController attackingFor = null;
                 foreach (var target in distincted)
                 {
                     if (IsAttackingFor(target, Hero))
                     {
                         EventAccepter.OnPlayerBattleWithEnemySender
                                      .OnNext(target.Enemy);
+                        attackingFor = target;
                     }
                     else
                     {
                         EventAccepter.OnPlayerAttackedByEnemySender
                                      .OnNext(target.Enemy);
-                        Animation.AnimateDamage(target.gameObject);
                     }
                     PlayHitEffect(target.transform.position);
+                }
+
+                if (attackingFor == null)
+                {
+                    Animation.AnimateDamage(BattleTargets[0].gameObject);
                 }
 
                 BattleTargets.Clear();
