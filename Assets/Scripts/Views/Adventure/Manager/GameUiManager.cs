@@ -13,5 +13,6 @@ namespace ProcedualLevels.Views
         public TimeLimit TimeLimitLabel;
         public GameObject ClearBackground;
         public GameObject ClearText;
+        public UILabel Score;
     }
 }

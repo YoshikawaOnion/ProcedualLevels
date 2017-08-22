@@ -93,6 +93,7 @@ namespace ProcedualLevels.Views
 
             gameUi.TimeLimitLabel.Initialize(modelContext);
             gameUi.ClearText.SetActive(false);
+            modelContext.Score.Subscribe(x => gameUi.Score.text = x.ToString());
         }
 
         /// <summary>

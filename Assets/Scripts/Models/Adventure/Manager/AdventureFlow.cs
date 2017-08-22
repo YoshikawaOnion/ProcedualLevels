@@ -35,6 +35,13 @@ namespace ProcedualLevels.Models
                 Spawners = map.Spawners.ToArray()
             };
             map.Spawners.ForEach(x => x.Initialize(Context));
+
+            foreach (var enemy in map.Enemies)
+            {
+                enemy.IsAlive.Where(x => !x)
+                     .Subscribe(x => Context.Score.Value += 1);
+            }
+
             view.Initialize(Context);
         }
 
