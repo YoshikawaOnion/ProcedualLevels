@@ -33,7 +33,10 @@ namespace ProcedualLevels.Views
         [SerializeField]
         private float wallDraggingVelocity = 0;
         [SerializeField]
-        private Collider2D WallDetecter;
+        private Collider2D WallDetecterLeft;
+        [SerializeField]
+        private Collider2D WallDetecterRight;
+        private int wallDetectCount_;
 
         private CompositeDisposable Disposable { get; set; }
         private HeroController Hero { get; set; }
@@ -46,6 +49,15 @@ namespace ProcedualLevels.Views
         private bool IsOnGround { get; set; }
         private Subject<int> WalkSubject { get; set; }
         private Subject<bool> JumpSubject { get; set; }
+        private int WallDetectCount
+        {
+            get{ return wallDetectCount_; }
+            set
+            {
+                wallDetectCount_ = value;
+                Debug.Log("WallDetectCount:" + value);
+            }
+        }
 
         private void Start()
         {
@@ -56,6 +68,7 @@ namespace ProcedualLevels.Views
             WalkSubject = new Subject<int>();
             JumpSubject = new Subject<bool>();
             JumpCount = 0;
+            WallDetectCount = 0;
             GravityScale = Rigidbody.gravityScale;
             SetFullJumpState();
         }
@@ -125,21 +138,36 @@ namespace ProcedualLevels.Views
             JumpSubject.SkipWhile(x => x)
                        .Where(x => x)
                        .FirstOrDefault()
-                       .Subscribe(x => WallJump(direction))
+                       .Subscribe(x =>
+            {
+                WallDetectCount = 0;
+                WallJump(direction);
+            })
                        .AddTo(Disposable);
             //*/
 
+            WallDetecterLeft.OnTriggerEnter2DAsObservable()
+                            .Merge(WallDetecterRight.OnTriggerEnter2DAsObservable())
+                            .Where(x => x.gameObject.tag == Def.TerrainTag
+                                   || x.gameObject.tag == Def.PlatformTag)
+                            .Subscribe(x => WallDetectCount++)
+                            .AddTo(Disposable);
+
             // ずり落ちたり壁を離れたらジャンプ状態へ遷移
-            WallDetecter.OnTriggerExit2DAsObservable()
-                        .Where(x => x.gameObject.tag == Def.TerrainTag
-                               || x.gameObject.tag == Def.PlatformTag)
-                        .FirstOrDefault()
-                        .Subscribe(x => 
+            WallDetecterLeft.OnTriggerExit2DAsObservable()
+                            .Merge(WallDetecterRight.OnTriggerExit2DAsObservable())
+                            .Where(x => x.gameObject.tag == Def.TerrainTag
+                                   || x.gameObject.tag == Def.PlatformTag)
+                            .Subscribe(x =>
             {
-                CheckJump();
-                Animation.AnimateNeutral(Def.MoveAnimationPriority, Def.MoveAnimationPriority);
+                WallDetectCount--;
+                if (WallDetectCount <= 0)
+                {
+                    CheckJump();
+                    Animation.AnimateNeutral(Def.MoveAnimationPriority, Def.MoveAnimationPriority);
+                }
             })
-                        .AddTo(Disposable);
+                            .AddTo(Disposable);
 
             // 順方向のキーを押し込むと落下速度が減少
             WalkSubject.SkipWhile(x => Rigidbody.velocity.y > 0)
@@ -200,12 +228,26 @@ namespace ProcedualLevels.Views
         /// </summary>
         private void ActivateGrab()
         {
-            Hero.OnCollisionStay2DAsObservable()
-                .SkipUntil(Observable.Timer(TimeSpan.FromMilliseconds(100)))
-                .Where(x => x.gameObject.tag == Def.TerrainTag
-                       || x.gameObject.tag == Def.PlatformTag)
-                .Subscribe(x => CheckGrabingWall(x))
-                .AddTo(Disposable);
+            GetWallDetection(WallDetecterLeft, 1).Merge(GetWallDetection(WallDetecterRight, -1))
+                                                 .Do(x => WallDetectCount++)
+                                                 .ThrottleFirst(TimeSpan.FromMilliseconds(50))
+                                                 .Subscribe(x =>
+            {
+                SetGrabingWallState(x);
+                Animation.AnimateGrabingWall(-x,
+                                             Def.MoveAnimationPriority,
+                                             Def.MoveAnimationPriority);
+            })
+                                                 .AddTo(Disposable);
+        }
+
+        private IObservable<int> GetWallDetection(Collider2D collider, int normalDirection)
+        {
+            return collider.OnTriggerStay2DAsObservable()
+                           .SkipUntil(Observable.Timer(TimeSpan.FromMilliseconds(100)))
+                           .Where(x => x.gameObject.tag == Def.TerrainTag
+                                  || x.gameObject.tag == Def.PlatformTag)
+                           .Select(x => normalDirection);
         }
 
         /// <summary>
@@ -326,7 +368,7 @@ namespace ProcedualLevels.Views
             jumpStopper1.Merge(jumpStopper2)
                         .FirstOrDefault()
                         .Subscribe(t => Rigidbody.gravityScale = GravityScale);
-            
+
             Hero.WalkDirection.Value = Helper.Sign(direction);
             IsOnGround = false;
             Animation.AnimateWallJump(Hero.WalkDirection.Value, Def.MoveAnimationPriority, Def.MoveAnimationPriority);
