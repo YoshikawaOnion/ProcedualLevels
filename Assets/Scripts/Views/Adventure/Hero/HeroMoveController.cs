@@ -4,6 +4,8 @@ using UniRx;
 using UniRx.Triggers;
 using System;
 using ProcedualLevels.Common;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace ProcedualLevels.Views
 {
@@ -49,9 +51,10 @@ namespace ProcedualLevels.Views
         private bool IsOnGround { get; set; }
         private Subject<int> WalkSubject { get; set; }
         private Subject<bool> JumpSubject { get; set; }
+        private List<int> DetectedWallDirections { get; set; }
         private int WallDetectCount
         {
-            get{ return wallDetectCount_; }
+            get { return wallDetectCount_; }
             set
             {
                 wallDetectCount_ = value;
@@ -67,10 +70,32 @@ namespace ProcedualLevels.Views
             MoveController = GetComponent<MoveController>();
             WalkSubject = new Subject<int>();
             JumpSubject = new Subject<bool>();
+            DetectedWallDirections = new List<int>();
             JumpCount = 0;
             WallDetectCount = 0;
             GravityScale = Rigidbody.gravityScale;
             SetFullJumpState();
+
+            {
+                var leftWallDetection = GetWallEvent(WallDetecterLeft.OnTriggerEnter2DAsObservable(), 1);
+                var rightWallDetection = GetWallEvent(WallDetecterRight.OnTriggerEnter2DAsObservable(), -1);
+                leftWallDetection.Merge(rightWallDetection)
+                                 .Subscribe(x => DetectedWallDirections.Add(x))
+                                 .AddTo(this);
+
+                var leftWallExit = GetWallEvent(WallDetecterLeft.OnTriggerExit2DAsObservable(), 1);
+                var rightWallExit = GetWallEvent(WallDetecterRight.OnTriggerExit2DAsObservable(), -1);
+                leftWallExit.Merge(rightWallExit)
+                            .Subscribe(x => DetectedWallDirections.Remove(x))
+                            .AddTo(this);
+            }
+        }
+
+        private IObservable<int> GetWallEvent(IObservable<Collider2D> source, int normalDirection)
+        {
+            return source.Where(x => x.gameObject.tag == Def.TerrainTag
+                                || x.gameObject.tag == Def.PlatformTag)
+                         .Select(x => normalDirection);
         }
 
         /// <summary>
@@ -134,40 +159,26 @@ namespace ProcedualLevels.Views
             ActivateWalk(jumpingAccelScale);
 
             // 一度ジャンプキーを離してから再びジャンプすると壁ジャンプ
-            //*/
             JumpSubject.SkipWhile(x => x)
                        .Where(x => x)
                        .FirstOrDefault()
                        .Subscribe(x =>
             {
-                WallDetectCount = 0;
+                Debug.Log("WallJump:" + direction);
                 WallJump(direction);
             })
                        .AddTo(Disposable);
-            //*/
-
-            WallDetecterLeft.OnTriggerEnter2DAsObservable()
-                            .Merge(WallDetecterRight.OnTriggerEnter2DAsObservable())
-                            .Where(x => x.gameObject.tag == Def.TerrainTag
-                                   || x.gameObject.tag == Def.PlatformTag)
-                            .Subscribe(x => WallDetectCount++)
-                            .AddTo(Disposable);
 
             // ずり落ちたり壁を離れたらジャンプ状態へ遷移
-            WallDetecterLeft.OnTriggerExit2DAsObservable()
-                            .Merge(WallDetecterRight.OnTriggerExit2DAsObservable())
-                            .Where(x => x.gameObject.tag == Def.TerrainTag
-                                   || x.gameObject.tag == Def.PlatformTag)
-                            .Subscribe(x =>
+            this.UpdateAsObservable()
+                .Where(x => !DetectedWallDirections.Any())
+                .Take(1)
+                .Subscribe(x =>
             {
-                WallDetectCount--;
-                if (WallDetectCount <= 0)
-                {
-                    CheckJump();
-                    Animation.AnimateNeutral(Def.MoveAnimationPriority, Def.MoveAnimationPriority);
-                }
+                CheckJump();
+                Animation.AnimateNeutral(Def.MoveAnimationPriority, Def.MoveAnimationPriority);
             })
-                            .AddTo(Disposable);
+                .AddTo(Disposable);
 
             // 順方向のキーを押し込むと落下速度が減少
             WalkSubject.SkipWhile(x => Rigidbody.velocity.y > 0)
@@ -228,17 +239,18 @@ namespace ProcedualLevels.Views
         /// </summary>
         private void ActivateGrab()
         {
-            GetWallDetection(WallDetecterLeft, 1).Merge(GetWallDetection(WallDetecterRight, -1))
-                                                 .Do(x => WallDetectCount++)
-                                                 .ThrottleFirst(TimeSpan.FromMilliseconds(50))
-                                                 .Subscribe(x =>
+            this.UpdateAsObservable()
+                .Where(x => DetectedWallDirections.Any())
+                .Take(1)
+                .Subscribe(x =>
             {
-                SetGrabingWallState(x);
-                Animation.AnimateGrabingWall(-x,
+                var dir = DetectedWallDirections.First();
+                SetGrabingWallState(dir);
+                Animation.AnimateGrabingWall(-dir,
                                              Def.MoveAnimationPriority,
                                              Def.MoveAnimationPriority);
             })
-                                                 .AddTo(Disposable);
+                .AddTo(Disposable);
         }
 
         private IObservable<int> GetWallDetection(Collider2D collider, int normalDirection)
