@@ -35,7 +35,7 @@ namespace ProcedualLevels.Views
                 .normalized;
             if (Mathf.Abs(direction.x) <= float.Epsilon)
             {
-                direction.x = 1;
+                direction.x = 1;  // X==0だとノックバック距離が0になるので
             }
             var force = direction * info.KnockbackPower;
             var jump = new Vector3(0, info.KnockbackJumpPower, 0);
