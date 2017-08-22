@@ -203,7 +203,7 @@ namespace ProcedualLevels.Views
             Hero.OnCollisionStay2DAsObservable()
                 .SkipUntil(Observable.Timer(TimeSpan.FromMilliseconds(100)))
                 .Where(x => x.gameObject.tag == Def.TerrainTag
-                      || x.gameObject.tag == Def.PlatformTag)
+                       || x.gameObject.tag == Def.PlatformTag)
                 .Subscribe(x => CheckGrabingWall(x))
                 .AddTo(Disposable);
         }

@@ -12,6 +12,11 @@ namespace ProcedualLevels.Models
     /// </summary>
     public class OnBottomPathGenStrategy : PathGenStrategy
     {
+        enum SlimWallKind
+        {
+            Alright, PathIsHigh, PathIsLow
+        }
+
         /// <summary>
         /// 部屋を通路で接続します。
         /// </summary>
@@ -29,9 +34,7 @@ namespace ProcedualLevels.Models
                 foreach (var topDiv in horizontalAdjacents)
                 {
                     var path = CreatePath(bottomDiv, topDiv);
-                    if (GetDivisionHavingSlimWall(map, path).Any())
-                    {
-                    }
+                    ResolveSlimWall(map, path);
                     yield return new MapConnection(bottomDiv, topDiv, path, true);
                 }
 
@@ -51,7 +54,6 @@ namespace ProcedualLevels.Models
                     }
                 }
             }
-            Debug.Log("Path Generated");
         }
 
         private bool IsThereSlimWall(MapData map, IMapPath path)
@@ -63,16 +65,30 @@ namespace ProcedualLevels.Models
             });
         }
 
-        private IEnumerable<MapDivision> GetDivisionHavingSlimWall(MapData map, OnBottomHorizontalPath path)
+        private void ResolveSlimWall(MapData map, OnBottomHorizontalPath path)
         {
-            return map.Divisions.Where(x =>
+            foreach (var div in map.Divisions)
             {
-                return path.EndPath != null
-                           && (x.Room.Top - path.EndPath.Bottom > 0
-                               || x.Room.Bottom - path.EndPath.Top < 0)
-                           && (x.Room.Bottom - path.StartPath.Top < 0
-                               || x.Room.Top - path.StartPath.Bottom > 0);
-            });
+                if (path.EndPath != null)
+                {
+                    if (path.EndPath.Left == div.Room.Left)
+                    {
+                        if (div.Room.Top - path.EndPath.Bottom == 1) // 通路の下が食い込むとき
+                        {
+                            path.StartPath.Top += 1;
+                            path.StartPath.Bottom += 1;
+                            path.EndPath.Top += 1;
+                            path.EndPath.Bottom += 1;
+                            path.DebugMark = true;
+                        }
+                        if (path.EndPath.Top - div.Room.Bottom == 1) // 通路の上が食い込むとき
+                        {
+                            div.Room.Bottom += 1;
+                            path.DebugMark = true;
+                        }
+                    }
+                }
+            }
         }
 
         private IMapPath CreateVerticalPath(MapDivision bottomDiv, MapDivision topDiv)

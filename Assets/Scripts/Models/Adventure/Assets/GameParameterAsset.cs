@@ -17,5 +17,7 @@ namespace ProcedualLevels.Models
         public int SpikeNumber;
         public float TrampleForce;
         public float RecoverTimeFromTrampled;
+        [Tooltip("プレイヤーの吹き飛ばし力の最小値")]
+        public int PlayerKnockbackPowerBase;
     }
 }
