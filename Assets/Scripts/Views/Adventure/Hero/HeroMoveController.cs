@@ -38,7 +38,6 @@ namespace ProcedualLevels.Views
         private Collider2D WallDetecterLeft;
         [SerializeField]
         private Collider2D WallDetecterRight;
-        private int wallDetectCount_;
 
         private CompositeDisposable Disposable { get; set; }
         private HeroController Hero { get; set; }
@@ -52,15 +51,6 @@ namespace ProcedualLevels.Views
         private Subject<int> WalkSubject { get; set; }
         private Subject<bool> JumpSubject { get; set; }
         private List<int> DetectedWallDirections { get; set; }
-        private int WallDetectCount
-        {
-            get { return wallDetectCount_; }
-            set
-            {
-                wallDetectCount_ = value;
-                Debug.Log("WallDetectCount:" + value);
-            }
-        }
 
         private void Start()
         {
@@ -72,7 +62,6 @@ namespace ProcedualLevels.Views
             JumpSubject = new Subject<bool>();
             DetectedWallDirections = new List<int>();
             JumpCount = 0;
-            WallDetectCount = 0;
             GravityScale = Rigidbody.gravityScale;
             SetFullJumpState();
 
@@ -98,6 +87,7 @@ namespace ProcedualLevels.Views
                          .Select(x => normalDirection);
         }
 
+        #region State
         /// <summary>
         /// 現在の状態に紐づけられた振る舞いを停止します。
         /// </summary>
@@ -164,7 +154,6 @@ namespace ProcedualLevels.Views
                        .FirstOrDefault()
                        .Subscribe(x =>
             {
-                Debug.Log("WallJump:" + direction);
                 WallJump(direction);
             })
                        .AddTo(Disposable);
@@ -193,7 +182,6 @@ namespace ProcedualLevels.Views
         /// </summary>
         public void SetWallJumpState()
         {
-            //Debug.Log("State: WallJump");
             InitializeState();
             ActivateGroundCheck();
             ActivateGrab();
@@ -205,12 +193,13 @@ namespace ProcedualLevels.Views
                       .Subscribe(x => CheckJump())
                       .AddTo(Disposable);
         }
+        #endregion
 
-
+        #region Activation
         /// <summary>
         /// 現在の状態でジャンプができるようにします。
         /// </summary>
-		private void ActivateJump()
+        private void ActivateJump()
         {
             JumpSubject.SkipWhile(x => x)
                        .Where(x => x)
@@ -240,6 +229,7 @@ namespace ProcedualLevels.Views
         private void ActivateGrab()
         {
             this.UpdateAsObservable()
+                .SkipUntil(Observable.Timer(TimeSpan.FromMilliseconds(100)))
                 .Where(x => DetectedWallDirections.Any())
                 .Take(1)
                 .Subscribe(x =>
@@ -251,15 +241,6 @@ namespace ProcedualLevels.Views
                                              Def.MoveAnimationPriority);
             })
                 .AddTo(Disposable);
-        }
-
-        private IObservable<int> GetWallDetection(Collider2D collider, int normalDirection)
-        {
-            return collider.OnTriggerStay2DAsObservable()
-                           .SkipUntil(Observable.Timer(TimeSpan.FromMilliseconds(100)))
-                           .Where(x => x.gameObject.tag == Def.TerrainTag
-                                  || x.gameObject.tag == Def.PlatformTag)
-                           .Select(x => normalDirection);
         }
 
         /// <summary>
@@ -286,7 +267,7 @@ namespace ProcedualLevels.Views
             WalkSubject.Subscribe(x => ActualyWalk(powerScale))
                        .AddTo(Disposable);
         }
-
+        #endregion
 
         /// <summary>
         /// 壁に張り付く状況であれば壁に張り付いた状態に遷移します。
@@ -379,7 +360,8 @@ namespace ProcedualLevels.Views
                                          .Select(t => Unit.Default);
             jumpStopper1.Merge(jumpStopper2)
                         .FirstOrDefault()
-                        .Subscribe(t => Rigidbody.gravityScale = GravityScale);
+                        .Subscribe(t => Rigidbody.gravityScale = GravityScale)
+                        .AddTo(Hero);
 
             Hero.WalkDirection.Value = Helper.Sign(direction);
             IsOnGround = false;
