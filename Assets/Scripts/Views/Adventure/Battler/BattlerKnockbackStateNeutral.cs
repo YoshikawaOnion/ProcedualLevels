@@ -33,6 +33,10 @@ namespace ProcedualLevels.Views
             var direction = -(against.transform.position - Context.transform.position)
                 .MergeY(0)
                 .normalized;
+            if (Mathf.Abs(direction.x) <= float.Epsilon)
+            {
+                direction.x = 1;
+            }
             var force = direction * info.KnockbackPower;
             var jump = new Vector3(0, info.KnockbackJumpPower, 0);
 

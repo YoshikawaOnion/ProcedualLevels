@@ -160,7 +160,7 @@ namespace ProcedualLevels.Views
             InitializeState();
 
             var direction = target.transform.position - transform.position;
-            Direction = Helper.Sign(direction.x);
+            Direction = (int)Mathf.Sign(direction.x);
             PlayAnimation(Settings["Damage"], Direction, priority, overwritePriority);
 
 			WaitAnimationFinish().Subscribe(x => PlayAnimation(Settings["Damage"], Direction, priority, overwritePriority))
