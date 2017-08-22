@@ -55,22 +55,21 @@ namespace ProcedualLevels.Models
             {
                 var majorLeftBlockX = EndPath.Left;
                 var majorRightBlockX = EndPath.Right - 1;
-                if (EndPath.Top > StartPath.Top)
+                if (EndPath.Top > StartPath.Top)  // 上に伸びる場合
                 {
                     var majorBlockY = connection.TopDivision.Room.Bottom;
-                    var cornerY = StartPath.Top - 1;
                     yield return new Vector2(majorLeftBlockX, majorBlockY);
                     yield return new Vector2(majorRightBlockX, majorBlockY);
-                    yield return new Vector2(majorLeftBlockX, cornerY);
                 }
-                else if(EndPath.Bottom < StartPath.Bottom)
+                else if(EndPath.Bottom < StartPath.Bottom)  // 下に伸びる場合
                 {
                     var majorBlockY = connection.TopDivision.Room.Top - 1;
-                    var cornerY = StartPath.Bottom;
                     yield return new Vector2(majorLeftBlockX, majorBlockY);
                     yield return new Vector2(majorRightBlockX, majorBlockY);
-                    yield return new Vector2(majorLeftBlockX, cornerY);
                 }
+
+                yield return new Vector2(majorLeftBlockX, StartPath.Bottom);
+                yield return new Vector2(majorLeftBlockX, StartPath.Top - 1);
 
                 foreach (var div in map.Divisions)
                 {

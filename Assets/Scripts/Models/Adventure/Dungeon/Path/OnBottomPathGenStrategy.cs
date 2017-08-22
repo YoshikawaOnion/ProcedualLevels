@@ -45,6 +45,7 @@ namespace ProcedualLevels.Models
                     if (topDiv.Room.Right <= bottomDiv.Room.Right)
                     {
                         var path = CreateVerticalPath(bottomDiv, topDiv);
+                        path.DebugMark = true;
                         if (IsThereSlimWall(map, path))
                         {
                             // 厚さ1マスの天井などができるような通路は生成しない
@@ -79,12 +80,12 @@ namespace ProcedualLevels.Models
                             path.StartPath.Bottom += 1;
                             path.EndPath.Top += 1;
                             path.EndPath.Bottom += 1;
-                            path.DebugMark = true;
+                            //path.DebugMark = true;
                         }
                         if (path.EndPath.Top - div.Room.Bottom == 1) // 通路の上が食い込むとき
                         {
                             div.Room.Bottom += 1;
-                            path.DebugMark = true;
+                            //path.DebugMark = true;
                         }
                     }
                 }
