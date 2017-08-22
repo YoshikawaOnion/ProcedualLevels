@@ -228,6 +228,7 @@ namespace ProcedualLevels.Views
         /// </summary>
         private void ActivateGrab()
         {
+            // 壁を1つ以上検知したら GrabingWall 状態へ(壁ジャンプの瞬間に張り付き判定をしないように遅延させる)
             this.UpdateAsObservable()
                 .SkipUntil(Observable.Timer(TimeSpan.FromMilliseconds(100)))
                 .Where(x => DetectedWallDirections.Any())
