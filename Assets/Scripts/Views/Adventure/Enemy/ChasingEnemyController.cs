@@ -17,10 +17,13 @@ namespace ProcedualLevels.Views
         private Collider2D FloorFinderLeft = null;
         [SerializeField]
         private Collider2D FloorFinderRight = null;
+        [SerializeField]
+        private Collider2D FloorFinderCenter = null;
 
         private MoveController MoveController { get; set; }
         private int LeftFloorCount { get; set; }
         private int RightFloorCount { get; set; }
+        private int CenterFloorCount { get; set; }
 
         public override void Initialize(Models.Enemy enemy, AdventureViewContext context)
         {
@@ -29,10 +32,12 @@ namespace ProcedualLevels.Views
 
             SubscribeFloorState(FloorFinderLeft, x => LeftFloorCount += x);
             SubscribeFloorState(FloorFinderRight, x => RightFloorCount += x);
+            SubscribeFloorState(FloorFinderCenter, x => CenterFloorCount += x);
         }
 
         private void SubscribeFloorState(Collider2D collider, Action<int> adder)
         {
+            // 目の前にある床を検知してカウント。0の場合進むことができない
             collider.OnTriggerEnter2DAsObservable()
                     .Where(x => x.tag == Def.TerrainTag || x.tag == Def.PlatformTag)
                     .Subscribe(x => adder(1));
@@ -57,6 +62,11 @@ namespace ProcedualLevels.Views
 			{
 				return;
 			}
+
+            if (CenterFloorCount == 0)
+            {
+                return;
+            }
 
             var direction = (Context.Hero.transform.position - transform.position).normalized;
             var walkDirection = Helper.Sign(direction.x, 0.2f);
