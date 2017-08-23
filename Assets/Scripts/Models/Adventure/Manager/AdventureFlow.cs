@@ -18,8 +18,11 @@ namespace ProcedualLevels.Models
         private IAdventureView View { get; set; }
         private AdventureContext Context { get; set; }
 
-        public void Initialize(DungeonGenAsset dungeonAsset, GameParameterAsset gameAsset, IAdventureView view)
+        public void Initialize(IAdventureView view)
         {
+            var dungeonAsset = AssetRepository.I.DungeonGenAsset;
+            var gameAsset = AssetRepository.I.GameParameterAsset;
+
             Disposable = new CompositeDisposable();
             View = view;
 
@@ -94,9 +97,7 @@ namespace ProcedualLevels.Models
                                  .ToYieldInstruction();
 
                 var next = new AdventureFlow();
-                next.Initialize(AssetRepository.I.DungeonGenAsset,
-                                AssetRepository.I.GameParameterAsset,
-                                nextView);
+                next.Initialize(nextView);
                 result.OnNext(next);
                 result.OnCompleted();
             }

@@ -46,7 +46,14 @@ namespace ProcedualLevels.Models
 
             yield return View.OnTap.Take(1).ToYieldInstruction();
 
-            result.OnNext(null);
+            IAdventureView nextView = null;
+            yield return View.GotoAdventure()
+                             .Do(x => nextView = x)
+                             .ToYieldInstruction();
+
+            var nextFlow = new AdventureFlow();
+            nextFlow.Initialize(nextView);
+            result.OnNext(nextFlow);
             result.OnCompleted();
         }
     }

@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using UniRx;
 using UnityEngine;
 using UniRx.Triggers;
+using ProcedualLevels.Models;
 
 namespace ProcedualLevels.Views
 {
@@ -60,6 +61,17 @@ namespace ProcedualLevels.Views
         public void ShowTapInstruction()
         {
             tapInstructionLabel.gameObject.SetActive(true);
+        }
+
+        public IObservable<IAdventureView> GotoAdventure()
+        {
+            Destroy(gameObject);
+
+            var viewPrefab = Resources.Load<Views.GameManager>("Prefabs/Manager/GameManager");
+            IAdventureView view = Instantiate(viewPrefab);
+
+            return Observable.NextFrame()
+                             .Select(x => view);
         }
     }
 }

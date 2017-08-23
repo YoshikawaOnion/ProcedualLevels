@@ -27,9 +27,7 @@ namespace ProcedualLevels.Models
                              .ToYieldInstruction();
 
             var adventure = new AdventureFlow();
-            adventure.Initialize(AssetRepository.I.DungeonGenAsset,
-                                 AssetRepository.I.GameParameterAsset,
-                                 nextView);
+            adventure.Initialize(nextView);
             result.OnNext(adventure);
             result.OnCompleted();
         }

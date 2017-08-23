@@ -11,5 +11,6 @@ namespace ProcedualLevels.Models
         IObservable<Unit> AnimateBonusAsync(int restTime, int score, int finalScore);
         void ResetScoreBoard(int restTime, int score);
         void ShowTapInstruction();
+        IObservable<IAdventureView> GotoAdventure();
     }
 }
