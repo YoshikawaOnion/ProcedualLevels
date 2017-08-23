@@ -83,7 +83,9 @@ namespace ProcedualLevels.Models
                              .Do(x => r = x)
                              .ToYieldInstruction();
 
-            yield return Observable.Timer(TimeSpan.FromSeconds(1))
+            View.StopGame();
+
+            yield return Observable.TimerFrame(60)
                                    .ToYieldInstruction();
 
             Context.Dispose();

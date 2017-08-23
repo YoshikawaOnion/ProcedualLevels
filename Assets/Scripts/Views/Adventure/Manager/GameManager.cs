@@ -141,6 +141,7 @@ namespace ProcedualLevels.Views
             Destroy(gameObject);
             Destroy(Context.UiManager.gameObject);
             Destroy(ObjectManager.gameObject);
+            Time.timeScale = 1;
 
             var viewPrefab = Resources.Load<Views.GameManager>("Prefabs/Manager/GameManager");
             IAdventureView view = Instantiate(viewPrefab);
@@ -153,12 +154,18 @@ namespace ProcedualLevels.Views
             Destroy(gameObject);
             Destroy(Context.UiManager.gameObject);
             Destroy(ObjectManager.gameObject);
+            Time.timeScale = 1;
 
             var viewPrefab = Resources.Load<Views.ResultUiController>("Prefabs/UI/ResultUi");
             var view = Instantiate(viewPrefab);
             view.Initialize(restTime, score);
             return Observable.NextFrame()
                              .Select(x => (IResultView)view);
+        }
+
+        public void StopGame()
+        {
+            Time.timeScale = 0;
         }
     }
 }

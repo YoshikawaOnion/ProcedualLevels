@@ -27,6 +27,10 @@ namespace ProcedualLevels.Models
         /// <param name="index">パワーアップアイテムのインデックス。</param>
         /// <param name="powerUp">パワーアップアイテムのモデル。</param>
         void PlacePowerUp(int index, PowerUp powerUp);
+        /// <summary>
+        /// ゲームを停止します
+        /// </summary>
+        void StopGame();
 
         /// <summary>
         /// 探検画面のビューをリセットします。
