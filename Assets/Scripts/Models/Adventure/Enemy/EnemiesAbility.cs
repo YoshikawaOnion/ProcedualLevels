@@ -7,6 +7,7 @@ namespace ProcedualLevels.Models
     /// <summary>
     /// 敵キャラクターのパラメータ。
     /// </summary>
+    [System.Serializable]
     public class EnemiesAbility
     {
         /// <summary>
@@ -27,6 +28,10 @@ namespace ProcedualLevels.Models
         /// この敵キャラクターの攻撃力。
         /// </summary>
         public int Attack { get; set; }
+        /// <summary>
+        /// この敵キャラクターを倒した時に得られるスコア。
+        /// </summary>
+        public int Score { get; set; }
         /// <summary>
         /// 生成アルゴリズムを提供するクラスのインスタンスを取得または設定します。
         /// </summary>

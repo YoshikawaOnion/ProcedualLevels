@@ -82,8 +82,7 @@ namespace ProcedualLevels.Views
 
         private IObservable<int> GetWallEvent(IObservable<Collider2D> source, int normalDirection)
         {
-            return source.Where(x => x.gameObject.tag == Def.TerrainTag
-                                || x.gameObject.tag == Def.PlatformTag)
+            return source.Where(x => x.gameObject.tag == Def.TerrainTag)
                          .Select(x => normalDirection);
         }
 

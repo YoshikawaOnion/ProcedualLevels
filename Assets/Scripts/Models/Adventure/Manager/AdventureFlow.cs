@@ -27,7 +27,6 @@ namespace ProcedualLevels.Models
                     Hp = { Value = gameAsset.PlayerHp },
                     Attack = { Value = gameAsset.PlayerAttack }
                 },
-                Enemies = map.Enemies,
                 Map = map,
                 TimeLimit = new ReactiveProperty<int>(gameAsset.TimeLimitSeconds),
                 NextBattlerIndex = map.Enemies.Max(x => x.Index) + 1,
@@ -38,8 +37,7 @@ namespace ProcedualLevels.Models
 
             foreach (var enemy in map.Enemies)
             {
-                enemy.IsAlive.Where(x => !x)
-                     .Subscribe(x => Context.Score.Value += 1);
+                Context.AddEnemy(enemy);
             }
 
             view.Initialize(Context);

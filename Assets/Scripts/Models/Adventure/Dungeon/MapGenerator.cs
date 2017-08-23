@@ -82,9 +82,9 @@ namespace ProcedualLevels.Models
 
         private static void PlaceEnemies(IAdventureView view, MapData map)
         {
-            var enemyDatabase = new EnemyDatabase();
+            var enemyDatabase = AssetRepository.I.EnemyMaster;
             int index = 1;
-            foreach (var ability in enemyDatabase.Enemies)
+            foreach (var ability in enemyDatabase.GetEnemiesAbilities())
             {
                 ability.GenerationStrategy.PlaceEnemies(map, ability, view, ref index);
             }

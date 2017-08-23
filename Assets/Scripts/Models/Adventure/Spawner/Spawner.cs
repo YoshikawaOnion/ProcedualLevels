@@ -50,7 +50,7 @@ namespace ProcedualLevels.Models
                                       .Do(x => context.NextBattlerIndex++);
             Disposable = SpawnObservable.Subscribe(x =>
             {
-                context.Enemies.Add(x);
+                context.AddEnemy(x);
             });
         }
 

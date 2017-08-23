@@ -8,7 +8,7 @@ namespace ProcedualLevels.Models
     {
         public Hero Hero { get; set; }
         public MapData Map { get; set; }
-		public List<Enemy> Enemies { get; set; }
+        private List<Enemy> Enemies { get; set; }
         public int NextBattlerIndex { get; set; }
         public IAdventureView View { get; set; }
         public Spawner[] Spawners { get; set; }
@@ -34,6 +34,14 @@ namespace ProcedualLevels.Models
             {
                 spawner.Dispose();
             }
+        }
+
+        public void AddEnemy(Enemy enemy)
+        {
+            Enemies.Add(enemy);
+            enemy.IsAlive.Where(x => !x)
+                 .Take(1)
+                 .Subscribe(x => Score.Value += enemy.Ability.Score);
         }
     }
 }

@@ -114,7 +114,7 @@ namespace ProcedualLevels.Views
 
         private EnemyController SetEnemyUp(Enemy enemy)
         {
-            EnemyController prefab;
+            EnemyController prefab = null;
             if (!EnemyPrefabs.TryGetValue(enemy.Ability.PrefabName, out prefab))
             {
                 prefab = Resources.Load<EnemyController>
