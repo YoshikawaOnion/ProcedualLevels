@@ -47,7 +47,9 @@ namespace ProcedualLevels.Models
                                                              InitialPosition,
                                                              Ability,
                                                              context.View))
-                                      .Do(x => context.NextBattlerIndex++);
+                                      .Do(x => context.NextBattlerIndex++)
+                                      .Publish()
+                                      .RefCount();
             Disposable = SpawnObservable.Subscribe(x =>
             {
                 context.AddEnemy(x);

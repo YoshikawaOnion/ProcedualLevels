@@ -72,8 +72,8 @@ namespace ProcedualLevels.Models
 
         private static void PlaceSpawners(MapData map)
         {
-            var spawnerDatabase = new SpawnerDatabase();
-            foreach (var spawner in spawnerDatabase.Spawners)
+            var spawnerMaster = AssetRepository.I.SpawnerMaster;
+            foreach (var spawner in spawnerMaster.GetParameters())
             {
                 var spawners = spawner.Generate(map);
                 map.Spawners.AddRange(spawners);

@@ -9,9 +9,10 @@ namespace ProcedualLevels.Models
 {
     public class EnemyMasterAsset : ScriptableObject
     {
-        [System.Serializable]
+        [Serializable]
         public class EnemiesProperty
         {
+            public string Name;
             public int Id;
             public int Hp;
             public int Attack;

@@ -35,14 +35,14 @@ namespace ProcedualLevels.Models
             Attack.Value = ability.Attack;
             Ability = ability;
 
-			Observable.Interval(TimeSpan.FromMilliseconds(500))
-					  .Skip(3)
-					  .TakeUntil(view.OnBattle.Where(x => x.Index == Index))
-					  .Repeat()
-					  .Subscribe(x =>
-			{
-				Hp.Value += 1;
-			})
+            Observable.Interval(TimeSpan.FromMilliseconds(500))
+                      .Skip(3)
+                      .TakeUntil(view.OnBattle.Where(x => x.Index == Index))
+                      .Repeat()
+                      .Subscribe(x =>
+            {
+                Hp.Value += 1;
+            })
                       .AddTo(Disposable);
 
             IsAlive.Where(x => !x && DropPowerUp)
