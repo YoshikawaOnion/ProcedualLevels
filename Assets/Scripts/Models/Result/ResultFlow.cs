@@ -27,17 +27,24 @@ namespace ProcedualLevels.Models
 
         private IEnumerator RunAsync(IObserver<IFlow> result)
         {
-            yield return Observable.Timer(TimeSpan.FromSeconds(1));
+            yield return Observable.Timer(TimeSpan.FromSeconds(0.8))
+                                   .ToYieldInstruction();
 
-            var finalScore = (int)(Score * AssetRepository.I.GameParameterAsset.ScoreParSecond);
+            var finalScore = Score + (int)(RestTime * AssetRepository.I.GameParameterAsset.ScoreParSecond);
 
+            // アニメーションする。タップされたら飛ばす
             yield return View.AnimateBonusAsync(RestTime, Score, finalScore)
                              .TakeUntil(View.OnTap)
                              .ToYieldInstruction();
 
             View.ResetScoreBoard(0, finalScore);
 
-            yield return Observable.Timer(TimeSpan.FromSeconds(1));
+            yield return Observable.Timer(TimeSpan.FromSeconds(0.3))
+                                   .ToYieldInstruction();
+
+            View.ShowTapInstruction();
+
+            yield return View.OnTap.Take(1).ToYieldInstruction();
 
             result.OnNext(null);
             result.OnCompleted();

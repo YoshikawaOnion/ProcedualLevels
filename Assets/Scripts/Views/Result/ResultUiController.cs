@@ -13,6 +13,8 @@ namespace ProcedualLevels.Views
         private UILabel restTimeLabel = null;
         [SerializeField]
         private UILabel scoreLabel = null;
+        [SerializeField]
+        private UILabel tapInstructionLabel = null;
 
         public IObservable<Unit> OnTap { get; set; }
 
@@ -22,11 +24,12 @@ namespace ProcedualLevels.Views
                         .Where(x => Input.GetMouseButtonDown(0));
             restTimeLabel.text = GetTimeString(restTime);
             scoreLabel.text = score.ToString();
+            tapInstructionLabel.gameObject.SetActive(false);
         }
 
         public IObservable<Unit> AnimateBonusAsync(int restTime, int score, int finalScore)
         {
-            float finalCount = 60;
+            float finalCount = 120;
             float count = 0;
 
             return this.UpdateAsObservable()
@@ -37,7 +40,7 @@ namespace ProcedualLevels.Views
                 var time = restTime * (finalCount - count) / finalCount;
                 var score2 = (score * (finalCount - count) + finalScore * count) / finalCount;
                 restTimeLabel.text = GetTimeString((int)time);
-                scoreLabel.text = score2.ToString();
+                scoreLabel.text = ((int)score2).ToString();
             });
         }
 
@@ -52,6 +55,11 @@ namespace ProcedualLevels.Views
             var minutes = (restSeconds / 60).ToString("00");
             var seconds = (restSeconds % 60).ToString("00");
             return minutes + ":" + seconds;
+        }
+
+        public void ShowTapInstruction()
+        {
+            tapInstructionLabel.gameObject.SetActive(true);
         }
     }
 }
