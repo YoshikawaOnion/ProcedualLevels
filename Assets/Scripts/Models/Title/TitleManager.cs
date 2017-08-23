@@ -16,7 +16,7 @@ namespace ProcedualLevels.Models
             View = view;
         }
 
-        private IEnumerator TitleFlow(IObserver<IFlow> result)
+        private IEnumerator RunAsync(IObserver<IFlow> result)
         {
             yield return View.OnTap.Take(1)
                              .ToYieldInstruction();
@@ -36,7 +36,7 @@ namespace ProcedualLevels.Models
 
         public IObservable<IFlow> Start()
         {
-            return Observable.FromCoroutine<IFlow>(observer => TitleFlow(observer));
+            return Observable.FromCoroutine<IFlow>(observer => RunAsync(observer));
         }
     }
 }

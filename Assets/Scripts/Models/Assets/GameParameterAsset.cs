@@ -19,5 +19,7 @@ namespace ProcedualLevels.Models
         public float RecoverTimeFromTrampled;
         [Tooltip("プレイヤーの吹き飛ばし力の最小値")]
         public int PlayerKnockbackPowerBase;
+        [Tooltip("タイムボーナス(1秒につき)")]
+        public float ScoreParSecond;
     }
 }

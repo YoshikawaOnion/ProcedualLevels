@@ -7,6 +7,11 @@ using ProcedualLevels.Common;
 
 namespace ProcedualLevels.Models
 {
+    public enum AdventureResult
+    {
+        Success, Miss,
+    }
+
     public class AdventureFlow : IFlow
     {
         private CompositeDisposable Disposable { get; set; }
@@ -65,28 +70,47 @@ namespace ProcedualLevels.Models
                       .Where(x => Context.TimeLimit.Value > 0)
                       .Subscribe(x => Context.TimeLimit.Value -= 1)
                       .AddTo(Disposable);
-            
-            yield return View.OnGoal.Merge(View.OnPlayerDie)
+
+            AdventureResult r = AdventureResult.Success;
+            var goal = View.OnGoal.Select(x => AdventureResult.Success);
+            var die = View.OnPlayerDie.Select(x => AdventureResult.Miss);
+
+            yield return goal.Merge(die)
                              .Take(1)
+                             .Do(x => r = x)
                              .ToYieldInstruction();
 
-            yield return Observable.Timer(TimeSpan.FromSeconds(2))
+            yield return Observable.Timer(TimeSpan.FromSeconds(1))
                                    .ToYieldInstruction();
 
             Context.Dispose();
             Disposable.Dispose();
 
-            IAdventureView nextView = null;
-            yield return View.ResetAsync()
-                             .Do(x => nextView = x)
-                             .ToYieldInstruction();
+            if (r == AdventureResult.Miss)
+            {
+                IAdventureView nextView = null;
+                yield return View.ResetAsync()
+                                 .Do(x => nextView = x)
+                                 .ToYieldInstruction();
 
-            var next = new AdventureFlow();
-            next.Initialize(AssetRepository.I.DungeonGenAsset,
-                            AssetRepository.I.GameParameterAsset,
-                            nextView);
-            result.OnNext(next);
-            result.OnCompleted();
+                var next = new AdventureFlow();
+                next.Initialize(AssetRepository.I.DungeonGenAsset,
+                                AssetRepository.I.GameParameterAsset,
+                                nextView);
+                result.OnNext(next);
+                result.OnCompleted();
+            }
+            else if(r == AdventureResult.Success)
+            {
+                IResultView nextView = null;
+                yield return View.GotoResult(Context.TimeLimit.Value, Context.Score.Value)
+                                 .Do(x => nextView = x)
+                                 .ToYieldInstruction();
+
+                var next = new ResultFlow(Context.TimeLimit.Value, Context.Score.Value, nextView);
+                result.OnNext(next);
+                result.OnCompleted();
+            }
         }
 
         public IObservable<IFlow> Start()

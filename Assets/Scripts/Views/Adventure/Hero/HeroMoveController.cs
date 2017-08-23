@@ -35,9 +35,9 @@ namespace ProcedualLevels.Views
         [SerializeField]
         private float wallDraggingVelocity = 0;
         [SerializeField]
-        private Collider2D WallDetecterLeft;
+        private Collider2D WallDetecterLeft = null;
         [SerializeField]
-        private Collider2D WallDetecterRight;
+        private Collider2D WallDetecterRight = null;
 
         private CompositeDisposable Disposable { get; set; }
         private HeroController Hero { get; set; }

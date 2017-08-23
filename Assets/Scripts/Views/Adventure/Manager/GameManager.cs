@@ -147,5 +147,18 @@ namespace ProcedualLevels.Views
             return Observable.NextFrame()
                              .Select(x => view);
         }
+
+        public IObservable<IResultView> GotoResult(int restTime, int score)
+        {
+            Destroy(gameObject);
+            Destroy(Context.UiManager.gameObject);
+            Destroy(ObjectManager.gameObject);
+
+            var viewPrefab = Resources.Load<Views.ResultUiController>("Prefabs/UI/ResultUi");
+            var view = Instantiate(viewPrefab);
+            view.Initialize(restTime, score);
+            return Observable.NextFrame()
+                             .Select(x => (IResultView)view);
+        }
     }
 }

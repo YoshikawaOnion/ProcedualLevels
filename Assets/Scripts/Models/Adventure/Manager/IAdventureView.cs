@@ -32,6 +32,11 @@ namespace ProcedualLevels.Models
         /// 探検画面のビューをリセットします。
         /// </summary>
 		IObservable<IAdventureView> ResetAsync();
+        /// <summary>
+        /// リザルト画面に遷移します。
+        /// </summary>
+        /// <returns>リザルト画面のビューを通知するストリーム。</returns>
+        IObservable<IResultView> GotoResult(int restTime, int score);
 
         /// <summary>
         /// プレイヤーが敵と戦闘したことを通知するストリームを取得します。

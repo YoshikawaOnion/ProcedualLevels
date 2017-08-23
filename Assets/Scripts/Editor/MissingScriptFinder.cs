@@ -35,7 +35,7 @@ public class MissinScriptFinder : ScriptableObject
             gameobject = (GameObject)prefab;
             return gameobject.GetComponentsInChildren<Component>(true).ToArray();
         }
-        catch (System.Exception ex)
+        catch (System.Exception)
         {
             Debug.Log("プレハブ " + path + " は GameObject に変換できませんでした");
             return new Component[0];
