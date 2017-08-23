@@ -1,0 +1,131 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<SpriteStudioCellMap version="1.00.02">
+	<name>TreasureChest</name>
+	<exportPath></exportPath>
+	<generator>TexturePacker</generator>
+	<packed>1</packed>
+	<imagePath>TreasureChest.png</imagePath>
+	<pixelSize>64 128</pixelSize>
+	<overrideTexSettings>0</overrideTexSettings>
+	<wrapMode>clamp</wrapMode>
+	<filterMode>linear</filterMode>
+	<imagePathAtImport>/Users/Ryoh/SideDungeonGame/Assets/TextureResources/TreasureChest/TreasureChest.png</imagePathAtImport>
+	<packInfoFilePath></packInfoFilePath>
+	<texPackSettings>
+		<maxSize>4096 4096</maxSize>
+		<forcePo2>1</forcePo2>
+		<forceSquare>0</forceSquare>
+		<margin>0</margin>
+		<padding>1</padding>
+	</texPackSettings>
+	<cells>
+		<cell>
+			<name>TreasureC01</name>
+			<pos>35 68</pos>
+			<size>16 17</size>
+			<pivot>0 0.323529422283173</pivot>
+			<rotated>0</rotated>
+			<orgImageName>/Users/Ryoh/SideDungeonGame/Assets/TextureResources/TreasureChest/TreasureC01.png</orgImageName>
+			<posStable>0</posStable>
+		</cell>
+		<cell>
+			<name>TreasureC02</name>
+			<pos>37 47</pos>
+			<size>16 20</size>
+			<pivot>0 0.200000002980232</pivot>
+			<rotated>0</rotated>
+			<orgImageName>/Users/Ryoh/SideDungeonGame/Assets/TextureResources/TreasureChest/TreasureC02.png</orgImageName>
+			<posStable>0</posStable>
+		</cell>
+		<cell>
+			<name>TreasureC03</name>
+			<pos>39 19</pos>
+			<size>16 27</size>
+			<pivot>0 0.0185185186564922</pivot>
+			<rotated>0</rotated>
+			<orgImageName>/Users/Ryoh/SideDungeonGame/Assets/TextureResources/TreasureChest/TreasureC03.png</orgImageName>
+			<posStable>0</posStable>
+		</cell>
+		<cell>
+			<name>TreasureG01</name>
+			<pos>18 73</pos>
+			<size>16 17</size>
+			<pivot>0 0.323529422283173</pivot>
+			<rotated>0</rotated>
+			<orgImageName>/Users/Ryoh/SideDungeonGame/Assets/TextureResources/TreasureChest/TreasureG01.png</orgImageName>
+			<posStable>0</posStable>
+		</cell>
+		<cell>
+			<name>TreasureG02</name>
+			<pos>18 52</pos>
+			<size>16 20</size>
+			<pivot>0 0.200000002980232</pivot>
+			<rotated>0</rotated>
+			<orgImageName>/Users/Ryoh/SideDungeonGame/Assets/TextureResources/TreasureChest/TreasureG02.png</orgImageName>
+			<posStable>0</posStable>
+		</cell>
+		<cell>
+			<name>TreasureG03</name>
+			<pos>20 24</pos>
+			<size>16 27</size>
+			<pivot>0 0.0185185186564922</pivot>
+			<rotated>0</rotated>
+			<orgImageName>/Users/Ryoh/SideDungeonGame/Assets/TextureResources/TreasureChest/TreasureG03.png</orgImageName>
+			<posStable>0</posStable>
+		</cell>
+		<cell>
+			<name>TreasureP01</name>
+			<pos>39 1</pos>
+			<size>18 17</size>
+			<pivot>0 0.323529422283173</pivot>
+			<rotated>0</rotated>
+			<orgImageName>/Users/Ryoh/SideDungeonGame/Assets/TextureResources/TreasureChest/TreasureP01.png</orgImageName>
+			<posStable>0</posStable>
+		</cell>
+		<cell>
+			<name>TreasureP02</name>
+			<pos>20 1</pos>
+			<size>18 22</size>
+			<pivot>0 0.136363640427589</pivot>
+			<rotated>0</rotated>
+			<orgImageName>/Users/Ryoh/SideDungeonGame/Assets/TextureResources/TreasureChest/TreasureP02.png</orgImageName>
+			<posStable>0</posStable>
+		</cell>
+		<cell>
+			<name>TreasureP03</name>
+			<pos>1 1</pos>
+			<size>18 26</size>
+			<pivot>0 0.0384615398943424</pivot>
+			<rotated>0</rotated>
+			<orgImageName>/Users/Ryoh/SideDungeonGame/Assets/TextureResources/TreasureChest/TreasureP03.png</orgImageName>
+			<posStable>0</posStable>
+		</cell>
+		<cell>
+			<name>TreasureS01</name>
+			<pos>1 77</pos>
+			<size>16 17</size>
+			<pivot>0 0.323529422283173</pivot>
+			<rotated>0</rotated>
+			<orgImageName>/Users/Ryoh/SideDungeonGame/Assets/TextureResources/TreasureChest/TreasureS01.png</orgImageName>
+			<posStable>0</posStable>
+		</cell>
+		<cell>
+			<name>TreasureS02</name>
+			<pos>1 56</pos>
+			<size>16 20</size>
+			<pivot>0 0.200000002980232</pivot>
+			<rotated>0</rotated>
+			<orgImageName>/Users/Ryoh/SideDungeonGame/Assets/TextureResources/TreasureChest/TreasureS02.png</orgImageName>
+			<posStable>0</posStable>
+		</cell>
+		<cell>
+			<name>TreasureS03</name>
+			<pos>1 28</pos>
+			<size>16 27</size>
+			<pivot>0 0.0185185186564922</pivot>
+			<rotated>0</rotated>
+			<orgImageName>/Users/Ryoh/SideDungeonGame/Assets/TextureResources/TreasureChest/TreasureS03.png</orgImageName>
+			<posStable>0</posStable>
+		</cell>
+	</cells>
+</SpriteStudioCellMap>
