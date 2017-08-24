@@ -47,6 +47,10 @@ namespace ProcedualLevels.Models
         /// このマップに所属するトゲブロックのリストを取得します。
         /// </summary>
         public List<Spike> Spikes { get; private set; }
+        /// <summary>
+        /// このマップに所属する宝箱のリストを取得します。
+        /// </summary>
+        public List<Treasure> Treasures { get; private set; }
 
         public MapData()
         {
@@ -57,6 +61,7 @@ namespace ProcedualLevels.Models
             Spawners = new List<Spawner>();
             CollisionBlocks = new List<Vector2>();
             Spikes = new List<Spike>();
+            Treasures = new List<Treasure>();
         }
 
         /// <summary>

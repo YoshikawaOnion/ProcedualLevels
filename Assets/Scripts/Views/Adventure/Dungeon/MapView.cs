@@ -16,6 +16,7 @@ namespace ProcedualLevels.Views
         private GameObject DebugRoot { get; set; }
         private Goal Goal { get; set; }
         private List<SpikeController> Spikes { get; set; }
+        private List<TreasureController> Treasures { get; set; }
         private bool Quitting { get; set; }
 
         /// <summary>
@@ -30,6 +31,7 @@ namespace ProcedualLevels.Views
             Maze = Instantiate(mazePrefab);
             Maze.transform.SetParent(transform);
             Spikes = new List<SpikeController>();
+            Treasures = new List<TreasureController>();
 
             ShowRooms(map, Maze);
             ShowPlatforms(map, Maze);
@@ -37,6 +39,21 @@ namespace ProcedualLevels.Views
             ShowSpawners(map, viewContext);
             ShowCollisionBlock(map);
             ShowSpikes(map, eventFacade);
+            ShowTreasures(map);
+        }
+
+        private void ShowTreasures(MapData map)
+        {
+            var prefab = Resources.Load<TreasureController>("Prefabs/Character/Treasure_Control");
+            foreach (var treasure in map.Treasures)
+            {
+                var obj = Instantiate(prefab);
+                obj.transform.position = treasure.InitialLocation.ToVector3()
+                    .MergeZ(obj.transform.position.z);
+                obj.transform.SetParent(RootObjectRepository.I.ManagerDraw.transform);
+                obj.Initialize(treasure);
+                Treasures.Add(obj);
+            }
         }
 
         private void ShowSpikes(MapData map, GameEventFacade eventFacade)
@@ -105,6 +122,10 @@ namespace ProcedualLevels.Views
 
             Destroy(Goal.gameObject);
             foreach (var item in Spikes)
+            {
+                Destroy(item.gameObject);
+            }
+            foreach (var item in Treasures)
             {
                 Destroy(item.gameObject);
             }

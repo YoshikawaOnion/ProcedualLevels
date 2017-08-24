@@ -43,6 +43,9 @@ namespace ProcedualLevels.Models
             };
             map.Spawners.ForEach(x => x.Initialize(Context));
 
+            var treasureGen = new TreasureGenerator();
+            treasureGen.PlaceTreasures(map, Context);
+
             foreach (var enemy in map.Enemies)
             {
                 Context.AddEnemy(enemy);
@@ -83,16 +86,19 @@ namespace ProcedualLevels.Models
                              .Do(x => r = x)
                              .ToYieldInstruction();
 
-            View.StopGame();
-
-            yield return Observable.TimerFrame(60)
-                                   .ToYieldInstruction();
-
-            Context.Dispose();
-            Disposable.Dispose();
-
             if (r == AdventureResult.Miss)
             {
+                yield return Observable.TimerFrame(30)
+                                       .ToYieldInstruction();
+                
+                View.StopGame();
+
+                yield return Observable.TimerFrame(60)
+                                       .ToYieldInstruction();
+
+                Context.Dispose();
+                Disposable.Dispose();
+
                 IAdventureView nextView = null;
                 yield return View.ResetAsync()
                                  .Do(x => nextView = x)
@@ -105,6 +111,14 @@ namespace ProcedualLevels.Models
             }
             else if(r == AdventureResult.Success)
             {
+                View.StopGame();
+
+                yield return Observable.TimerFrame(60)
+                                       .ToYieldInstruction();
+
+                Context.Dispose();
+                Disposable.Dispose();
+
                 IResultView nextView = null;
                 yield return View.GotoResult(Context.TimeLimit.Value, Context.Score.Value)
                                  .Do(x => nextView = x)

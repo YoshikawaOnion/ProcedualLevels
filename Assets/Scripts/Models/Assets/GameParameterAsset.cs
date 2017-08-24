@@ -21,5 +21,6 @@ namespace ProcedualLevels.Models
         public int PlayerKnockbackPowerBase;
         [Tooltip("タイムボーナス(1秒につき)")]
         public float ScoreParSecond;
+        public int ScoreForTreasure;
     }
 }
