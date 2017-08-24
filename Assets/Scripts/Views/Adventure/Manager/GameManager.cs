@@ -22,6 +22,7 @@ namespace ProcedualLevels.Views
         private AdventureViewContext Context { get; set; }
         private GameEventFacade EventFacade { get; set; }
         private GameObjectManager ObjectManager { get; set; }
+        private bool IsQuiting { get; set; }
 
         /// <summary>
         /// プレイヤーが敵と戦闘したことを通知するストリームを取得します。
@@ -58,9 +59,25 @@ namespace ProcedualLevels.Views
             OnAttacked = EventFacade.OnPlayerAttackedByEnemyReceiver;
             OnBattlerTouchSpike = EventFacade.OnBattlerTouchedSpikeReceiver
                                              .Select(x => Tuple.Create(x.Item1.Spike, x.Item2.Battler));
+            IsQuiting = false;
 
             var gomPrefab = Resources.Load<GameObjectManager>("Prefabs/Manager/GameObjectManager");
             ObjectManager = Instantiate(gomPrefab);
+        }
+
+        private void OnApplicationQuit()
+        {
+            IsQuiting = true;
+        }
+
+        private void OnDestroy()
+        {
+            if (IsQuiting)
+            {
+                return;
+            }
+            Destroy(Context.UiManager.gameObject);
+            Destroy(ObjectManager.gameObject);
         }
 
         /// <summary>
@@ -139,8 +156,6 @@ namespace ProcedualLevels.Views
         public IObservable<IAdventureView> ResetAsync()
         {
             Destroy(gameObject);
-            Destroy(Context.UiManager.gameObject);
-            Destroy(ObjectManager.gameObject);
             Time.timeScale = 1;
 
             var viewPrefab = Resources.Load<Views.GameManager>("Prefabs/Manager/GameManager");
@@ -152,8 +167,6 @@ namespace ProcedualLevels.Views
         public IObservable<IResultView> GotoResult(int restTime, int score)
         {
             Destroy(gameObject);
-            Destroy(Context.UiManager.gameObject);
-            Destroy(ObjectManager.gameObject);
             Time.timeScale = 1;
 
             var viewPrefab = Resources.Load<Views.ResultUiController>("Prefabs/UI/ResultUi");
@@ -166,6 +179,19 @@ namespace ProcedualLevels.Views
         public void StopGame()
         {
             Time.timeScale = 0;
+        }
+
+        public IObservable<IGameOverView> GotoGameOver()
+        {
+            Destroy(gameObject);
+            Time.timeScale = 1;
+
+            var viewPrefab = Resources.Load<GameOverController>("Prefabs/UI/GameOverUi");
+            var view = Instantiate(viewPrefab);
+            view.Initialize();
+
+            return Observable.NextFrame()
+                             .Select(x => (IGameOverView)view);
         }
     }
 }

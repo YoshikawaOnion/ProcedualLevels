@@ -41,6 +41,11 @@ namespace ProcedualLevels.Models
         /// </summary>
         /// <returns>リザルト画面のビューを通知するストリーム。</returns>
         IObservable<IResultView> GotoResult(int restTime, int score);
+        /// <summary>
+        /// ゲームオーバー画面に遷移します。
+        /// </summary>
+        /// <returns>ゲームオーバー画面のビューが通知されるストリーム。</returns>
+        IObservable<IGameOverView> GotoGameOver();
 
         /// <summary>
         /// プレイヤーが敵と戦闘したことを通知するストリームを取得します。

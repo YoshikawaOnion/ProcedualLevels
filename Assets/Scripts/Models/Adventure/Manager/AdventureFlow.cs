@@ -99,13 +99,12 @@ namespace ProcedualLevels.Models
                 Context.Dispose();
                 Disposable.Dispose();
 
-                IAdventureView nextView = null;
-                yield return View.ResetAsync()
+                IGameOverView nextView = null;
+                yield return View.GotoGameOver()
                                  .Do(x => nextView = x)
                                  .ToYieldInstruction();
-
-                var next = new AdventureFlow();
-                next.Initialize(nextView);
+                
+                var next = new GameOverFlow(nextView);
                 result.OnNext(next);
                 result.OnCompleted();
             }
