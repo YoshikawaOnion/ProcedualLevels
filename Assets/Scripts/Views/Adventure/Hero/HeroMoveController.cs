@@ -342,6 +342,12 @@ namespace ProcedualLevels.Views
             ++JumpCount;
             IsOnGround = false;
             CheckJump();
+            if (JumpCount >= maxJumpCount)
+            {
+                Animation.AnimateWallJump(Hero.WalkDirection.Value,
+                                          Def.MoveAnimationPriority,
+                                          Def.MoveAnimationPriority);
+            }
         }
 
         /// <summary>

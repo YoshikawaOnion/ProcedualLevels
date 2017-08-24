@@ -187,6 +187,7 @@ namespace ProcedualLevels.Views
                 return;
             }
 
+            direction = direction == 0 ? Direction : direction;
             InitializeState();
 
             Direction = Helper.Sign(direction);
